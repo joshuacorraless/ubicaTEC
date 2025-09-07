@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ubicaTEC - Eventos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+  <main class="container py-5">
+    <!-- Encabezado -->
+    <header class="text-center mb-4">
+      <h1 id="titulo-eventos">Eventos disponibles</h1>
+      <p id="subtitulo-eventos" class="lead"></p>
+    </header>
+
+    <!-- Contenedor dinámico de eventos -->
+    <section aria-labelledby="lista-eventos">
+      <h2 id="lista-eventos" class="visually-hidden">Lista de todos los eventos</h2>
+      <div class="row g-4" id="contenedor-eventos"></div>
+    </section>
+  </main>
+
+  <script>
+    // Capturar el tipo de usuario desde la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const tipo = urlParams.get('tipo') || "visitante"; // por defecto visitante
+
+    // Definimos los eventos
+    const eventos = [
+      {
+        titulo: "Conferencia de Tecnología",
+        lugar: "Auditorio D3",
+        fecha: "12 de septiembre · 10:00 a.m.",
+        img: "../images/auditorioD3.webp",
+        alt: "Conferencia de tecnología en el Auditorio D3",
+        acceso: "todos" // solo comunidad TEC
+      },
+      {
+        titulo: "Taller de Innovación",
+        lugar: "Learning Commons",
+        fecha: "15 de septiembre · 2:00 p.m.",
+        img: "../images/learningCommons.jpg",
+        alt: "Taller de innovación en el Learning Commons",
+        acceso: "todos" // TEC + visitantes
+      },
+      {
+        titulo: "Recital Musical",
+        lugar: "Restaurante Institucional",
+        fecha: "20 de septiembre · 6:00 p.m.",
+        img: "../images/restauranteInstitucional.webp",
+        alt: "Recital musical en el restaurante institucional",
+        acceso: "todos"
+      }
+      
+    ];
+
+    // Filtrar según usuario
+    let eventosFiltrados = [];
+    if (tipo === "visitante") {
+      eventosFiltrados = eventos.filter(e => e.acceso === "todos");
+      document.getElementById("subtitulo-eventos").textContent = 
+        "Eventos abiertos a visitantes externos y comunidad TEC";
+    } else {
+      eventosFiltrados = eventos; // estudiantes y docentes ven todos
+      document.getElementById("subtitulo-eventos").textContent = 
+        "Eventos disponibles para la comunidad TEC";
+    }
+
+    // Renderizar los eventos en tarjetas
+    const contenedor = document.getElementById("contenedor-eventos");
+    eventosFiltrados.forEach(evento => {
+      const col = document.createElement("div");
+      col.className = "col-12 col-md-6 col-lg-4";
+
+      col.innerHTML = `
+        <div class="card h-100 shadow-sm">
+          <img src="${evento.img}" class="card-img-top" alt="${evento.alt}">
+          <div class="card-body">
+            <h3 class="card-title fs-5">${evento.titulo}</h3>
+            <p class="card-text">${evento.lugar} · ${evento.fecha}</p>
+            <p class="text-muted small">Acceso: ${evento.acceso === "todos" ? "Comunidad TEC y visitantes" : "Solo comunidad TEC"}</p>
+            ${tipo === "visitante" && evento.acceso === "tec" 
+              ? `<button class="btn btn-secondary w-100" disabled aria-disabled="true">No disponible</button>`
+              : `<button class="btn btn-primary w-100">Reservar</button>`
+            }
+          </div>
+        </div>
+      `;
+
+      contenedor.appendChild(col);
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

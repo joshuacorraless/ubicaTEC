@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ubicaTEC - Registrar Evento</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+  <main class="container py-5">
+    <header class="mb-4">
+      <h1 class="text-start">Registrar nuevo evento</h1>
+      <p class="text-start text-muted">Complete los campos para crear un nuevo evento.</p>
+    </header>
+
+    <form id="form-registrar" class="needs-validation" novalidate enctype="multipart/form-data">
+      <!-- Nombre -->
+      <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre del evento</label>
+        <input type="text" id="nombre" class="form-control" required>
+      </div>
+
+      <!-- Descripción -->
+      <div class="mb-3">
+        <label for="descripcion" class="form-label">Descripción</label>
+        <textarea id="descripcion" class="form-control" rows="4" required></textarea>
+      </div>
+
+      <!-- Fecha y hora -->
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="fecha" class="form-label">Fecha</label>
+          <input type="date" id="fecha" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label for="hora" class="form-label">Hora</label>
+          <input type="time" id="hora" class="form-control" required>
+        </div>
+      </div>
+
+      <!-- Lugar -->
+      <div class="mb-3 mt-3">
+        <label for="lugar" class="form-label">Lugar</label>
+        <input type="text" id="lugar" class="form-control" placeholder="Ej: Auditorio D3" required>
+      </div>
+
+      <!-- Capacidad -->
+      <div class="mb-3">
+        <label for="capacidad" class="form-label">Capacidad máxima</label>
+        <input type="number" id="capacidad" class="form-control" min="1" required>
+      </div>
+
+      <!-- Costo -->
+      <div class="mb-3">
+        <label for="costo" class="form-label">Costo de entrada</label>
+        <input type="text" id="costo" class="form-control" placeholder="Ej: Gratis o ₡5000">
+      </div>
+
+      <!-- Acceso -->
+      <div class="mb-3">
+        <label for="acceso" class="form-label">Acceso</label>
+        <select id="acceso" class="form-select" required>
+          <option value="tec">Solo comunidad TEC</option>
+          <option value="todos">Comunidad TEC y visitantes</option>
+        </select>
+      </div>
+
+      <!-- Imagen -->
+      <div class="mb-3">
+        <label for="imagen" class="form-label">Imagen del evento</label>
+        <input type="file" id="imagen" class="form-control" accept="image/*" required>
+        <div class="form-text">Seleccione una imagen en formato JPG o PNG.</div>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100">Registrar evento</button>
+    </form>
+  </main>
+
+  <script>
+    document.getElementById("form-registrar").addEventListener("submit", async function(e){
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append("nombre", document.getElementById("nombre").value);
+      formData.append("descripcion", document.getElementById("descripcion").value);
+      formData.append("fecha", document.getElementById("fecha").value);
+      formData.append("hora", document.getElementById("hora").value);
+      formData.append("lugar", document.getElementById("lugar").value);
+      formData.append("capacidad", document.getElementById("capacidad").value);
+      formData.append("costo", document.getElementById("costo").value);
+      formData.append("acceso", document.getElementById("acceso").value);
+      formData.append("imagen", document.getElementById("imagen").files[0]);
+
+      // Aquí deberías enviar al backend (ejemplo con fetch)
+      try {
+        const res = await fetch("http://localhost:3000/eventos", {
+          method: "POST",
+          body: formData
+        });
+
+        if (res.ok) {
+          alert("Evento registrado correctamente ✅ (imagen subida a Cloudinary en backend).");
+        } else {
+          alert("Error al registrar evento ❌");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error de conexión con el servidor.");
+      }
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
