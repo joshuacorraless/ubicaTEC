@@ -6,7 +6,7 @@ import {pool} from './db/connection.js';
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+    
 
 //prueba
 app.get('/ping', async (req, res) => {
@@ -15,5 +15,10 @@ app.get('/ping', async (req, res) => {
 });
 //agregar rutas que le voy a permitir a la app acceder
 
+// Prueba para backend
+app.get('/', (req, res) => {
+    res.status(200) // Código de confirmación de exito
+    res.send('Corriendo exitosamente')
+})
 
 export default app;

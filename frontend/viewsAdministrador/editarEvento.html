@@ -17,23 +17,23 @@
     <form id="form-editar">
       <!-- Nombre -->
       <div class="mb-3">
-        <label for="nombre" class="form-label">Nombre del evento</label>
-        <input type="text" id="nombre" class="form-control" value="Conferencia de Tecnología" required aria-required="true">
+        <label for="nombre-evento" class="form-label">Nombre del evento</label>
+        <input type="text" id="nombre-evento" class="form-control" value="Conferencia de Tecnología" required aria-required="true">
       </div>
 
       <!-- Descripción -->
       <div class="mb-3">
-        <label for="descripcion" class="form-label">Descripción</label>
-        <textarea id="descripcion" class="form-control" rows="4" required aria-required="true">
+        <label for="descripcion-editar" class="form-label">Descripción</label>
+        <textarea id="descripcion-editar" class="form-control" rows="4" required aria-required="true">
 Una conferencia sobre las últimas tendencias en inteligencia artificial y ciberseguridad.
         </textarea>
       </div>
 
-      <!-- Fecha y hora -->
+      <!-- fecha y hora -->
       <div class="row g-3">
         <div class="col-md-6">
-          <label for="fecha" class="form-label">Fecha</label>
-          <input type="date" id="fecha" class="form-control" value="2025-09-12" required aria-required="true">
+          <label for="fecha-editar" class="form-label">Fecha</label>
+          <input type="date" id="fecha-editar" class="form-control" value="2025-09-12" required aria-required="true">
         </div>
         <div class="col-md-6">
           <label for="hora" class="form-label">Hora</label>
@@ -43,20 +43,20 @@ Una conferencia sobre las últimas tendencias en inteligencia artificial y ciber
 
       <!-- Lugar -->
       <div class="mb-3 mt-3">
-        <label for="lugar" class="form-label">Lugar</label>
-        <input type="text" id="lugar" class="form-control" value="Auditorio D3, Campus TEC" required aria-required="true">
+        <label for="lugar-editar" class="form-label">Lugar</label>
+        <input type="text" id="lugar-editar" class="form-control" value="Auditorio D3, Campus TEC" required aria-required="true">
       </div>
 
       <!-- Capacidad -->
       <div class="mb-3">
-        <label for="capacidad" class="form-label">Capacidad máxima</label>
-        <input type="number" id="capacidad" class="form-control" value="200" min="1" required aria-required="true">
+        <label for="capacidad-editar" class="form-label">Capacidad máxima</label>
+        <input type="number" id="capacidad-editar" class="form-control" value="200" min="1" required aria-required="true">
       </div>
 
       <!-- Costo -->
       <div class="mb-3">
-        <label for="costo" class="form-label">Costo de entrada</label>
-        <input type="text" id="costo" class="form-control" value="Gratis">
+        <label for="costo-editar" class="form-label">Costo de entrada</label>
+        <input type="text" id="costo-editar" class="form-control" value="0">
       </div>
 
       <!-- Acceso -->
@@ -70,8 +70,11 @@ Una conferencia sobre las últimas tendencias en inteligencia artificial y ciber
 
       <!-- Botón -->
       <button type="submit" class="btn btn-primary w-100">Guardar cambios</button>
+      <p class="warnings" id="warnings-editar"></p>
     </form>
   </main>
+
+  
 
   <script>
     document.getElementById("form-editar").addEventListener("submit", function(e){
@@ -81,5 +84,6 @@ Una conferencia sobre las últimas tendencias en inteligencia artificial y ciber
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="editarEvento.js"></script>
 </body>
 </html>
