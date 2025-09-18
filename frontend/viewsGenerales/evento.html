@@ -1,69 +1,886 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ubicaTEC - Detalle del evento</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>ubicaTEC – Reserva de Evento</title>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <style>
+    /* ======= PALETA ubicaTEC ======= */
+    :root{
+      --ubc-primary:#1C0058;     
+      --ubc-secondary:#3800B0;   
+      --ubc-action:#4100CD;      
+      --ubc-on-primary:#ffffff;
+      --ubc-surface:#f6f7fb;
+      --ubc-text:#1d1f21;
+      --ubc-gradient: linear-gradient(135deg, #1C0058 0%, #3800B0 50%, #4100CD 100%);
+      --ubc-gradient-light: linear-gradient(135deg, rgba(28,0,88,0.1) 0%, rgba(56,0,176,0.05) 100%);
+      --shadow-soft: 0 10px 40px rgba(28,0,88,0.1);
+      --shadow-hover: 0 20px 60px rgba(28,0,88,0.15);
+      --border-radius: 16px;
+    }
+
+    /* ======= ANIMACIONES Y EFECTOS ======= */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* ======= ELEMENTOS BASE ======= */
+    * { scroll-behavior: smooth; }
+    
+    body { 
+      background: linear-gradient(135deg, #f6f7fb 0%, #e8eaf6 100%);
+      color: var(--ubc-text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ======= GRADIENTE DE TEXTO ======= */
+    .text-gradient {
+      background: var(--ubc-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s ease-in-out infinite;
+      background-size: 200% 100%;
+    }
+
+    /* ======= THEMING AVANZADO ======= */
+    a { 
+      color: var(--ubc-action); 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    a:hover, a:focus { 
+      color: var(--ubc-secondary);
+      transform: translateY(-1px);
+    }
+
+    .btn {
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary{
+      background: var(--ubc-gradient);
+      border: none;
+      box-shadow: var(--shadow-soft);
+      transform: translateY(0);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .btn-outline-secondary{
+      border: 2px solid var(--ubc-secondary);
+      color: var(--ubc-secondary);
+      background: rgba(255,255,255,0.8);
+    }
+    .btn-outline-secondary:hover{
+      background: var(--ubc-gradient);
+      border-color: transparent;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      border: none;
+    }
+
+    :focus-visible { 
+      outline: 3px solid var(--ubc-action); 
+      outline-offset: 2px;
+      border-radius: 8px;
+    }
+
+    /* ======= SKIP LINK MEJORADO ======= */
+    .skip-link{
+      position:absolute;
+      top:-40px;
+      left:20px;
+      background: var(--ubc-gradient);
+      color: white;
+      padding: 12px 24px;
+      z-index:1100;
+      transition: all 0.3s ease;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .skip-link:focus{
+      top: 20px;
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* ======= NAVBAR ESPECTACULAR ======= */
+    .navbar-ubc.navbar { 
+      background: var(--ubc-gradient) !important;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .navbar-ubc .navbar-brand,
+    .navbar-ubc .nav-link,
+    .navbar-ubc .btn,
+    .navbar-ubc .navbar-toggler { 
+      color: var(--ubc-on-primary);
+      transition: all 0.3s ease;
+    }
+    .navbar-ubc .navbar-brand:hover,
+    .navbar-ubc .nav-link:hover { 
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    /* ======= SIDEBAR MEJORADO ======= */
+    .sidebar {
+      background: var(--ubc-gradient);
+      color: var(--ubc-on-primary);
+      min-height: 100vh;
+      position: sticky;
+      top: 0;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar .section-label { 
+      color: rgba(255,255,255,.7);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .sidebar .nav-link {
+      color: rgba(255,255,255,.92);
+      border-radius: 12px;
+      margin: 4px 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .sidebar .nav-link::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      transition: width 0.3s ease;
+    }
+    .sidebar .nav-link:hover::before { width: 100%; }
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link:focus { 
+      background: rgba(255,255,255,.12);
+      transform: translateX(8px);
+    }
+    .sidebar .nav-link.active { 
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* ======= CARDS ESPECTACULARES ======= */
+    .card-elevada { 
+      border: 0; 
+      box-shadow: var(--shadow-soft);
+      border-radius: var(--border-radius);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .card-elevada:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* ======= BREADCRUMBS MEJORADOS ======= */
+    .breadcrumb {
+      background: var(--ubc-gradient-light);
+      border-radius: 12px;
+      padding: 12px 20px;
+    }
+
+    .breadcrumb-item a {
+      color: var(--ubc-action);
+      font-weight: 500;
+    }
+
+    /* ======= IMAGEN DEL EVENTO ======= */
+    .evento-imagen {
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .evento-imagen:hover {
+      transform: scale(1.02);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .evento-imagen img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .evento-imagen:hover img {
+      transform: scale(1.05);
+    }
+
+    /* ======= BADGES MEJORADOS ======= */
+    .badge-evento {
+      background: var(--ubc-gradient);
+      color: white;
+      font-size: 0.8rem;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .badge-disponibilidad {
+      background: rgba(40, 167, 69, 0.1);
+      color: #28a745;
+      font-size: 0.8rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 15px;
+      font-weight: 600;
+    }
+
+    /* ======= DETALLES DEL EVENTO ======= */
+    .detalle-item {
+      background: rgba(255,255,255,0.8);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      border-left: 4px solid var(--ubc-action);
+      transition: all 0.3s ease;
+    }
+
+    .detalle-item:hover {
+      background: rgba(255,255,255,0.95);
+      transform: translateX(5px);
+    }
+
+    .detalle-icon {
+      color: var(--ubc-action);
+      font-size: 1.2rem;
+      margin-right: 0.5rem;
+    }
+
+    /* ======= FORMULARIO DE RESERVA ======= */
+    .reserva-form {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .form-control, .form-select {
+      border: 2px solid rgba(28,0,88,0.1);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      padding: 0.75rem 1rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--ubc-action);
+      box-shadow: 0 0 0 0.2rem rgba(65,0,205,0.25);
+    }
+
+    /* ======= INFORMACIÓN DEL USUARIO ======= */
+    .user-info-card {
+      background: rgba(28,0,88,0.05);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(28,0,88,0.1);
+    }
+
+    .user-avatar {
+      font-size: 2.5rem;
+      color: var(--ubc-action);
+    }
+
+    .user-info-card h5 {
+      color: var(--ubc-primary);
+      font-weight: 600;
+    }
+
+    /* ======= RESUMEN DE RESERVA ======= */
+    .reservation-summary {
+      background: rgba(255,255,255,0.8);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(28,0,88,0.1);
+    }
+
+    .reservation-summary h5 {
+      color: var(--ubc-primary);
+      font-weight: 600;
+      border-bottom: 2px solid var(--ubc-gradient);
+      padding-bottom: 0.5rem;
+    }
+
+    .summary-item {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .summary-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .summary-item strong {
+      color: var(--ubc-primary);
+    }
+
+    /* ======= FOOTER MEJORADO ======= */
+    footer {
+      background: var(--ubc-gradient-light);
+      border-radius: 12px 12px 0 0;
+      margin-top: 40px !important;
+    }
+
+    /* ======= RESPONSIVE MEJORAS ======= */
+    @media (max-width: 768px) {
+      .evento-imagen img {
+        height: 250px;
+      }
+      
+      .reserva-form {
+        padding: 1.5rem;
+      }
+    }
+  </style>
 </head>
-<body class="bg-light">
+<body>
+  <a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
 
-  <main class="container py-5">
-    <!-- Encabezado del evento -->
-    <header class="mb-4">
-      <h1 id="nombre-evento" class="text-start">Conferencia de Tecnología</h1>
-      <p id="descripcion-evento" class="lead text-start">
-        Una conferencia sobre las últimas tendencias en inteligencia artificial, 
-        ciberseguridad y desarrollo de software, organizada por la Escuela de Ingeniería en Computación.
-      </p>
-    </header>
-
-    <!-- Imagen principal -->
-    <figure class="mb-4">
-      <img src="../images/auditorioD3.webp" class="img-fluid rounded shadow" alt="Fotografía ilustrativa de la conferencia de tecnología en el Auditorio D3" aria-describedby="descripcion-evento">
-      <figcaption class="text-muted text-start">Imagen representativa del evento</figcaption>
-    </figure>
-
-    <!-- Detalles del evento -->
-    <section aria-labelledby="detalles-evento" class="mb-4">
-      <h2 id="detalles-evento" class="h4 text-start">Detalles del evento</h2>
-      <dl class="row">
-        <dt class="col-sm-3 text-start">Lugar:</dt>
-        <dd class="col-sm-9 text-start" id="lugar-evento">Auditorio D3, Campus TEC</dd>
-
-        <dt class="col-sm-3 text-start">Fecha y hora:</dt>
-        <dd class="col-sm-9 text-start">12 de septiembre · 10:00 a.m.</dd>
-
-        <dt class="col-sm-3 text-start">Capacidad máxima:</dt>
-        <dd class="col-sm-9 text-start">200 personas</dd>
-
-        <dt class="col-sm-3 text-start">Costo de entrada:</dt>
-        <dd class="col-sm-9 text-start">Gratis (entrada libre para comunidad TEC)</dd>
-      </dl>
-    </section>
-
-    <!-- Botón de Google Maps -->
-    <section class="mb-4">
-      <h2 class="visually-hidden">Cómo llegar</h2>
-      <button 
-        class="btn btn-primary btn-lg" 
-        id="btn-maps" 
-        aria-label="Abrir Google Maps para ver la ruta hacia el Auditorio D3">
-        Ver ruta en Google Maps
+  <!-- NAV SUPERIOR -->
+  <header class="navbar navbar-expand-lg navbar-dark navbar-ubc sticky-top" role="banner">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#" aria-label="Inicio ubicaTEC">
+        <i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
+              aria-controls="menuLateral" aria-label="Abrir menú de navegación">
+        <span class="navbar-toggler-icon"></span>
       </button>
-    </section>
-  </main>
+      <div class="d-none d-lg-flex gap-2">
+        <a class="btn btn-outline-light btn-sm" href="#"><i class="bi bi-life-preserver me-1"></i>Ayuda</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- SIDEBAR DESKTOP -->
+      <aside class="col-md-3 col-xl-2 d-none d-md-block border-end sidebar" aria-label="Navegación principal">
+        <nav class="py-4">
+          <div class="px-3 text-uppercase small section-label mb-2">Administrador</div>
+          <ul class="nav nav-pills flex-column gap-1 px-2">
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center" href="eventos.html">
+                <i class="bi bi-speedometer2 me-2"></i> Panel de eventos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center" href="../viewsAdministrador/listarEventos.html">
+                <i class="bi bi-calendar-event me-2"></i> Gestión de eventos
+              </a>
+            </li>
+            <li class="nav-item mt-2">
+              <a class="nav-link d-flex align-items-center" href="#">
+                <i class="bi bi-person-gear me-2"></i> Configuración de perfil
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- OFFCANVAS MOBILE -->
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
+        <div class="offcanvas-header" style="background:var(--ubc-primary); color:#fff;">
+          <h5 class="offcanvas-title" id="menuLateralLabel"><i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+        </div>
+        <div class="offcanvas-body">
+          <nav aria-label="Navegación móvil">
+            <ul class="nav nav-pills flex-column gap-1">
+              <li class="nav-item"><a class="nav-link" href="eventos.html"><i class="bi bi-speedometer2 me-2"></i> Panel de eventos</a></li>
+              <li class="nav-item"><a class="nav-link" href="../viewsAdministrador/listarEventos.html"><i class="bi bi-calendar-event me-2"></i> Gestión de eventos</a></li>
+              <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- CONTENIDO -->
+      <main id="contenido-principal" class="col-12 col-md-9 col-xl-10 px-4 py-4" tabindex="-1">
+        <!-- Migas -->
+        <nav aria-label="Ruta de navegación" class="mb-3">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="eventos.html">Panel de eventos</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Reserva de evento</li>
+          </ol>
+        </nav>
+
+        <!-- Estado accesible -->
+        <div id="live-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+        <!-- Encabezado del evento -->
+        <header class="mb-4">
+          <h1 id="nombre-evento" class="h2 mb-1 text-gradient">Conferencia de Tecnología</h1>
+          <p id="descripcion-evento" class="text-muted mb-0">
+            Una conferencia sobre las últimas tendencias en inteligencia artificial, 
+            ciberseguridad y desarrollo de software, organizada por la Escuela de Ingeniería en Computación.
+          </p>
+        </header>
+
+        <div class="row g-4">
+          <!-- Columna izquierda: Imagen y detalles -->
+          <div class="col-lg-7">
+            <!-- Imagen principal -->
+            <figure class="evento-imagen mb-4">
+              <img src="../images/auditorioD3.webp" class="img-fluid" alt="Fotografía ilustrativa de la conferencia de tecnología en el Auditorio D3" aria-describedby="descripcion-evento">
+              <figcaption class="visually-hidden">Imagen representativa del evento</figcaption>
+            </figure>
+
+            <!-- Detalles del evento -->
+            <section class="card card-elevada">
+              <div class="card-body">
+                <h2 class="h4 mb-3">
+                  <i class="bi bi-info-circle me-2"></i>Detalles del evento
+                </h2>
+                
+                <div class="detalle-item">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-geo-alt detalle-icon"></i>
+                    <div>
+                      <strong>Lugar:</strong>
+                      <span id="lugar-evento">Auditorio D3, Campus TEC</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="detalle-item">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-calendar-event detalle-icon"></i>
+                    <div>
+                      <strong>Fecha y hora:</strong>
+                      <span id="fecha-evento">12 de septiembre · 10:00 a.m.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="detalle-item">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-people detalle-icon"></i>
+                    <div>
+                      <strong>Capacidad:</strong>
+                      <span id="capacidad-evento">200 personas</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="detalle-item">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-currency-dollar detalle-icon"></i>
+                    <div>
+                      <strong>Costo:</strong>
+                      <span id="costo-evento">Gratis (entrada libre para comunidad TEC)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-3">
+                  <button 
+                    class="btn btn-outline-primary" 
+                    id="btn-maps" 
+                    aria-label="Abrir Google Maps para ver la ruta hacia el Auditorio D3">
+                    <i class="bi bi-map me-2"></i>Ver ruta en Google Maps
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Columna derecha: Reserva directa -->
+          <div class="col-lg-5">
+            <section class="reserva-form">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 mb-0">
+                  <i class="bi bi-bookmark-plus me-2"></i>Reservar Cupo
+                </h2>
+                <span class="badge badge-disponibilidad">
+                  <i class="bi bi-check-circle me-1"></i>150 cupos disponibles
+                </span>
+              </div>
+
+              <!-- Información del usuario actual -->
+              <div class="user-info-card mb-4">
+                <div class="d-flex align-items-center mb-3">
+                  <div class="user-avatar me-3">
+                    <i class="bi bi-person-circle"></i>
+                  </div>
+                  <div>
+                    <h5 class="mb-1" id="usuario-nombre">Juan Pérez Rodríguez</h5>
+                    <small class="text-muted" id="usuario-email">juan.perez@tec.ac.cr</small>
+                  </div>
+                </div>
+                <div class="row g-2">
+                  <div class="col-6">
+                    <small class="text-muted d-block">Tipo de usuario</small>
+                    <span class="badge bg-primary" id="usuario-tipo">Estudiante TEC</span>
+                  </div>
+                  <div class="col-6">
+                    <small class="text-muted d-block">Carné</small>
+                    <span class="fw-bold" id="usuario-carne">2023123456</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Resumen de la reserva -->
+              <div class="reservation-summary mb-4">
+                <h5 class="mb-3">
+                  <i class="bi bi-clipboard-check me-2"></i>Resumen de reserva
+                </h5>
+                <div class="summary-item">
+                  <div class="d-flex justify-content-between">
+                    <span>Evento:</span>
+                    <strong id="resumen-evento">Conferencia de Tecnología</strong>
+                  </div>
+                </div>
+                <div class="summary-item">
+                  <div class="d-flex justify-content-between">
+                    <span>Fecha:</span>
+                    <strong id="resumen-fecha">12 de septiembre · 10:00 a.m.</strong>
+                  </div>
+                </div>
+                <div class="summary-item">
+                  <div class="d-flex justify-content-between">
+                    <span>Lugar:</span>
+                    <strong id="resumen-lugar">Auditorio D3</strong>
+                  </div>
+                </div>
+                <div class="summary-item">
+                  <div class="d-flex justify-content-between">
+                    <span>Costo:</span>
+                    <strong class="text-success">Gratuito</strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botón de reserva -->
+              <button type="button" class="btn btn-primary btn-lg w-100 mb-3" id="btn-reservar">
+                <i class="bi bi-bookmark-plus me-2"></i>
+                <span class="btn-text">Confirmar Reserva</span>
+              </button>
+
+              <div class="text-center">
+                <small class="text-muted">
+                  <i class="bi bi-info-circle me-1"></i>
+                  Se enviará confirmación a tu correo institucional
+                </small>
+              </div>
+
+              <!-- Comentarios opcionales -->
+              <div class="mt-4 pt-3 border-top">
+                <label for="comentarios" class="form-label">
+                  <i class="bi bi-chat-text me-1"></i>Comentarios adicionales (opcional)
+                </label>
+                <textarea 
+                  id="comentarios" 
+                  class="form-control" 
+                  rows="3"
+                  placeholder="Algún comentario o requerimiento especial..."
+                ></textarea>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <footer class="mt-4 py-3 text-center text-muted border-top">
+          <small>© <span id="year"></span> ubicaTEC — Admin</small>
+        </footer>
+      </main>
+    </div>
+  </div>
 
   <script>
-    // Lugar a mostrar en Google Maps
-    const lugar = document.getElementById("lugar-evento").textContent;
+    // Referencias del DOM
+    const btnReservar = document.getElementById('btn-reservar');
+    const statusDiv = document.getElementById('live-status');
     const btnMaps = document.getElementById("btn-maps");
 
-    btnMaps.addEventListener("click", () => {
-      // Redirige a Google Maps en modo "Cómo llegar"
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(lugar)}`;
-      window.open(url, "_blank");
+    // Datos del evento (normalmente vendrían de la URL o API)
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventoId = urlParams.get('id') || '1';
+
+    // Usuario actual (normalmente vendrían de la sesión)
+    const usuarioActual = {
+      nombre: "Juan Pérez Rodríguez",
+      email: "juan.perez@tec.ac.cr",
+      tipo: "Estudiante TEC",
+      carne: "2023123456"
+    };
+
+    // Eventos de ejemplo
+    const eventos = {
+      '1': {
+        titulo: "Conferencia de Tecnología",
+        lugar: "Auditorio D3, Campus TEC",
+        fecha: "12 de septiembre · 10:00 a.m.",
+        imagen: "../images/auditorioD3.webp",
+        descripcion: "Una conferencia sobre las últimas tendencias en inteligencia artificial, ciberseguridad y desarrollo de software, organizada por la Escuela de Ingeniería en Computación.",
+        capacidad: 200,
+        disponibles: 150,
+        costo: 0
+      },
+      '2': {
+        titulo: "Taller de Innovación",
+        lugar: "Learning Commons, Campus TEC",
+        fecha: "15 de septiembre · 2:00 p.m.",
+        imagen: "../images/learningCommons.jpg",
+        descripcion: "Taller práctico sobre metodologías de innovación y design thinking.",
+        capacidad: 80,
+        disponibles: 65,
+        costo: 0
+      },
+      '3': {
+        titulo: "Recital Musical",
+        lugar: "Restaurante Institucional, Campus TEC",
+        fecha: "20 de septiembre · 6:00 p.m.",
+        imagen: "../images/restauranteInstitucional.webp",
+        descripcion: "Presentación de música clásica y contemporánea por estudiantes de música.",
+        capacidad: 120,
+        disponibles: 95,
+        costo: 0
+      }
+    };
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+      cargarEvento();
+      cargarUsuario();
+      setupEventListeners();
+      document.getElementById('year').textContent = new Date().getFullYear();
     });
+
+    function cargarEvento() {
+      const evento = eventos[eventoId];
+      if (!evento) {
+        // Si no se encuentra el evento, mostrar error
+        document.getElementById('nombre-evento').textContent = 'Evento no encontrado';
+        document.getElementById('descripcion-evento').textContent = 'El evento solicitado no existe.';
+        return;
+      }
+
+      // Actualizar información del evento
+      document.getElementById('nombre-evento').textContent = evento.titulo;
+      document.getElementById('descripcion-evento').textContent = evento.descripcion;
+      document.getElementById('lugar-evento').textContent = evento.lugar;
+      document.getElementById('fecha-evento').textContent = evento.fecha;
+      document.getElementById('capacidad-evento').textContent = `${evento.capacidad} personas`;
+      document.getElementById('costo-evento').textContent = evento.costo === 0 ? 'Gratis (entrada libre para comunidad TEC)' : `₡${evento.costo}`;
+      
+      // Actualizar imagen
+      const imagen = document.querySelector('.evento-imagen img');
+      imagen.src = evento.imagen;
+      imagen.alt = `Imagen del evento: ${evento.titulo}`;
+
+      // Actualizar disponibilidad
+      const badgeDisponibilidad = document.querySelector('.badge-disponibilidad');
+      badgeDisponibilidad.innerHTML = `<i class="bi bi-check-circle me-1"></i>${evento.disponibles} cupos disponibles`;
+
+      // Actualizar resumen de reserva
+      document.getElementById('resumen-evento').textContent = evento.titulo;
+      document.getElementById('resumen-fecha').textContent = evento.fecha;
+      document.getElementById('resumen-lugar').textContent = evento.lugar.split(',')[0]; // Solo el lugar sin "Campus TEC"
+    }
+
+    function cargarUsuario() {
+      // Cargar información del usuario autenticado
+      document.getElementById('usuario-nombre').textContent = usuarioActual.nombre;
+      document.getElementById('usuario-email').textContent = usuarioActual.email;
+      document.getElementById('usuario-tipo').textContent = usuarioActual.tipo;
+      document.getElementById('usuario-carne').textContent = usuarioActual.carne;
+    }
+
+    function setupEventListeners() {
+      // Google Maps
+      btnMaps.addEventListener("click", () => {
+        const lugar = document.getElementById("lugar-evento").textContent;
+        const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(lugar)}`;
+        window.open(url, "_blank");
+      });
+
+      // Botón de reserva
+      btnReservar.addEventListener('click', handleReservation);
+    }
+
+    async function handleReservation() {
+      // Estado de carga
+      setLoadingState(true);
+      
+      try {
+        // Simular proceso de reserva
+        await simulateReservation();
+        
+        // Éxito
+        showSuccess();
+        
+        // Redireccionar después de 3 segundos
+        setTimeout(() => {
+          window.location.href = 'eventos.html';
+        }, 3000);
+        
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        setTimeout(() => setLoadingState(false), 1000);
+      }
+    }
+
+    function setLoadingState(loading) {
+      const btnText = btnReservar.querySelector('.btn-text');
+      
+      if (loading) {
+        btnReservar.disabled = true;
+        btnReservar.classList.add('btn-loading');
+        btnText.innerHTML = '<div class="spinner-border spinner-border-sm me-2" role="status"></div>Procesando reserva...';
+      } else {
+        btnReservar.disabled = false;
+        btnReservar.classList.remove('btn-loading');
+        btnText.innerHTML = '<i class="bi bi-bookmark-plus me-2"></i>Confirmar Reserva';
+      }
+    }
+
+    async function simulateReservation() {
+      // Simular delay de red
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Simular éxito/error (95% éxito)
+      if (Math.random() > 0.05) {
+        return { success: true, reservaId: 'RSV-' + Date.now() };
+      } else {
+        throw new Error('Error en el servidor. Intenta nuevamente.');
+      }
+    }
+
+    function showSuccess() {
+      const btnText = btnReservar.querySelector('.btn-text');
+      btnReservar.className = 'btn btn-success btn-lg w-100 mb-3';
+      btnText.innerHTML = '<i class="bi bi-check-circle me-2"></i>¡Reserva confirmada!';
+      
+      announceToScreenReader('Reserva confirmada exitosamente. Redirigiendo al panel de eventos...');
+      
+      // Crear efecto de éxito
+      createSuccessEffect();
+    }
+
+    function showError(message) {
+      const btnText = btnReservar.querySelector('.btn-text');
+      btnReservar.className = 'btn btn-danger btn-lg w-100 mb-3';
+      btnText.innerHTML = `<i class="bi bi-exclamation-triangle me-2"></i>${message}`;
+      
+      announceToScreenReader(`Error: ${message}`);
+      
+      // Restaurar después de 3 segundos
+      setTimeout(() => {
+        btnReservar.className = 'btn btn-primary btn-lg w-100 mb-3';
+        btnText.innerHTML = '<i class="bi bi-bookmark-plus me-2"></i>Confirmar Reserva';
+        btnReservar.disabled = false;
+      }, 3000);
+    }
+
+    function createSuccessEffect() {
+      // Crear ondas de éxito
+      for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+          const ripple = document.createElement('div');
+          ripple.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: rgba(40, 167, 69, 0.6);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            animation: ripple 1s ease-out;
+            z-index: 1000;
+          `;
+          
+          btnReservar.appendChild(ripple);
+          
+          setTimeout(() => ripple.remove(), 1000);
+        }, i * 200);
+      }
+    }
+
+    function announceToScreenReader(message) {
+      statusDiv.textContent = message;
+      statusDiv.classList.remove('visually-hidden');
+      
+      setTimeout(() => {
+        statusDiv.classList.add('visually-hidden');
+      }, 3000);
+    }
+
+    // Agregar animación CSS para ripple
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes ripple {
+        to { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

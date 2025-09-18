@@ -1,12 +1,450 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ubicaTEC - Lista de Eventos</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>ubicaTEC – Lista de eventos</title>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <style>
+    /* ======= PALETA ubicaTEC ======= */
+    :root{
+      --ubc-primary:#1C0058;     
+      --ubc-secondary:#3800B0;   
+      --ubc-action:#4100CD;      
+      --ubc-on-primary:#ffffff;
+      --ubc-surface:#f6f7fb;
+      --ubc-text:#1d1f21;
+      --ubc-gradient: linear-gradient(135deg, #1C0058 0%, #3800B0 50%, #4100CD 100%);
+      --ubc-gradient-light: linear-gradient(135deg, rgba(28,0,88,0.1) 0%, rgba(56,0,176,0.05) 100%);
+      --shadow-soft: 0 10px 40px rgba(28,0,88,0.1);
+      --shadow-hover: 0 20px 60px rgba(28,0,88,0.15);
+      --border-radius: 16px;
+    }
+
+    /* ======= ANIMACIONES Y EFECTOS ======= */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ======= ELEMENTOS BASE ======= */
+    * { scroll-behavior: smooth; }
+    
+    body { 
+      background: linear-gradient(135deg, #f6f7fb 0%, #e8eaf6 100%);
+      color: var(--ubc-text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ======= GRADIENTE DE TEXTO ======= */
+    .text-gradient {
+      background: var(--ubc-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s ease-in-out infinite;
+      background-size: 200% 100%;
+    }
+
+    /* ======= THEMING AVANZADO ======= */
+    a { 
+      color: var(--ubc-action); 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    a:hover, a:focus { 
+      color: var(--ubc-secondary);
+      transform: translateY(-1px);
+    }
+
+    .btn {
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary{
+      background: var(--ubc-gradient);
+      border: none;
+      box-shadow: var(--shadow-soft);
+      transform: translateY(0);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .btn-outline-secondary{
+      border: 2px solid var(--ubc-secondary);
+      color: var(--ubc-secondary);
+      background: rgba(255,255,255,0.8);
+    }
+    .btn-outline-secondary:hover{
+      background: var(--ubc-gradient);
+      border-color: transparent;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .btn-danger{
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      border: none;
+    }
+
+    :focus-visible { 
+      outline: 3px solid var(--ubc-action); 
+      outline-offset: 2px;
+      border-radius: 8px;
+    }
+
+    /* ======= SKIP LINK MEJORADO ======= */
+    .skip-link{
+      position:absolute;
+      top:-40px;
+      left:20px;
+      background: var(--ubc-gradient);
+      color: white;
+      padding: 12px 24px;
+      z-index:1100;
+      transition: all 0.3s ease;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .skip-link:focus{
+      top: 20px;
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* ======= NAVBAR ESPECTACULAR ======= */
+    .navbar-ubc.navbar { 
+      background: var(--ubc-gradient) !important;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .navbar-ubc .navbar-brand,
+    .navbar-ubc .nav-link,
+    .navbar-ubc .btn,
+    .navbar-ubc .navbar-toggler { 
+      color: var(--ubc-on-primary);
+      transition: all 0.3s ease;
+    }
+    .navbar-ubc .navbar-brand:hover,
+    .navbar-ubc .nav-link:hover { 
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    /* ======= SIDEBAR MEJORADO ======= */
+    .sidebar {
+      background: var(--ubc-gradient);
+      color: var(--ubc-on-primary);
+      min-height: 100vh;
+      position: sticky;
+      top: 0;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar .section-label { 
+      color: rgba(255,255,255,.7);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .sidebar .nav-link {
+      color: rgba(255,255,255,.92);
+      border-radius: 12px;
+      margin: 4px 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .sidebar .nav-link::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      transition: width 0.3s ease;
+    }
+    .sidebar .nav-link:hover::before { width: 100%; }
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link:focus { 
+      background: rgba(255,255,255,.12);
+      transform: translateX(8px);
+    }
+    .sidebar .nav-link.active { 
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* ======= CARDS ESPECTACULARES ======= */
+    .card-elevada { 
+      border: 0; 
+      box-shadow: var(--shadow-soft);
+      border-radius: var(--border-radius);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .card-elevada:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* ======= STATS CARD ======= */
+    .stats-card {
+      background: var(--ubc-gradient);
+      color: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+      animation: slideInRight 0.6s ease-out;
+      transition: transform 0.3s ease;
+    }
+
+    .stats-card:hover {
+      transform: scale(1.05);
+      animation: pulse 2s infinite;
+    }
+
+    .stats-number {
+      font-size: 2.5rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .stats-label {
+      font-size: 0.875rem;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    /* ======= TABLA MEJORADA ======= */
+    .table-eventos { 
+      margin-bottom: 0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .table-eventos th { 
+      border-top: none;
+      background: var(--ubc-gradient);
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      padding: 20px 16px;
+    }
+
+    .table-eventos tbody tr {
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .table-eventos tbody tr:hover {
+      background: var(--ubc-gradient-light);
+      transform: scale(1.01);
+      box-shadow: 0 4px 12px rgba(28,0,88,0.1);
+    }
+
+    .table-eventos td {
+      padding: 20px 16px;
+      border-top: 1px solid rgba(0,0,0,0.05);
+      vertical-align: middle;
+    }
+
+    /* ======= BADGES ESPECTACULARES ======= */
+    .badge {
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+      animation: fadeInUp 0.4s ease-out;
+    }
+
+    .badge-disponible { 
+      background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+      box-shadow: 0 2px 8px rgba(25,135,84,0.3);
+    }
+    
+    .badge-agotado { 
+      background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+      box-shadow: 0 2px 8px rgba(220,53,69,0.3);
+    }
+
+    /* ======= BREADCRUMBS MEJORADOS ======= */
+    .breadcrumb {
+      background: var(--ubc-gradient-light);
+      border-radius: 12px;
+      padding: 12px 20px;
+    }
+
+    .breadcrumb-item a {
+      color: var(--ubc-action);
+      font-weight: 500;
+    }
+
+    /* ======= RESPONSIVE MEJORAS ======= */
+    @media (max-width: 768px) {
+      .display-5 { font-size: 2rem; }
+      .stats-card { 
+        margin-top: 20px;
+        width: 100%;
+      }
+    }
+
+    /* ======= EFECTOS ADICIONALES ======= */
+    .table-responsive {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .btn-group .btn {
+      margin: 0 2px;
+    }
+
+    /* ======= FOOTER MEJORADO ======= */
+    footer {
+      background: var(--ubc-gradient-light);
+      border-radius: 12px 12px 0 0;
+      margin-top: 40px !important;
+    }
+  </style>
 </head>
-<body class="bg-light">
+<body>
+  <a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+
+  <!-- NAV SUPERIOR -->
+  <header class="navbar navbar-expand-lg navbar-dark navbar-ubc sticky-top" role="banner">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#" aria-label="Inicio ubicaTEC">
+        <i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
+              aria-controls="menuLateral" aria-label="Abrir menú de navegación">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="d-none d-lg-flex gap-2">
+        <a class="btn btn-outline-light btn-sm" href="#"><i class="bi bi-life-preserver me-1"></i>Ayuda</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- SIDEBAR DESKTOP -->
+      <aside class="col-md-3 col-xl-2 d-none d-md-block border-end sidebar" aria-label="Navegación principal">
+        <nav class="py-4">
+          <div class="px-3 text-uppercase small section-label mb-2">Administrador</div>
+          <ul class="nav nav-pills flex-column gap-1 px-2">
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center" href="#">
+                <i class="bi bi-speedometer2 me-2"></i> Panel de eventos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active d-flex align-items-center" href="#" aria-current="page">
+                <i class="bi bi-calendar-event me-2"></i> Gestión de eventos
+              </a>
+            </li>
+            <li class="nav-item mt-2">
+              <a class="nav-link d-flex align-items-center" href="#">
+                <i class="bi bi-person-gear me-2"></i> Configuración de perfil
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- OFFCANVAS MOBILE -->
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
+        <div class="offcanvas-header" style="background:var(--ubc-primary); color:#fff;">
+          <h5 class="offcanvas-title" id="menuLateralLabel"><i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+        </div>
+        <div class="offcanvas-body">
+          <nav aria-label="Navegación móvil">
+            <ul class="nav nav-pills flex-column gap-1">
+              <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-speedometer2 me-2"></i> Panel de eventos</a></li>
+              <li class="nav-item"><a class="nav-link active" href="#" aria-current="page"><i class="bi bi-calendar-event me-2"></i> Gestión de eventos</a></li>
+              <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- CONTENIDO -->
+      <main id="contenido-principal" class="col-12 col-md-9 col-xl-10 px-4 py-4" tabindex="-1">
+        <!-- Migas -->
+        <nav aria-label="Ruta de navegación" class="mb-3">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item active" aria-current="page">Gestión de eventos</li>
+          </ol>
+        </nav>
+
+        <header class="mb-4">
+          <div class="row align-items-center">
+            <div class="col">
+              <h1 class="display-5 fw-bold mb-2 text-gradient">Centro de Eventos</h1>
+              <p class="lead text-muted mb-0">Administra y supervisa todos los eventos de ubicaTEC desde un solo lugar</p>
+            </div>
+            <div class="col-auto">
+              <div class="stats-card">
+                <div class="stats-number" id="eventos-activos">2</div>
+                <div class="stats-label">Eventos Activos</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Estado accesible -->
+        <div id="live-status" class="visually-hidden" role="status" aria-live="polite"></div>
 
   <main class="container py-5">
     <header class="mb-4">
@@ -14,56 +452,489 @@
       <p class="text-start text-muted">Gestione los eventos creados en el sistema.</p>
     </header>
 
-    <div class="table-responsive">
-      <table class="table table-striped table-hover align-middle">
-        <caption class="text-start">Tabla de eventos con opciones de gestión</caption>
-        <thead class="table-dark">
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">Fecha</th>
-            <th scope="col">Asistencia</th>
-            <th scope="col">Estado</th>
-            <th scope="col">Acción</th>
-          </tr>
-        </thead>
-        <tbody id="tabla-eventos">
-          <!-- Filas dinámicas -->
-        </tbody>
-      </table>
+        <section class="card card-elevada">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h2 class="h4 mb-1 text-gradient">Gestión de Eventos</h2>
+                <p class="text-muted mb-0">Controla y administra todos tus eventos de manera eficiente</p>
+              </div>
+              <a href="registrarEvento.html" class="btn btn-primary" aria-label="Crear nuevo evento">
+                <i class="bi bi-plus-circle me-2"></i>Crear Evento
+              </a>
+            </div>
+
+            <!-- Filtros y búsqueda -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-search"></i></span>
+                  <input type="text" class="form-control" placeholder="Buscar eventos..." id="searchInput" aria-label="Buscar eventos">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <select class="form-select" id="filterStatus" aria-label="Filtrar por estado">
+                  <option value="">Todos los estados</option>
+                  <option value="disponible">Disponible</option>
+                  <option value="agotado">Agotado</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <select class="form-select" id="sortBy" aria-label="Ordenar por">
+                  <option value="fecha">Ordenar por fecha</option>
+                  <option value="nombre">Ordenar por nombre</option>
+                  <option value="asistencia">Ordenar por asistencia</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover align-middle table-eventos" role="table" aria-label="Tabla de eventos registrados">
+                <thead>
+                  <tr>
+                    <th scope="col" class="text-center">
+                      <i class="bi bi-hash me-1"></i>ID
+                    </th>
+                    <th scope="col">
+                      <i class="bi bi-calendar-event me-1"></i>Evento
+                    </th>
+                    <th scope="col">
+                      <i class="bi bi-calendar-date me-1"></i>Fecha
+                    </th>
+                    <th scope="col" class="text-center">
+                      <i class="bi bi-people me-1"></i>Asistentes
+                    </th>
+                    <th scope="col" class="text-center">
+                      <i class="bi bi-circle-fill me-1"></i>Estado
+                    </th>
+                    <th scope="col" class="text-center">
+                      <i class="bi bi-gear me-1"></i>Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-eventos">
+                  <!-- Filas dinámicas -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="row mt-4 align-items-center">
+              <div class="col-md-6">
+                <small class="text-muted">
+                  <i class="bi bi-info-circle me-1"></i>
+                  Mostrando <span id="showing-events">2</span> de <span id="total-eventos">2</span> eventos
+                </small>
+              </div>
+              <div class="col-md-6 text-end">
+                <div class="btn-group" role="group" aria-label="Paginación">
+                  <button type="button" class="btn btn-outline-secondary btn-sm" disabled>
+                    <i class="bi bi-chevron-left"></i>
+                  </button>
+                  <button type="button" class="btn btn-primary btn-sm">1</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" disabled>
+                    <i class="bi bi-chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <footer class="mt-4 py-3 text-center text-muted border-top">
+          <small>© <span id="year"></span> ubicaTEC — Admin</small>
+        </footer>
+      </main>
     </div>
-  </main>
+  </div>
 
   <script>
-    // Ejemplo de eventos precargados
+    // ======= DATOS DE EVENTOS MEJORADOS ======= 
     const eventos = [
-      {id: 1, nombre: "Conferencia de Tecnología", fecha: "12/09/2025", asistencia: 120, estado: "Disponible"},
-      {id: 2, nombre: "Taller de Innovación", fecha: "15/09/2025", asistencia: 80, estado: "Agotado"}
+      {
+        id: 1, 
+        nombre: "Conferencia de Tecnología e Innovación", 
+        fecha: "2025-09-22", 
+        fechaTexto: "22 Sept 2025",
+        asistencia: 185, 
+        capacidad: 200,
+        estado: "disponible",
+        lugar: "Auditorio D3",
+        descripcion: "Una conferencia sobre las últimas tendencias en IA y ciberseguridad"
+      },
+      {
+        id: 2, 
+        nombre: "Taller de Desarrollo Web Moderno", 
+        fecha: "2025-09-25", 
+        fechaTexto: "25 Sept 2025",
+        asistencia: 150, 
+        capacidad: 150,
+        estado: "agotado",
+        lugar: "Learning Commons",
+        descripcion: "Aprende React, Node.js y las últimas tecnologías web"
+      },
+      {
+        id: 3, 
+        nombre: "Hackathon UbicaTEC 2025", 
+        fecha: "2025-10-01", 
+        fechaTexto: "01 Oct 2025",
+        asistencia: 89, 
+        capacidad: 100,
+        estado: "disponible",
+        lugar: "Laboratorio de Computación",
+        descripcion: "48 horas de código, creatividad e innovación tecnológica"
+      }
     ];
 
-    const tbody = document.getElementById("tabla-eventos");
+    let eventosFiltrados = [...eventos];
+    let currentSort = 'fecha';
 
-    eventos.forEach(evento => {
-      const fila = document.createElement("tr");
-
-      fila.innerHTML = `
-        <td>${evento.id}</td>
-        <td>${evento.nombre}</td>
-        <td>${evento.fecha}</td>
-        <td>${evento.asistencia}</td>
-        <td>${evento.estado}</td>
-        <td>
-          <a href="editarEvento.html?id=${evento.id}" class="btn btn-sm btn-primary" aria-label="Editar ${evento.nombre}">Editar</a>
-          <button class="btn btn-sm btn-danger" aria-label="Eliminar ${evento.nombre}" onclick="eliminarEvento(${evento.id})">Eliminar</button>
-        </td>
-      `;
-
-      tbody.appendChild(fila);
+    // ======= INICIALIZACIÓN ======= 
+    document.addEventListener('DOMContentLoaded', function() {
+      // Año dinámico
+      document.getElementById('year').textContent = new Date().getFullYear();
+      
+      // Renderizar eventos iniciales
+      renderEventos();
+      
+      // Configurar eventos de filtrado y búsqueda
+      setupEventListeners();
+      
+      // Animaciones de entrada
+      animateOnLoad();
     });
 
-    function eliminarEvento(id){
-      alert("Evento con ID " + id + " eliminado (falta conexión con backend).");
+    // ======= RENDERIZADO DE EVENTOS ======= 
+    function renderEventos() {
+      const tbody = document.getElementById("tabla-eventos");
+      const totalEventos = document.getElementById("total-eventos");
+      const eventosActivos = document.getElementById("eventos-activos");
+      const showingEvents = document.getElementById("showing-events");
+      
+      tbody.innerHTML = "";
+      
+      eventosFiltrados.forEach((evento, index) => {
+        const fila = document.createElement("tr");
+        fila.style.animationDelay = `${index * 0.1}s`;
+        fila.classList.add('fade-in-row');
+        
+        const porcentajeOcupacion = Math.round((evento.asistencia / evento.capacidad) * 100);
+        const estadoBadge = evento.estado === 'disponible' ? 
+          `<span class="badge badge-disponible">
+            <i class="bi bi-check-circle me-1"></i>Disponible
+           </span>` :
+          `<span class="badge badge-agotado">
+            <i class="bi bi-x-circle me-1"></i>Agotado
+           </span>`;
+
+        fila.innerHTML = `
+          <td class="text-center">
+            <strong>#${evento.id.toString().padStart(3, '0')}</strong>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="me-3">
+                <div class="evento-icon">
+                  <i class="bi bi-calendar-event"></i>
+                </div>
+              </div>
+              <div>
+                <h6 class="mb-1 fw-bold">${evento.nombre}</h6>
+                <small class="text-muted">
+                  <i class="bi bi-geo-alt me-1"></i>${evento.lugar}
+                </small>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-calendar3 me-2 text-primary"></i>
+              <span class="fw-semibold">${evento.fechaTexto}</span>
+            </div>
+          </td>
+          <td class="text-center">
+            <div class="asistencia-info">
+              <div class="fw-bold text-primary">${evento.asistencia}/${evento.capacidad}</div>
+              <div class="progress mt-1" style="height: 4px;">
+                <div class="progress-bar" role="progressbar" 
+                     style="width: ${porcentajeOcupacion}%; background: var(--ubc-gradient);" 
+                     aria-valuenow="${porcentajeOcupacion}" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
+              <small class="text-muted">${porcentajeOcupacion}%</small>
+            </div>
+          </td>
+          <td class="text-center">
+            ${estadoBadge}
+          </td>
+          <td class="text-center">
+            <div class="btn-group" role="group" aria-label="Acciones del evento ${evento.nombre}">
+              <button class="btn btn-sm btn-outline-primary" 
+                      onclick="verEvento(${evento.id})" 
+                      title="Ver detalles">
+                <i class="bi bi-eye"></i>
+              </button>
+              <a href="editarEvento.html?id=${evento.id}" 
+                 class="btn btn-sm btn-primary" 
+                 title="Editar evento"
+                 aria-label="Editar ${evento.nombre}">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <button class="btn btn-sm btn-danger" 
+                      onclick="eliminarEvento(${evento.id})" 
+                      title="Eliminar evento"
+                      aria-label="Eliminar ${evento.nombre}">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(fila);
+      });
+      
+      // Actualizar contadores
+      totalEventos.textContent = eventos.length;
+      eventosActivos.textContent = eventos.filter(e => e.estado === 'disponible').length;
+      showingEvents.textContent = eventosFiltrados.length;
     }
+
+    // ======= EVENT LISTENERS ======= 
+    function setupEventListeners() {
+      // Búsqueda en tiempo real
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', debounce(handleSearch, 300));
+      
+      // Filtro por estado
+      const filterStatus = document.getElementById('filterStatus');
+      filterStatus.addEventListener('change', handleFilter);
+      
+      // Ordenamiento
+      const sortBy = document.getElementById('sortBy');
+      sortBy.addEventListener('change', handleSort);
+    }
+
+    // ======= FUNCIONES DE FILTRADO Y BÚSQUEDA ======= 
+    function handleSearch(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      eventosFiltrados = eventos.filter(evento => 
+        evento.nombre.toLowerCase().includes(searchTerm) ||
+        evento.lugar.toLowerCase().includes(searchTerm) ||
+        evento.descripcion.toLowerCase().includes(searchTerm)
+      );
+      applyCurrentFilters();
+    }
+
+    function handleFilter(e) {
+      const status = e.target.value;
+      if (status) {
+        eventosFiltrados = eventosFiltrados.filter(evento => evento.estado === status);
+      }
+      renderEventos();
+    }
+
+    function handleSort(e) {
+      currentSort = e.target.value;
+      sortEventos(currentSort);
+    }
+
+    function sortEventos(criteria) {
+      eventosFiltrados.sort((a, b) => {
+        switch(criteria) {
+          case 'nombre':
+            return a.nombre.localeCompare(b.nombre);
+          case 'fecha':
+            return new Date(a.fecha) - new Date(b.fecha);
+          case 'asistencia':
+            return b.asistencia - a.asistencia;
+          default:
+            return 0;
+        }
+      });
+      renderEventos();
+    }
+
+    function applyCurrentFilters() {
+      const filterStatus = document.getElementById('filterStatus').value;
+      if (filterStatus) {
+        eventosFiltrados = eventosFiltrados.filter(evento => evento.estado === filterStatus);
+      }
+      sortEventos(currentSort);
+    }
+
+    // ======= FUNCIONES DE ACCIÓN ======= 
+    function verEvento(id) {
+      const evento = eventos.find(e => e.id === id);
+      if (evento) {
+        // Crear modal dinámico para mostrar detalles
+        showEventModal(evento);
+      }
+    }
+
+    function eliminarEvento(id) {
+      const evento = eventos.find(e => e.id === id);
+      if (evento && confirm(`¿Estás seguro de eliminar el evento "${evento.nombre}"?`)) {
+        // Animación de salida
+        const row = document.querySelector(`tr:has(button[onclick="eliminarEvento(${id})"])`);
+        if (row) {
+          row.style.animation = 'fadeOut 0.3s ease-out forwards';
+          setTimeout(() => {
+            const index = eventos.findIndex(e => e.id === id);
+            if (index > -1) {
+              eventos.splice(index, 1);
+              eventosFiltrados = [...eventos];
+              renderEventos();
+              showNotification('Evento eliminado correctamente', 'success');
+            }
+          }, 300);
+        }
+      }
+    }
+
+    // ======= MODAL DINÁMICO ======= 
+    function showEventModal(evento) {
+      const modalHTML = `
+        <div class="modal fade" id="eventoModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius: var(--border-radius); border: none;">
+              <div class="modal-header" style="background: var(--ubc-gradient); color: white;">
+                <h5 class="modal-title">
+                  <i class="bi bi-calendar-event me-2"></i>${evento.nombre}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h6><i class="bi bi-info-circle me-2"></i>Información General</h6>
+                    <p><strong>Fecha:</strong> ${evento.fechaTexto}</p>
+                    <p><strong>Lugar:</strong> ${evento.lugar}</p>
+                    <p><strong>Estado:</strong> 
+                      <span class="badge ${evento.estado === 'disponible' ? 'badge-disponible' : 'badge-agotado'}">
+                        ${evento.estado === 'disponible' ? 'Disponible' : 'Agotado'}
+                      </span>
+                    </p>
+                  </div>
+                  <div class="col-md-6">
+                    <h6><i class="bi bi-people me-2"></i>Capacidad</h6>
+                    <p><strong>Asistentes:</strong> ${evento.asistencia}/${evento.capacidad}</p>
+                    <div class="progress mb-3">
+                      <div class="progress-bar" style="width: ${(evento.asistencia/evento.capacidad)*100}%; background: var(--ubc-gradient);"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-3">
+                  <h6><i class="bi bi-card-text me-2"></i>Descripción</h6>
+                  <p>${evento.descripcion}</p>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <a href="editarEvento.html?id=${evento.id}" class="btn btn-primary">
+                  <i class="bi bi-pencil me-1"></i>Editar Evento
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Remover modal existente si lo hay
+      const existingModal = document.getElementById('eventoModal');
+      if (existingModal) existingModal.remove();
+      
+      // Agregar nuevo modal
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      const modal = new bootstrap.Modal(document.getElementById('eventoModal'));
+      modal.show();
+    }
+
+    // ======= NOTIFICACIONES ======= 
+    function showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        animation: slideInRight 0.3s ease-out;
+      `;
+      notification.innerHTML = `
+        <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Auto-remove después de 4 segundos
+      setTimeout(() => {
+        if (notification && notification.parentNode) {
+          notification.style.animation = 'fadeOut 0.3s ease-out forwards';
+          setTimeout(() => notification.remove(), 300);
+        }
+      }, 4000);
+    }
+
+    // ======= UTILIDADES ======= 
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    // ======= ANIMACIONES ======= 
+    function animateOnLoad() {
+      const cards = document.querySelectorAll('.card-elevada');
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+      });
+    }
+
+    // ======= CSS ADICIONAL PARA ANIMACIONES ======= 
+    const additionalStyles = `
+      <style>
+        .fade-in-row {
+          animation: fadeInUp 0.4s ease-out forwards;
+        }
+        
+        .evento-icon {
+          width: 40px;
+          height: 40px;
+          background: var(--ubc-gradient-light);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--ubc-action);
+          font-size: 1.2rem;
+        }
+        
+        .asistencia-info {
+          min-width: 80px;
+        }
+        
+        .progress {
+          background-color: rgba(0,0,0,0.1);
+        }
+        
+        @keyframes fadeOut {
+          to {
+            opacity: 0;
+            transform: translateX(100px);
+          }
+        }
+      </style>
+    `;
+    
+    document.head.insertAdjacentHTML('beforeend', additionalStyles);
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -13,72 +13,235 @@
   <style>
     /* ======= PALETA ubicaTEC ======= */
     :root{
-      --ubc-primary:#1C0058;     /* principal (header/sidebar) */
-      --ubc-secondary:#3800B0;   /* secundario (activos/hover) */
-      --ubc-action:#4100CD;      /* botones/links de acción */
+      --ubc-primary:#1C0058;     
+      --ubc-secondary:#3800B0;   
+      --ubc-action:#4100CD;      
       --ubc-on-primary:#ffffff;
       --ubc-surface:#f6f7fb;
       --ubc-text:#1d1f21;
+      --ubc-gradient: linear-gradient(135deg, #1C0058 0%, #3800B0 50%, #4100CD 100%);
+      --ubc-gradient-light: linear-gradient(135deg, rgba(28,0,88,0.1) 0%, rgba(56,0,176,0.05) 100%);
+      --shadow-soft: 0 10px 40px rgba(28,0,88,0.1);
+      --shadow-hover: 0 20px 60px rgba(28,0,88,0.15);
+      --border-radius: 16px;
     }
 
-    /* ======= Theming rápido sobre Bootstrap ======= */
-    a { color: var(--ubc-action); }
-    a:hover, a:focus { color: var(--ubc-secondary); }
+    /* ======= ANIMACIONES Y EFECTOS ======= */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ======= ELEMENTOS BASE ======= */
+    * { scroll-behavior: smooth; }
+    
+    body { 
+      background: linear-gradient(135deg, #f6f7fb 0%, #e8eaf6 100%);
+      color: var(--ubc-text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ======= GRADIENTE DE TEXTO ======= */
+    .text-gradient {
+      background: var(--ubc-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s ease-in-out infinite;
+      background-size: 200% 100%;
+    }
+
+    /* ======= THEMING AVANZADO ======= */
+    a { 
+      color: var(--ubc-action); 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    a:hover, a:focus { 
+      color: var(--ubc-secondary);
+      transform: translateY(-1px);
+    }
+
+    .btn {
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
 
     .btn-primary{
-      --bs-btn-bg: var(--ubc-action);
-      --bs-btn-border-color: var(--ubc-action);
-      --bs-btn-hover-bg: var(--ubc-secondary);
-      --bs-btn-hover-border-color: var(--ubc-secondary);
-      --bs-btn-active-bg: var(--ubc-secondary);
-      --bs-btn-active-border-color: var(--ubc-secondary);
-      --bs-btn-disabled-bg: var(--ubc-action);
-      --bs-btn-disabled-border-color: var(--ubc-action);
+      background: var(--ubc-gradient);
+      border: none;
+      box-shadow: var(--shadow-soft);
+      transform: translateY(0);
     }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
     .btn-outline-secondary{
-      --bs-btn-color: var(--ubc-secondary);
-      --bs-btn-border-color: var(--ubc-secondary);
-      --bs-btn-hover-bg: var(--ubc-secondary);
-      --bs-btn-hover-border-color: var(--ubc-secondary);
-      --bs-btn-hover-color: #fff;
+      border: 2px solid var(--ubc-secondary);
+      color: var(--ubc-secondary);
+      background: rgba(255,255,255,0.8);
+    }
+    .btn-outline-secondary:hover{
+      background: var(--ubc-gradient);
+      border-color: transparent;
+      color: white;
+      transform: translateY(-2px);
     }
 
-    :focus-visible { outline: 3px solid var(--ubc-action); outline-offset: 2px; }
+    :focus-visible { 
+      outline: 3px solid var(--ubc-action); 
+      outline-offset: 2px;
+      border-radius: 8px;
+    }
 
-    /* Skip link */
-    .skip-link{position:absolute;top:-40px;left:0;background:#fff;color:#000;padding:.5rem .75rem;z-index:1100;transition:top .2s}
-    .skip-link:focus{top:0}
+    /* ======= SKIP LINK MEJORADO ======= */
+    .skip-link{
+      position:absolute;
+      top:-40px;
+      left:20px;
+      background: var(--ubc-gradient);
+      color: white;
+      padding: 12px 24px;
+      z-index:1100;
+      transition: all 0.3s ease;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .skip-link:focus{
+      top: 20px;
+      box-shadow: var(--shadow-hover);
+    }
 
-    /* Navbar brand */
-    .navbar-ubc.navbar { background: var(--ubc-primary) !important; }
+    /* ======= NAVBAR ESPECTACULAR ======= */
+    .navbar-ubc.navbar { 
+      background: var(--ubc-gradient) !important;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
     .navbar-ubc .navbar-brand,
     .navbar-ubc .nav-link,
     .navbar-ubc .btn,
-    .navbar-ubc .navbar-toggler { color: var(--ubc-on-primary); }
+    .navbar-ubc .navbar-toggler { 
+      color: var(--ubc-on-primary);
+      transition: all 0.3s ease;
+    }
     .navbar-ubc .navbar-brand:hover,
-    .navbar-ubc .nav-link:hover { color: #fff; }
+    .navbar-ubc .nav-link:hover { 
+      color: #fff;
+      transform: scale(1.05);
+    }
 
-    /* Sidebar */
+    /* ======= SIDEBAR MEJORADO ======= */
     .sidebar {
-      background: var(--ubc-primary);
+      background: var(--ubc-gradient);
       color: var(--ubc-on-primary);
       min-height: 100vh;
       position: sticky;
       top: 0;
+      border-right: 1px solid rgba(255,255,255,0.1);
     }
-    .sidebar .section-label { color: rgba(255,255,255,.7); }
+    .sidebar .section-label { 
+      color: rgba(255,255,255,.7);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
     .sidebar .nav-link {
       color: rgba(255,255,255,.92);
-      border-radius: .5rem;
+      border-radius: 12px;
+      margin: 4px 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
     }
+    .sidebar .nav-link::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      transition: width 0.3s ease;
+    }
+    .sidebar .nav-link:hover::before { width: 100%; }
     .sidebar .nav-link:hover,
-    .sidebar .nav-link:focus { background: rgba(255,255,255,.12); }
-    .sidebar .nav-link.active { background: var(--ubc-secondary); color:#fff; }
+    .sidebar .nav-link:focus { 
+      background: rgba(255,255,255,.12);
+      transform: translateX(8px);
+    }
+    .sidebar .nav-link.active { 
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
 
-    /* Cards */
-    .card-elevada { border:0; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+    /* ======= CARDS ESPECTACULARES ======= */
+    .card-elevada { 
+      border: 0; 
+      box-shadow: var(--shadow-soft);
+      border-radius: var(--border-radius);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      animation: fadeInUp 0.6s ease-out;
+    }
 
-    body { background: var(--ubc-surface); color: var(--ubc-text); }
+    .card-elevada:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* ======= BREADCRUMBS MEJORADOS ======= */
+    .breadcrumb {
+      background: var(--ubc-gradient-light);
+      border-radius: 12px;
+      padding: 12px 20px;
+    }
+
+    .breadcrumb-item a {
+      color: var(--ubc-action);
+      font-weight: 500;
+    }
+
+    /* ======= FOOTER MEJORADO ======= */
+    footer {
+      background: var(--ubc-gradient-light);
+      border-radius: 12px 12px 0 0;
+      margin-top: 40px !important;
+    }
   </style>
 </head>
 <body>
@@ -113,8 +276,8 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active d-flex align-items-center" href="#" aria-current="page">
-                <i class="bi bi-card-checklist me-2"></i> Listar eventos
+              <a class="nav-link d-flex align-items-center" href="listarEventos.html">
+                <i class="bi bi-calendar-event me-2"></i> Gestión de eventos
               </a>
             </li>
             <li class="nav-item mt-2">
@@ -136,7 +299,7 @@
           <nav aria-label="Navegación móvil">
             <ul class="nav nav-pills flex-column gap-1">
               <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-speedometer2 me-2"></i> Panel de eventos</a></li>
-              <li class="nav-item"><a class="nav-link active" href="#" aria-current="page"><i class="bi bi-card-checklist me-2"></i> Listar eventos</a></li>
+              <li class="nav-item"><a class="nav-link" href="listarEventos.html"><i class="bi bi-calendar-event me-2"></i> Gestión de eventos</a></li>
               <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
             </ul>
           </nav>
@@ -148,8 +311,7 @@
         <!-- Migas -->
         <nav aria-label="Ruta de navegación" class="mb-3">
           <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="#">Panel de eventos</a></li>
-            <li class="breadcrumb-item"><a href="#">Listar eventos</a></li>
+            <li class="breadcrumb-item"><a href="listarEventos.html">Gestión de eventos</a></li>
             <li class="breadcrumb-item active" aria-current="page">Editar evento</li>
           </ol>
         </nav>
@@ -233,7 +395,7 @@
               <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Guardar cambios</button>
                 <button type="reset" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise me-1"></i>Restablecer</button>
-                <a href="#" class="btn btn-link ms-auto"><i class="bi bi-arrow-left-short me-1"></i>Volver a eventos</a>
+                <a href="listarEventos.html" class="btn btn-link ms-auto"><i class="bi bi-arrow-left-short me-1"></i>Volver a eventos</a>
               </div>
             </form>
           </div>

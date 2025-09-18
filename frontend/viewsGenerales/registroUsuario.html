@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
-  <title>ubicaTEC – Iniciar Sesión</title>
+  <title>ubicaTEC – Registro de Usuario</title>
 
   <!-- Bootstrap + Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -119,7 +119,7 @@
     }
 
     /* ======= CONTAINER PRINCIPAL ======= */
-    .login-container {
+    .register-container {
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -129,8 +129,8 @@
       z-index: 10;
     }
 
-    /* ======= CARD DE LOGIN GLASSMORPHISM ======= */
-    .login-card {
+    /* ======= CARD DE REGISTRO GLASSMORPHISM ======= */
+    .register-card {
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -138,13 +138,13 @@
       box-shadow: var(--shadow-soft);
       padding: 2rem;
       width: 100%;
-      max-width: 400px;
+      max-width: 500px;
       animation: slideInUp 0.8s ease-out;
       position: relative;
       overflow: hidden;
     }
 
-    .login-card::before {
+    .register-card::before {
       content: '';
       position: absolute;
       top: -50%;
@@ -159,7 +159,7 @@
     /* ======= LOGO SECTION ======= */
     .logo-section {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       position: relative;
       z-index: 2;
     }
@@ -168,8 +168,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       background: rgba(255, 255, 255, 0.2);
       border-radius: 50%;
       margin: 0 auto 1rem;
@@ -181,18 +181,18 @@
     .logo-container::before {
       content: '';
       position: absolute;
-      top: -8px;
-      left: -8px;
-      right: -8px;
-      bottom: -8px;
+      top: -6px;
+      left: -6px;
+      right: -6px;
+      bottom: -6px;
       border: 2px solid rgba(255, 255, 255, 0.3);
       border-radius: 50%;
       animation: pulse 3s ease-in-out infinite reverse;
     }
 
     .logo-img {
-      width: 80px;
-      height: 80px;
+      width: 60px;
+      height: 60px;
       object-fit: contain;
       filter: brightness(0) invert(1);
       transition: all 0.3s ease;
@@ -202,15 +202,9 @@
       transform: scale(1.1);
     }
 
-    .logo-icon {
-      font-size: 3rem;
-      color: white;
-      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    }
-
     .brand-text {
       color: white;
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 700;
       margin: 0;
       text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -219,55 +213,55 @@
 
     .brand-subtitle {
       color: rgba(255, 255, 255, 0.9);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       margin: 0.3rem 0 0;
       font-weight: 400;
       letter-spacing: 0.5px;
     }
 
     /* ======= TITULO DINAMICO ======= */
-    .login-title {
+    .register-title {
       color: white;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 600;
       text-align: center;
       margin-bottom: 0.5rem;
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
-    .login-subtitle {
+    .register-subtitle {
       color: rgba(255, 255, 255, 0.8);
       text-align: center;
       margin-bottom: 1.5rem;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
     /* ======= FORMULARIO AVANZADO ======= */
     .form-group {
-      margin-bottom: 1.2rem;
+      margin-bottom: 1rem;
     }
 
     .form-label {
       color: rgba(255, 255, 255, 0.95);
       font-weight: 500;
-      font-size: 0.9rem;
-      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      margin-bottom: 0.4rem;
       display: block;
     }
 
-    .form-control {
+    .form-control, .form-select {
       background: rgba(255, 255, 255, 0.2);
       border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 14px;
+      border-radius: 12px;
       color: white;
-      font-size: 0.95rem;
-      padding: 0.8rem 1rem;
+      font-size: 0.9rem;
+      padding: 0.7rem 0.9rem;
       backdrop-filter: blur(10px);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       width: 100%;
     }
 
-    .form-control:focus {
+    .form-control:focus, .form-select:focus {
       background: rgba(255, 255, 255, 0.25);
       border-color: rgba(255, 255, 255, 0.6);
       box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.2);
@@ -280,17 +274,40 @@
       color: rgba(255, 255, 255, 0.6);
     }
 
+    .form-select option {
+      background: var(--ubc-primary);
+      color: white;
+    }
+
+    /* ======= CAMPOS CONDICIONALES ======= */
+    .conditional-field {
+      opacity: 0.5;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .conditional-field.enabled {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .conditional-field.enabled .form-control,
+    .conditional-field.enabled .form-select {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
     /* ======= BOTÓN ESPECTACULAR ======= */
-    .btn-login {
+    .btn-register {
       background: linear-gradient(45deg, #ffffff, #f0f0f0);
       border: none;
       color: var(--ubc-primary);
       font-weight: 700;
-      font-size: 1rem;
-      padding: 0.8rem 1.5rem;
-      border-radius: 14px;
+      font-size: 0.95rem;
+      padding: 0.75rem 1.4rem;
+      border-radius: 12px;
       width: 100%;
-      margin-top: 0.8rem;
+      margin-top: 1rem;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
@@ -299,23 +316,23 @@
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
 
-    .btn-login:hover {
+    .btn-register:hover {
       transform: translateY(-3px);
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
       background: linear-gradient(45deg, #f8f9fa, #e9ecef);
       color: var(--ubc-secondary);
     }
 
-    .btn-login:active {
+    .btn-register:active {
       transform: translateY(-1px);
     }
 
-    .btn-login .btn-text {
+    .btn-register .btn-text {
       position: relative;
       z-index: 2;
     }
 
-    .btn-login::before {
+    .btn-register::before {
       content: '';
       position: absolute;
       top: 50%;
@@ -328,7 +345,7 @@
       transition: width 0.6s, height 0.6s;
     }
 
-    .btn-login:hover::before {
+    .btn-register:hover::before {
       width: 300px;
       height: 300px;
     }
@@ -341,8 +358,8 @@
 
     .spinner {
       display: inline-block;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       border: 2px solid rgba(28, 0, 88, 0.3);
       border-radius: 50%;
       border-top-color: var(--ubc-primary);
@@ -354,66 +371,89 @@
       to { transform: rotate(360deg); }
     }
 
-    /* ======= LINKS ADICIONALES ======= */
-    .additional-links {
-      text-align: center;
-      margin-top: 1.5rem;
+    /* ======= ESTADOS DE VALIDACIÓN ======= */
+    .form-control.is-invalid, .form-select.is-invalid {
+      border-color: rgba(220, 53, 69, 0.8);
+      background: rgba(220, 53, 69, 0.1);
     }
 
-    .additional-links a {
-      color: rgba(255, 255, 255, 0.8);
+    .invalid-feedback {
+      color: rgba(255, 255, 255, 0.95);
+      font-weight: 500;
+      margin-top: 0.4rem;
+      display: block;
+      width: 100%;
+      font-size: 0.8rem;
+    }
+
+    .form-text {
+      margin-top: 0.25rem;
+      font-size: 0.75rem;
+    }
+
+    /* ======= LINKS ADICIONALES ======= */
+    .login-section {
+      text-align: center;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .login-link {
+      color: rgba(255, 255, 255, 0.9);
       text-decoration: none;
       font-size: 0.85rem;
-      transition: color 0.3s ease;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .additional-links a:hover {
+    .login-link:hover {
       color: white;
       text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
     }
 
     /* ======= RESPONSIVE DESIGN ======= */
     @media (max-width: 768px) {
-      .login-card {
+      .register-card {
         padding: 1.5rem;
         margin: 0.5rem;
-        max-width: 350px;
+        max-width: 380px;
       }
 
       .logo-container {
-        width: 80px;
-        height: 80px;
+        width: 70px;
+        height: 70px;
       }
 
       .logo-img {
-        width: 65px;
-        height: 65px;
-      }
-
-      .logo-icon {
-        font-size: 2.5rem;
+        width: 50px;
+        height: 50px;
       }
 
       .brand-text {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
       }
 
-      .login-title {
-        font-size: 1.3rem;
+      .register-title {
+        font-size: 1.2rem;
       }
 
-      .form-control {
-        font-size: 0.9rem;
-        padding: 0.75rem;
+      .form-control, .form-select {
+        font-size: 0.85rem;
+        padding: 0.65rem 0.8rem;
       }
 
-      .btn-login {
-        font-size: 0.9rem;
-        padding: 0.75rem 1.2rem;
+      .btn-register {
+        font-size: 0.85rem;
+        padding: 0.7rem 1.2rem;
       }
 
       .form-label {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
       }
     }
 
@@ -448,56 +488,11 @@
     .skip-link:focus {
       top: 20px;
     }
-
-    /* ======= ESTADOS DE VALIDACIÓN ======= */
-    .form-control.is-invalid {
-      border-color: rgba(220, 53, 69, 0.8);
-      background: rgba(220, 53, 69, 0.1);
-    }
-
-    .invalid-feedback {
-      color: rgba(255, 255, 255, 0.95);
-      font-weight: 500;
-      margin-top: 0.5rem;
-      display: block;
-      width: 100%;
-      font-size: 0.875rem;
-    }
-
-    .form-text {
-      margin-top: 0.25rem;
-      font-size: 0.8rem;
-    }
-
-    /* ======= REGISTRO LINK ======= */
-    .register-section {
-      text-align: center;
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .register-link {
-      color: rgba(255, 255, 255, 0.9);
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .register-link:hover {
-      color: white;
-      text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
-      transform: translateY(-1px);
-    }
   </style>
 </head>
 
 <body>
-  <a href="#main-login" class="skip-link">Saltar al contenido principal</a>
+  <a href="#main-register" class="skip-link">Saltar al contenido principal</a>
   
   <!-- Elementos flotantes decorativos -->
   <div class="floating-elements">
@@ -507,25 +502,51 @@
     <div class="floating-element"></div>
   </div>
 
-  <main id="main-login" class="login-container" tabindex="-1">
-    <div class="login-card">
+  <main id="main-register" class="register-container" tabindex="-1">
+    <div class="register-card">
       <!-- Logo Section -->
       <div class="logo-section">
         <div class="logo-container">
           <img src="../images/charlieLogo.png" alt="ubicaTEC Logo" class="logo-img">
         </div>
         <h1 class="brand-text">ubicaTEC</h1>
-        <p class="brand-subtitle">Portal de Eventos</p>
+        <p class="brand-subtitle">Crear Nueva Cuenta</p>
       </div>
 
-      <!-- Dynamic Title -->
+      <!-- Title -->
       <div id="title-section">
-        <h2 id="login-title" class="login-title">Iniciar Sesión</h2>
-        <p id="login-subtitle" class="login-subtitle">Ingresa tus credenciales para continuar</p>
+        <h2 class="register-title">Registro de Usuario</h2>
+        <p class="register-subtitle">Complete los campos para crear su cuenta</p>
       </div>
 
       <!-- Form -->
-      <form id="form-login" class="needs-validation" novalidate>
+      <form id="form-register" class="needs-validation" novalidate>
+        <!-- Nombre de usuario -->
+        <div class="form-group">
+          <label for="nombreUsuario" class="form-label">
+            <i class="bi bi-person me-2"></i>Nombre de usuario
+          </label>
+          <input 
+            type="text" 
+            id="nombreUsuario" 
+            class="form-control" 
+            placeholder="Ingrese su nombre de usuario"
+            required
+            autocomplete="username"
+            aria-describedby="nombre-help"
+          >
+          <div id="nombre-help" class="form-text">
+            <small style="color: rgba(255, 255, 255, 0.7);">
+              Mínimo 3 caracteres, solo letras, números y guiones bajos
+            </small>
+          </div>
+          <div class="invalid-feedback">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            <span class="error-message"></span>
+          </div>
+        </div>
+
+        <!-- Correo -->
         <div class="form-group">
           <label for="correo" class="form-label">
             <i class="bi bi-envelope me-2"></i>Correo electrónico institucional
@@ -541,7 +562,7 @@
           >
           <div id="correo-help" class="form-text">
             <small style="color: rgba(255, 255, 255, 0.7);">
-              Utiliza tu correo institucional del TEC
+              Debe ser un correo institucional del TEC
             </small>
           </div>
           <div class="invalid-feedback">
@@ -550,6 +571,7 @@
           </div>
         </div>
 
+        <!-- Contraseña -->
         <div class="form-group">
           <label for="contraseña" class="form-label">
             <i class="bi bi-lock me-2"></i>Contraseña
@@ -561,12 +583,12 @@
             placeholder="••••••••"
             required
             minlength="8"
-            autocomplete="current-password"
+            autocomplete="new-password"
             aria-describedby="password-help"
           >
           <div id="password-help" class="form-text">
             <small style="color: rgba(255, 255, 255, 0.7);">
-              Mínimo 8 caracteres
+              Mínimo 8 caracteres, incluya letras, números y símbolos
             </small>
           </div>
           <div class="invalid-feedback">
@@ -575,31 +597,96 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-login" id="btn-login">
+        <!-- Tipo de usuario -->
+        <div class="form-group">
+          <label for="tipoUsuario" class="form-label">
+            <i class="bi bi-people me-2"></i>Tipo de usuario
+          </label>
+          <select 
+            id="tipoUsuario" 
+            class="form-select" 
+            required
+            aria-describedby="tipo-help"
+          >
+            <option value="">Seleccione su tipo de usuario</option>
+            <option value="estudiante">Estudiante</option>
+            <option value="administrador">Administrador</option>
+            <option value="visitante">Visitante</option>
+          </select>
+          <div id="tipo-help" class="form-text">
+            <small style="color: rgba(255, 255, 255, 0.7);">
+              Seleccione la opción que mejor lo describa
+            </small>
+          </div>
+          <div class="invalid-feedback">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            <span class="error-message"></span>
+          </div>
+        </div>
+
+        <!-- Carrera/Escuela (condicional) -->
+        <div class="form-group conditional-field" id="carrera-group">
+          <label for="carrera" class="form-label">
+            <i class="bi bi-mortarboard me-2"></i>Carrera o Escuela
+          </label>
+          <select 
+            id="carrera" 
+            class="form-select" 
+            aria-describedby="carrera-help"
+          >
+            <option value="">Seleccione su carrera o escuela</option>
+            <option value="ing-sistemas">Ingeniería en Computación</option>
+            <option value="ing-electronica">Ingeniería Electrónica</option>
+            <option value="ing-industrial">Ingeniería en Producción Industrial</option>
+          </select>
+          <div id="carrera-help" class="form-text">
+            <small style="color: rgba(255, 255, 255, 0.7);">
+              Solo requerido para estudiantes y administradores
+            </small>
+          </div>
+          <div class="invalid-feedback">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            <span class="error-message"></span>
+          </div>
+        </div>
+
+        <!-- Código de administrador (condicional) -->
+        <div class="form-group conditional-field" id="codigo-admin-group">
+          <label for="codigoAdmin" class="form-label">
+            <i class="bi bi-key me-2"></i>Código de administrador
+          </label>
+          <input 
+            type="password" 
+            id="codigoAdmin" 
+            class="form-control" 
+            placeholder="Ingrese el código de administrador"
+            aria-describedby="codigo-help"
+          >
+          <div id="codigo-help" class="form-text">
+            <small style="color: rgba(255, 255, 255, 0.7);">
+              Código especial requerido para cuentas de administrador
+            </small>
+          </div>
+          <div class="invalid-feedback">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            <span class="error-message"></span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-register" id="btn-register">
           <span class="btn-text">
-            <i class="bi bi-box-arrow-in-right me-2"></i>
-            Iniciar Sesión
+            <i class="bi bi-person-plus me-2"></i>
+            Crear Cuenta
           </span>
         </button>
 
-        <div class="additional-links">
-          <a href="#" class="me-3">
-            <i class="bi bi-question-circle me-1"></i>
-            ¿Olvidaste tu contraseña?
-          </a>
-          <a href="#">
-            <i class="bi bi-person-plus me-1"></i>
-            Ayuda
-          </a>
-        </div>
-
-        <div class="register-section">
-          <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 0.5rem; font-size: 0.9rem;">
-            ¿No tienes cuenta aún?
+        <div class="login-section">
+          <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 0.5rem; font-size: 0.85rem;">
+            ¿Ya tienes una cuenta?
           </p>
-          <a href="#" class="register-link">
-            <i class="bi bi-person-plus-fill"></i>
-            Registrarse aquí
+          <a href="login.html" class="login-link">
+            <i class="bi bi-box-arrow-in-right"></i>
+            Iniciar sesión aquí
           </a>
         </div>
       </form>
@@ -610,47 +697,51 @@
   <div id="live-status" class="visually-hidden" role="status" aria-live="polite"></div>
 
   <script>
-    // Configuración inicial
-    const urlParams = new URLSearchParams(window.location.search);
-    const tipo = urlParams.get('tipo');
-    
     // Referencias del DOM
-    const titleElement = document.getElementById("login-title");
-    const subtitleElement = document.getElementById("login-subtitle");
-    const form = document.getElementById("form-login");
-    const btnLogin = document.getElementById("btn-login");
-    const statusDiv = document.getElementById("live-status");
+    const form = document.getElementById('form-register');
+    const btnRegister = document.getElementById('btn-register');
+    const statusDiv = document.getElementById('live-status');
+    const tipoUsuarioSelect = document.getElementById('tipoUsuario');
+    const carreraGroup = document.getElementById('carrera-group');
+    const codigoAdminGroup = document.getElementById('codigo-admin-group');
+    const carreraSelect = document.getElementById('carrera');
+    const codigoAdminInput = document.getElementById('codigoAdmin');
 
-    // Personalizar título según tipo de usuario
-    function updateTitle() {
-      switch(tipo) {
-        case "estudiante":
-          titleElement.textContent = "Portal Estudiantes";
-          subtitleElement.textContent = "Accede a tu cuenta de estudiante";
-          break;
-        case "docente":
-        case "administrador":
-          titleElement.textContent = "Portal Administración";
-          subtitleElement.textContent = "Acceso para docentes y administradores";
-          break;
-        default:
-          titleElement.textContent = "Iniciar Sesión";
-          subtitleElement.textContent = "Ingresa tus credenciales para continuar";
+    // Manejo de campos condicionales
+    tipoUsuarioSelect.addEventListener('change', function() {
+      const tipo = this.value;
+      
+      // Reset campos condicionales
+      carreraGroup.classList.remove('enabled');
+      codigoAdminGroup.classList.remove('enabled');
+      carreraSelect.required = false;
+      codigoAdminInput.required = false;
+      
+      // Limpiar valores
+      carreraSelect.value = '';
+      codigoAdminInput.value = '';
+      
+      // Habilitar campos según tipo
+      if (tipo === 'estudiante' || tipo === 'administrador') {
+        carreraGroup.classList.add('enabled');
+        carreraSelect.required = true;
       }
-    }
+      
+      if (tipo === 'administrador') {
+        codigoAdminGroup.classList.add('enabled');
+        codigoAdminInput.required = true;
+      }
+    });
 
     // Validación en tiempo real - solo limpiar errores al escribir
     function setupRealTimeValidation() {
-      const correoInput = document.getElementById('correo');
-      const passwordInput = document.getElementById('contraseña');
-
-      // Solo limpiar errores cuando el usuario empiece a escribir
-      correoInput.addEventListener('input', clearValidation);
-      passwordInput.addEventListener('input', clearValidation);
-
-      function clearValidation() {
-        this.classList.remove('is-invalid');
-      }
+      const inputs = form.querySelectorAll('input, select');
+      
+      inputs.forEach(input => {
+        input.addEventListener('input', function() {
+          this.classList.remove('is-invalid');
+        });
+      });
     }
 
     // Manejo del formulario
@@ -668,15 +759,15 @@
         setLoadingState(true);
         
         try {
-          // Simular proceso de autenticación
-          await simulateLogin();
+          // Simular proceso de registro
+          await simulateRegister();
           
           // Éxito
           showSuccess();
           
           // Redireccionar después de 2 segundos
           setTimeout(() => {
-            redirectUser();
+            window.location.href = 'login.html';
           }, 2000);
           
         } catch (error) {
@@ -691,8 +782,16 @@
       let isValid = true;
       
       // Limpiar validaciones previas
-      document.getElementById('correo').classList.remove('is-invalid');
-      document.getElementById('contraseña').classList.remove('is-invalid');
+      const inputs = form.querySelectorAll('input, select');
+      inputs.forEach(input => input.classList.remove('is-invalid'));
+
+      // Validar nombre de usuario
+      const nombreValid = validateField('nombreUsuario', (value) => {
+        if (!value.trim()) return 'El nombre de usuario es obligatorio';
+        if (value.length < 3) return 'El nombre debe tener al menos 3 caracteres';
+        if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Solo se permiten letras, números y guiones bajos';
+        return null;
+      });
 
       // Validar correo
       const correoValid = validateField('correo', (value) => {
@@ -709,10 +808,39 @@
       const passwordValid = validateField('contraseña', (value) => {
         if (!value) return 'La contraseña es obligatoria';
         if (value.length < 8) return 'La contraseña debe tener al menos 8 caracteres';
+        if (!/(?=.*[a-z])/.test(value)) return 'Debe incluir al menos una letra minúscula';
+        if (!/(?=.*[A-Z])/.test(value)) return 'Debe incluir al menos una letra mayúscula';
+        if (!/(?=.*\d)/.test(value)) return 'Debe incluir al menos un número';
         return null;
       });
 
-      return correoValid && passwordValid;
+      // Validar tipo de usuario
+      const tipoValid = validateField('tipoUsuario', (value) => {
+        if (!value) return 'Debe seleccionar un tipo de usuario';
+        return null;
+      });
+
+      // Validar carrera (si está habilitada)
+      let carreraValid = true;
+      if (carreraSelect.required) {
+        carreraValid = validateField('carrera', (value) => {
+          if (!value) return 'Debe seleccionar una carrera o escuela';
+          return null;
+        });
+      }
+
+      // Validar código de administrador (si está habilitado)
+      let codigoValid = true;
+      if (codigoAdminInput.required) {
+        codigoValid = validateField('codigoAdmin', (value) => {
+          if (!value) return 'El código de administrador es obligatorio';
+          if (value !== 'ADMIN2025') return 'Código de administrador incorrecto';
+          return null;
+        });
+      }
+
+      isValid = nombreValid && correoValid && passwordValid && tipoValid && carreraValid && codigoValid;
+      return isValid;
     }
 
     function validateField(fieldId, validator) {
@@ -735,53 +863,53 @@
     }
 
     function setLoadingState(loading) {
-      const btnText = btnLogin.querySelector('.btn-text');
+      const btnText = btnRegister.querySelector('.btn-text');
       
       if (loading) {
-        btnLogin.disabled = true;
-        btnLogin.classList.add('btn-loading');
-        btnText.innerHTML = '<div class="spinner"></div>Iniciando sesión...';
+        btnRegister.disabled = true;
+        btnRegister.classList.add('btn-loading');
+        btnText.innerHTML = '<div class="spinner"></div>Creando cuenta...';
       } else {
-        btnLogin.disabled = false;
-        btnLogin.classList.remove('btn-loading');
-        btnText.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión';
+        btnRegister.disabled = false;
+        btnRegister.classList.remove('btn-loading');
+        btnText.innerHTML = '<i class="bi bi-person-plus me-2"></i>Crear Cuenta';
       }
     }
 
-    async function simulateLogin() {
+    async function simulateRegister() {
       // Simular delay de red
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Simular autenticación exitosa
+      // Simular registro exitoso
       if (Math.random() > 0.1) { // 90% de éxito
         return { success: true };
       } else {
-        throw new Error('Credenciales incorrectas');
+        throw new Error('Error en el servidor');
       }
     }
 
     function showSuccess() {
-      const btnText = btnLogin.querySelector('.btn-text');
-      btnLogin.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
-      btnText.innerHTML = '<i class="bi bi-check-circle me-2"></i>¡Acceso concedido!';
+      const btnText = btnRegister.querySelector('.btn-text');
+      btnRegister.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
+      btnText.innerHTML = '<i class="bi bi-check-circle me-2"></i>¡Cuenta creada exitosamente!';
       
-      announceToScreenReader('Inicio de sesión exitoso. Redirigiendo...');
+      announceToScreenReader('Registro exitoso. Redirigiendo al login...');
       
       // Crear efecto de éxito
       createSuccessEffect();
     }
 
     function showError(message) {
-      const btnText = btnLogin.querySelector('.btn-text');
-      btnLogin.style.background = 'linear-gradient(45deg, #dc3545, #fd7e14)';
+      const btnText = btnRegister.querySelector('.btn-text');
+      btnRegister.style.background = 'linear-gradient(45deg, #dc3545, #fd7e14)';
       btnText.innerHTML = `<i class="bi bi-exclamation-triangle me-2"></i>${message}`;
       
       announceToScreenReader(`Error: ${message}`);
       
       // Restaurar después de 3 segundos
       setTimeout(() => {
-        btnLogin.style.background = '';
-        btnText.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión';
+        btnRegister.style.background = '';
+        btnText.innerHTML = '<i class="bi bi-person-plus me-2"></i>Crear Cuenta';
       }, 3000);
     }
 
@@ -804,22 +932,11 @@
             z-index: 1000;
           `;
           
-          btnLogin.appendChild(ripple);
+          btnRegister.appendChild(ripple);
           
           setTimeout(() => ripple.remove(), 1000);
         }, i * 200);
       }
-    }
-
-    function redirectUser() {
-      const redirectMap = {
-        'estudiante': '../viewsEstudiante/reservarEstudiante.html',
-        'docente': '../viewsAdministrador/listarEventos.html',
-        'administrador': '../viewsAdministrador/listarEventos.html'
-      };
-      
-      const targetUrl = redirectMap[tipo] || '../viewsGenerales/seleccionDeUsuario.html';
-      window.location.href = targetUrl;
     }
 
     function announceToScreenReader(message) {
@@ -833,18 +950,17 @@
 
     // Inicialización
     document.addEventListener('DOMContentLoaded', function() {
-      updateTitle();
       setupRealTimeValidation();
       setupFormHandler();
       
       // Enfocar el primer campo
-      document.getElementById('correo').focus();
+      document.getElementById('nombreUsuario').focus();
     });
 
-    // Efectos adicionales
+    // Efectos adicionales (mismo que el login)
     document.addEventListener('mousemove', function(e) {
       const cursor = { x: e.clientX, y: e.clientY };
-      const card = document.querySelector('.login-card');
+      const card = document.querySelector('.register-card');
       const rect = card.getBoundingClientRect();
       
       if (cursor.x >= rect.left && cursor.x <= rect.right && 
@@ -861,7 +977,7 @@
     });
 
     document.addEventListener('mouseleave', function() {
-      const card = document.querySelector('.login-card');
+      const card = document.querySelector('.register-card');
       card.style.transform = '';
     });
   </script>

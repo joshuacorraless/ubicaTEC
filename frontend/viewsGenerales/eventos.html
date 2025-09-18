@@ -1,96 +1,886 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ubicaTEC - Eventos</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>ubicaTEC – Eventos Disponibles</title>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <style>
+    /* ======= PALETA ubicaTEC ======= */
+    :root{
+      --ubc-primary:#1C0058;     
+      --ubc-secondary:#3800B0;   
+      --ubc-action:#4100CD;      
+      --ubc-on-primary:#ffffff;
+      --ubc-surface:#f6f7fb;
+      --ubc-text:#1d1f21;
+      --ubc-gradient: linear-gradient(135deg, #1C0058 0%, #3800B0 50%, #4100CD 100%);
+      --ubc-gradient-light: linear-gradient(135deg, rgba(28,0,88,0.1) 0%, rgba(56,0,176,0.05) 100%);
+      --shadow-soft: 0 10px 40px rgba(28,0,88,0.1);
+      --shadow-hover: 0 20px 60px rgba(28,0,88,0.15);
+      --border-radius: 16px;
+    }
+
+    /* ======= ANIMACIONES Y EFECTOS ======= */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* ======= ELEMENTOS BASE ======= */
+    * { scroll-behavior: smooth; }
+    
+    body { 
+      background: linear-gradient(135deg, #f6f7fb 0%, #e8eaf6 100%);
+      color: var(--ubc-text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ======= GRADIENTE DE TEXTO ======= */
+    .text-gradient {
+      background: var(--ubc-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s ease-in-out infinite;
+      background-size: 200% 100%;
+    }
+
+    /* ======= THEMING AVANZADO ======= */
+    a { 
+      color: var(--ubc-action); 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    a:hover, a:focus { 
+      color: var(--ubc-secondary);
+      transform: translateY(-1px);
+    }
+
+    .btn {
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary{
+      background: var(--ubc-gradient);
+      border: none;
+      box-shadow: var(--shadow-soft);
+      transform: translateY(0);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .btn-outline-secondary{
+      border: 2px solid var(--ubc-secondary);
+      color: var(--ubc-secondary);
+      background: rgba(255,255,255,0.8);
+    }
+    .btn-outline-secondary:hover{
+      background: var(--ubc-gradient);
+      border-color: transparent;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #6c757d, #5a6268);
+      border: none;
+    }
+
+    :focus-visible { 
+      outline: 3px solid var(--ubc-action); 
+      outline-offset: 2px;
+      border-radius: 8px;
+    }
+
+    /* ======= SKIP LINK MEJORADO ======= */
+    .skip-link{
+      position:absolute;
+      top:-40px;
+      left:20px;
+      background: var(--ubc-gradient);
+      color: white;
+      padding: 12px 24px;
+      z-index:1100;
+      transition: all 0.3s ease;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .skip-link:focus{
+      top: 20px;
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* ======= NAVBAR ESPECTACULAR ======= */
+    .navbar-ubc.navbar { 
+      background: var(--ubc-gradient) !important;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .navbar-ubc .navbar-brand,
+    .navbar-ubc .nav-link,
+    .navbar-ubc .btn,
+    .navbar-ubc .navbar-toggler { 
+      color: var(--ubc-on-primary);
+      transition: all 0.3s ease;
+    }
+    .navbar-ubc .navbar-brand:hover,
+    .navbar-ubc .nav-link:hover { 
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    /* ======= SIDEBAR MEJORADO ======= */
+    .sidebar {
+      background: var(--ubc-gradient);
+      color: var(--ubc-on-primary);
+      min-height: 100vh;
+      position: sticky;
+      top: 0;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar .section-label { 
+      color: rgba(255,255,255,.7);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .sidebar .nav-link {
+      color: rgba(255,255,255,.92);
+      border-radius: 12px;
+      margin: 4px 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .sidebar .nav-link::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      transition: width 0.3s ease;
+    }
+    .sidebar .nav-link:hover::before { width: 100%; }
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link:focus { 
+      background: rgba(255,255,255,.12);
+      transform: translateX(8px);
+    }
+    .sidebar .nav-link.active { 
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* ======= CARDS ESPECTACULARES ======= */
+    .card-elevada { 
+      border: 0; 
+      box-shadow: var(--shadow-soft);
+      border-radius: var(--border-radius);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .card-elevada:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* ======= CARDS DE EVENTOS MEJORADAS ======= */
+    .evento-card {
+      border: 0;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-soft);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255,255,255,0.98);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      position: relative;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .evento-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--ubc-gradient);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .evento-card:hover {
+      transform: translateY(-12px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .evento-card:hover::before {
+      opacity: 1;
+    }
+
+    .evento-card .card-img-top {
+      height: 200px;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .evento-card:hover .card-img-top {
+      transform: scale(1.05);
+    }
+
+    .evento-card .card-body {
+      padding: 1.5rem;
+    }
+
+    .evento-card .card-title {
+      color: var(--ubc-primary);
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+    }
+
+    .evento-card .card-text {
+      color: var(--ubc-text);
+      margin-bottom: 0.5rem;
+    }
+
+    .evento-card .text-muted {
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ======= BREADCRUMBS MEJORADOS ======= */
+    .breadcrumb {
+      background: var(--ubc-gradient-light);
+      border-radius: 12px;
+      padding: 12px 20px;
+    }
+
+    .breadcrumb-item a {
+      color: var(--ubc-action);
+      font-weight: 500;
+    }
+
+    /* ======= BADGES MEJORADOS ======= */
+    .badge-acceso {
+      background: var(--ubc-gradient);
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .badge-fecha {
+      background: rgba(28,0,88,0.1);
+      color: var(--ubc-primary);
+      font-size: 0.8rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 15px;
+      font-weight: 600;
+    }
+
+    /* ======= FILTROS Y CONTROLES ======= */
+    .filtros-section {
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .form-select, .form-control {
+      border: 2px solid rgba(28,0,88,0.1);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .form-select:focus, .form-control:focus {
+      border-color: var(--ubc-action);
+      box-shadow: 0 0 0 0.2rem rgba(65,0,205,0.25);
+    }
+
+    /* ======= FOOTER MEJORADO ======= */
+    footer {
+      background: var(--ubc-gradient-light);
+      border-radius: 12px 12px 0 0;
+      margin-top: 40px !important;
+    }
+
+    /* ======= ESTADOS DE CARGA ======= */
+    .loading-skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+
+    /* ======= RESPONSIVE MEJORAS ======= */
+    @media (max-width: 768px) {
+      .evento-card .card-img-top {
+        height: 160px;
+      }
+      
+      .filtros-section {
+        padding: 1rem;
+      }
+    }
+
+    /* ======= ACCESIBILIDAD ======= */
+    .visually-hidden-focusable:not(:focus):not(:focus-within) {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      border: 0 !important;
+    }
+  </style>
 </head>
-<body class="bg-light">
+<body>
+  <a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
 
-  <main class="container py-5">
-    <!-- Encabezado -->
-    <header class="text-center mb-4">
-      <h1 id="titulo-eventos">Eventos disponibles</h1>
-      <p id="subtitulo-eventos" class="lead"></p>
-    </header>
+  <!-- NAV SUPERIOR -->
+  <header class="navbar navbar-expand-lg navbar-dark navbar-ubc sticky-top" role="banner">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#" aria-label="Inicio ubicaTEC">
+        <i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
+              aria-controls="menuLateral" aria-label="Abrir menú de navegación">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="d-none d-lg-flex gap-2">
+        <a class="btn btn-outline-light btn-sm" href="#"><i class="bi bi-life-preserver me-1"></i>Ayuda</a>
+      </div>
+    </div>
+  </header>
 
-    <!-- Contenedor dinámico de eventos -->
-    <section aria-labelledby="lista-eventos">
-      <h2 id="lista-eventos" class="visually-hidden">Lista de todos los eventos</h2>
-      <div class="row g-4" id="contenedor-eventos"></div>
-    </section>
-  </main>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- SIDEBAR DESKTOP -->
+      <aside class="col-md-3 col-xl-2 d-none d-md-block border-end sidebar" aria-label="Navegación principal">
+        <nav class="py-4">
+          <div class="px-3 text-uppercase small section-label mb-2">Administrador</div>
+          <ul class="nav nav-pills flex-column gap-1 px-2">
+            <li class="nav-item">
+              <a class="nav-link active d-flex align-items-center" href="#">
+                <i class="bi bi-speedometer2 me-2"></i> Panel de eventos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center" href="../viewsAdministrador/listarEventos.html">
+                <i class="bi bi-calendar-event me-2"></i> Gestión de eventos
+              </a>
+            </li>
+            <li class="nav-item mt-2">
+              <a class="nav-link d-flex align-items-center" href="#">
+                <i class="bi bi-person-gear me-2"></i> Configuración de perfil
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- OFFCANVAS MOBILE -->
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
+        <div class="offcanvas-header" style="background:var(--ubc-primary); color:#fff;">
+          <h5 class="offcanvas-title" id="menuLateralLabel"><i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+        </div>
+        <div class="offcanvas-body">
+          <nav aria-label="Navegación móvil">
+            <ul class="nav nav-pills flex-column gap-1">
+              <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-speedometer2 me-2"></i> Panel de eventos</a></li>
+              <li class="nav-item"><a class="nav-link" href="../viewsAdministrador/listarEventos.html"><i class="bi bi-calendar-event me-2"></i> Gestión de eventos</a></li>
+              <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- CONTENIDO -->
+      <main id="contenido-principal" class="col-12 col-md-9 col-xl-10 px-4 py-4" tabindex="-1">
+        <!-- Migas -->
+        <nav aria-label="Ruta de navegación" class="mb-3">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item active" aria-current="page">Panel de eventos</li>
+          </ol>
+        </nav>
+
+        <!-- Encabezado -->
+        <header class="mb-4">
+          <h1 id="titulo-eventos" class="h2 mb-1 text-gradient">Panel de Eventos</h1>
+          <p id="subtitulo-eventos" class="text-muted mb-0">Vista general de todos los eventos del sistema ubicaTEC</p>
+        </header>
+
+        <!-- Estado accesible -->
+        <div id="live-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+        <!-- Filtros y controles -->
+        <section class="filtros-section" aria-labelledby="filtros-titulo">
+          <h2 id="filtros-titulo" class="h5 mb-3">
+            <i class="bi bi-funnel me-2"></i>Filtros y búsqueda
+          </h2>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="buscar-evento" class="form-label">Buscar evento</label>
+              <input 
+                type="search" 
+                id="buscar-evento" 
+                class="form-control" 
+                placeholder="Nombre del evento, lugar..."
+                aria-describedby="buscar-help"
+              >
+              <div id="buscar-help" class="form-text">
+                Busca por nombre del evento o lugar
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="filtro-lugar" class="form-label">Lugar</label>
+              <select id="filtro-lugar" class="form-select">
+                <option value="">Todos los lugares</option>
+                <option value="Auditorio D3">Auditorio D3</option>
+                <option value="Learning Commons">Learning Commons</option>
+                <option value="Restaurante Institucional">Restaurante Institucional</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="filtro-acceso" class="form-label">Tipo de acceso</label>
+              <select id="filtro-acceso" class="form-select">
+                <option value="">Todos</option>
+                <option value="todos">Abierto a visitantes</option>
+                <option value="tec">Solo comunidad TEC</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Contenedor dinámico de eventos -->
+        <section aria-labelledby="lista-eventos">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 id="lista-eventos" class="h4 mb-0">
+              <i class="bi bi-calendar-event me-2"></i>Lista de eventos
+            </h2>
+            <span id="contador-eventos" class="badge badge-fecha">
+              Cargando eventos...
+            </span>
+          </div>
+          <div class="row g-4" id="contenedor-eventos">
+            <!-- Los eventos se cargarán aquí dinámicamente -->
+          </div>
+        </section>
+
+        <footer class="mt-4 py-3 text-center text-muted border-top">
+          <small>© <span id="year"></span> ubicaTEC — Admin</small>
+        </footer>
+      </main>
+    </div>
+  </div>
 
   <script>
+    // Referencias del DOM
+    const contenedor = document.getElementById("contenedor-eventos");
+    const contadorEventos = document.getElementById("contador-eventos");
+    const statusDiv = document.getElementById("live-status");
+    const buscarInput = document.getElementById("buscar-evento");
+    const filtroLugar = document.getElementById("filtro-lugar");
+    const filtroAcceso = document.getElementById("filtro-acceso");
+
     // Capturar el tipo de usuario desde la URL
     const urlParams = new URLSearchParams(window.location.search);
     const tipo = urlParams.get('tipo') || "visitante"; // por defecto visitante
 
-    // Definimos los eventos
+    // Definimos los eventos con más detalles
     const eventos = [
       {
+        id: 1,
         titulo: "Conferencia de Tecnología",
         lugar: "Auditorio D3",
         fecha: "12 de septiembre · 10:00 a.m.",
+        fechaCompleta: "2025-09-12",
+        hora: "10:00",
         img: "../images/auditorioD3.webp",
         alt: "Conferencia de tecnología en el Auditorio D3",
-        acceso: "todos" // solo comunidad TEC
+        acceso: "todos",
+        descripcion: "Una conferencia sobre las últimas tendencias en inteligencia artificial y ciberseguridad.",
+        capacidad: 200,
+        disponibles: 150,
+        costo: 0
       },
       {
+        id: 2,
         titulo: "Taller de Innovación",
         lugar: "Learning Commons",
         fecha: "15 de septiembre · 2:00 p.m.",
+        fechaCompleta: "2025-09-15",
+        hora: "14:00",
         img: "../images/learningCommons.jpg",
         alt: "Taller de innovación en el Learning Commons",
-        acceso: "todos" // TEC + visitantes
+        acceso: "todos",
+        descripcion: "Taller práctico sobre metodologías de innovación y design thinking.",
+        capacidad: 80,
+        disponibles: 65,
+        costo: 0
       },
       {
+        id: 3,
         titulo: "Recital Musical",
         lugar: "Restaurante Institucional",
         fecha: "20 de septiembre · 6:00 p.m.",
+        fechaCompleta: "2025-09-20",
+        hora: "18:00",
         img: "../images/restauranteInstitucional.webp",
         alt: "Recital musical en el restaurante institucional",
-        acceso: "todos"
+        acceso: "todos",
+        descripcion: "Presentación de música clásica y contemporánea por estudiantes de música.",
+        capacidad: 120,
+        disponibles: 95,
+        costo: 0
+      },
+      {
+        id: 4,
+        titulo: "Seminario de Investigación",
+        lugar: "Auditorio D3",
+        fecha: "25 de septiembre · 9:00 a.m.",
+        fechaCompleta: "2025-09-25",
+        hora: "09:00",
+        img: "../images/auditorioD3.webp",
+        alt: "Seminario de investigación en el Auditorio D3",
+        acceso: "tec",
+        descripcion: "Seminario exclusivo para la comunidad TEC sobre proyectos de investigación actuales.",
+        capacidad: 180,
+        disponibles: 120,
+        costo: 0
       }
-      
     ];
 
-    // Filtrar según usuario
     let eventosFiltrados = [];
-    if (tipo === "visitante") {
-      eventosFiltrados = eventos.filter(e => e.acceso === "todos");
-      document.getElementById("subtitulo-eventos").textContent = 
-        "Eventos abiertos a visitantes externos y comunidad TEC";
-    } else {
-      eventosFiltrados = eventos; // estudiantes y docentes ven todos
-      document.getElementById("subtitulo-eventos").textContent = 
-        "Eventos disponibles para la comunidad TEC";
+    let eventosActuales = [];
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+      setupEventListeners();
+      configurarSubtitulo();
+      cargarEventos();
+      document.getElementById('year').textContent = new Date().getFullYear();
+    });
+
+    function setupEventListeners() {
+      // Búsqueda en tiempo real
+      buscarInput.addEventListener('input', filtrarEventos);
+      filtroLugar.addEventListener('change', filtrarEventos);
+      filtroAcceso.addEventListener('change', filtrarEventos);
     }
 
-    // Renderizar los eventos en tarjetas
-    const contenedor = document.getElementById("contenedor-eventos");
-    eventosFiltrados.forEach(evento => {
-      const col = document.createElement("div");
-      col.className = "col-12 col-md-6 col-lg-4";
+    function configurarSubtitulo() {
+      const subtitulo = document.getElementById("subtitulo-eventos");
+      // Para el panel de administración, mostramos un subtítulo fijo
+      subtitulo.textContent = "Vista general de todos los eventos del sistema ubicaTEC";
+    }
 
-      col.innerHTML = `
-        <div class="card h-100 shadow-sm">
-          <img src="${evento.img}" class="card-img-top" alt="${evento.alt}">
-          <div class="card-body">
-            <h3 class="card-title fs-5">${evento.titulo}</h3>
-            <p class="card-text">${evento.lugar} · ${evento.fecha}</p>
-            <p class="text-muted small">Acceso: ${evento.acceso === "todos" ? "Comunidad TEC y visitantes" : "Solo comunidad TEC"}</p>
-            ${tipo === "visitante" && evento.acceso === "tec" 
-              ? `<button class="btn btn-secondary w-100" disabled aria-disabled="true">No disponible</button>`
-              : `<button class="btn btn-primary w-100">Reservar</button>`
-            }
+    async function cargarEventos() {
+      // Mostrar estado de carga
+      mostrarCargando();
+      
+      // Simular carga
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      // Filtrar según usuario
+      if (tipo === "visitante") {
+        eventosFiltrados = eventos.filter(e => e.acceso === "todos");
+      } else {
+        eventosFiltrados = eventos; // estudiantes y administradores ven todos
+      }
+
+      eventosActuales = [...eventosFiltrados];
+      renderizarEventos(eventosActuales);
+      actualizarContador(eventosActuales.length);
+    }
+
+    function mostrarCargando() {
+      contenedor.innerHTML = '';
+      for (let i = 0; i < 3; i++) {
+        const col = document.createElement("div");
+        col.className = "col-12 col-md-6 col-lg-4";
+        col.innerHTML = `
+          <div class="card evento-card h-100">
+            <div class="loading-skeleton" style="height: 200px;"></div>
+            <div class="card-body">
+              <div class="loading-skeleton mb-2" style="height: 24px; width: 80%;"></div>
+              <div class="loading-skeleton mb-2" style="height: 16px; width: 60%;"></div>
+              <div class="loading-skeleton mb-3" style="height: 14px; width: 40%;"></div>
+              <div class="loading-skeleton" style="height: 38px;"></div>
+            </div>
+          </div>
+        `;
+        contenedor.appendChild(col);
+      }
+      contadorEventos.textContent = "Cargando eventos...";
+    }
+
+    function renderizarEventos(eventos) {
+      contenedor.innerHTML = '';
+      
+      if (eventos.length === 0) {
+        mostrarMensajeVacio();
+        return;
+      }
+
+      eventos.forEach((evento, index) => {
+        const col = document.createElement("div");
+        col.className = "col-12 col-md-6 col-lg-4";
+        col.style.animationDelay = `${index * 0.1}s`;
+
+        const disponibilidad = calcularDisponibilidad(evento);
+        const estadoReserva = obtenerEstadoReserva(evento);
+
+        col.innerHTML = `
+          <article class="card evento-card h-100" role="article" aria-labelledby="evento-${evento.id}">
+            <img src="${evento.img}" class="card-img-top" alt="${evento.alt}" loading="lazy">
+            <div class="card-body d-flex flex-column">
+              <header>
+                <h3 id="evento-${evento.id}" class="card-title">${evento.titulo}</h3>
+                <div class="d-flex align-items-center mb-2">
+                  <i class="bi bi-geo-alt me-1 text-primary"></i>
+                  <span class="card-text">${evento.lugar}</span>
+                </div>
+                <div class="d-flex align-items-center mb-2">
+                  <i class="bi bi-clock me-1 text-primary"></i>
+                  <span class="card-text">${evento.fecha}</span>
+                </div>
+              </header>
+              
+              <p class="card-text flex-grow-1 mb-3" style="font-size: 0.9rem; color: #666;">
+                ${evento.descripcion}
+              </p>
+              
+              <div class="mt-auto">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="badge badge-acceso">
+                    <i class="bi bi-${evento.acceso === 'todos' ? 'globe' : 'people'} me-1"></i>
+                    ${evento.acceso === "todos" ? "Abierto" : "Solo TEC"}
+                  </span>
+                  <small class="text-muted">${disponibilidad}</small>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="badge badge-fecha">
+                    <i class="bi bi-currency-dollar me-1"></i>
+                    ${evento.costo === 0 ? 'Gratuito' : `₡${evento.costo}`}
+                  </span>
+                  <small class="text-muted">
+                    <i class="bi bi-people me-1"></i>
+                    ${evento.disponibles}/${evento.capacidad} disponibles
+                  </small>
+                </div>
+                
+                ${estadoReserva.html}
+              </div>
+            </div>
+          </article>
+        `;
+
+        contenedor.appendChild(col);
+      });
+
+      // Agregar event listeners a los botones
+      agregarEventListenersReserva();
+    }
+
+    function calcularDisponibilidad(evento) {
+      const porcentaje = (evento.disponibles / evento.capacidad) * 100;
+      if (porcentaje > 50) return "Alta disponibilidad";
+      if (porcentaje > 20) return "Disponibilidad media";
+      if (porcentaje > 0) return "Últimos cupos";
+      return "Agotado";
+    }
+
+    function obtenerEstadoReserva(evento) {
+      // Verificar si el evento ya pasó
+      const fechaEvento = new Date(evento.fechaCompleta);
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      
+      if (fechaEvento < hoy) {
+        return {
+          html: `<button class="btn btn-secondary w-100" disabled>
+                   <i class="bi bi-calendar-x me-2"></i>Evento finalizado
+                 </button>`,
+          disponible: false
+        };
+      }
+
+      // Verificar disponibilidad
+      if (evento.disponibles === 0) {
+        return {
+          html: `<button class="btn btn-outline-secondary w-100" disabled>
+                   <i class="bi bi-x-circle me-2"></i>Sin cupos disponibles
+                 </button>`,
+          disponible: false
+        };
+      }
+
+      // Verificar acceso según tipo usuario
+      if (tipo === "visitante" && evento.acceso === "tec") {
+        return {
+          html: `<button class="btn btn-outline-secondary w-100" disabled aria-describedby="acceso-${evento.id}">
+                   <i class="bi bi-lock me-2"></i>Solo comunidad TEC
+                 </button>
+                 <div id="acceso-${evento.id}" class="visually-hidden">
+                   Este evento está restringido a la comunidad del TEC
+                 </div>`,
+          disponible: false
+        };
+      }
+
+      // Botón de reserva disponible
+      return {
+        html: `<button class="btn btn-primary w-100 btn-reservar" data-evento-id="${evento.id}">
+                 <i class="bi bi-bookmark-plus me-2"></i>Reservar cupo
+               </button>`,
+        disponible: true
+      };
+    }
+
+    function agregarEventListenersReserva() {
+      const botonesReserva = document.querySelectorAll('.btn-reservar');
+      botonesReserva.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const eventoId = parseInt(this.dataset.eventoId);
+          manejarReserva(eventoId, this);
+        });
+      });
+    }
+
+    async function manejarReserva(eventoId, boton) {
+      const evento = eventos.find(e => e.id === eventoId);
+      if (!evento) return;
+
+      // Redireccionar directamente a evento.html
+      window.location.href = `evento.html?id=${eventoId}`;
+    }
+
+
+
+    function filtrarEventos() {
+      const textoBusqueda = buscarInput.value.toLowerCase().trim();
+      const lugarSeleccionado = filtroLugar.value;
+      const accesoSeleccionado = filtroAcceso.value;
+
+      eventosActuales = eventosFiltrados.filter(evento => {
+        const cumpleBusqueda = !textoBusqueda || 
+          evento.titulo.toLowerCase().includes(textoBusqueda) ||
+          evento.lugar.toLowerCase().includes(textoBusqueda) ||
+          evento.descripcion.toLowerCase().includes(textoBusqueda);
+        
+        const cumpleLugar = !lugarSeleccionado || evento.lugar === lugarSeleccionado;
+        const cumpleAcceso = !accesoSeleccionado || evento.acceso === accesoSeleccionado;
+        
+        return cumpleBusqueda && cumpleLugar && cumpleAcceso;
+      });
+
+      renderizarEventos(eventosActuales);
+      actualizarContador(eventosActuales.length);
+      
+      // Anunciar cambios para accesibilidad
+      const mensaje = `Se encontraron ${eventosActuales.length} evento${eventosActuales.length !== 1 ? 's' : ''}`;
+      anunciarCambio(mensaje);
+    }
+
+    function mostrarMensajeVacio() {
+      contenedor.innerHTML = `
+        <div class="col-12">
+          <div class="card card-elevada text-center py-5">
+            <div class="card-body">
+              <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
+              <h3 class="h4 text-muted">No se encontraron eventos</h3>
+              <p class="text-muted mb-3">
+                Intenta ajustar los filtros de búsqueda o revisa más tarde.
+              </p>
+              <button class="btn btn-outline-primary" onclick="limpiarFiltros()">
+                <i class="bi bi-arrow-counterclockwise me-2"></i>Limpiar filtros
+              </button>
+            </div>
           </div>
         </div>
       `;
+    }
 
-      contenedor.appendChild(col);
-    });
+    function limpiarFiltros() {
+      buscarInput.value = '';
+      filtroLugar.value = '';
+      filtroAcceso.value = '';
+      filtrarEventos();
+    }
+
+    function actualizarContador(cantidad) {
+      contadorEventos.textContent = `${cantidad} evento${cantidad !== 1 ? 's' : ''} ${cantidad !== eventosFiltrados.length ? 'filtrado' + (cantidad !== 1 ? 's' : '') : 'disponible' + (cantidad !== 1 ? 's' : '')}`;
+    }
+
+    function anunciarCambio(mensaje) {
+      statusDiv.textContent = mensaje;
+      statusDiv.classList.remove('visually-hidden');
+      
+      setTimeout(() => {
+        statusDiv.classList.add('visually-hidden');
+      }, 3000);
+    }
+
+    // Funciones de utilidad
+    window.limpiarFiltros = limpiarFiltros;
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

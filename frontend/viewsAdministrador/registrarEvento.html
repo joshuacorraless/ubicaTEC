@@ -1,118 +1,741 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ubicaTEC - Registrar Evento</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>ubicaTEC – Registrar evento</title>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <style>
+    /* ======= PALETA ubicaTEC ======= */
+    :root{
+      --ubc-primary:#1C0058;     
+      --ubc-secondary:#3800B0;   
+      --ubc-action:#4100CD;      
+      --ubc-on-primary:#ffffff;
+      --ubc-surface:#f6f7fb;
+      --ubc-text:#1d1f21;
+      --ubc-gradient: linear-gradient(135deg, #1C0058 0%, #3800B0 50%, #4100CD 100%);
+      --ubc-gradient-light: linear-gradient(135deg, rgba(28,0,88,0.1) 0%, rgba(56,0,176,0.05) 100%);
+      --shadow-soft: 0 10px 40px rgba(28,0,88,0.1);
+      --shadow-hover: 0 20px 60px rgba(28,0,88,0.15);
+      --border-radius: 16px;
+    }
+
+    /* ======= ANIMACIONES Y EFECTOS ======= */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ======= ELEMENTOS BASE ======= */
+    * { scroll-behavior: smooth; }
+    
+    body { 
+      background: linear-gradient(135deg, #f6f7fb 0%, #e8eaf6 100%);
+      color: var(--ubc-text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ======= GRADIENTE DE TEXTO ======= */
+    .text-gradient {
+      background: var(--ubc-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s ease-in-out infinite;
+      background-size: 200% 100%;
+    }
+
+    /* ======= THEMING AVANZADO ======= */
+    a { 
+      color: var(--ubc-action); 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    a:hover, a:focus { 
+      color: var(--ubc-secondary);
+      transform: translateY(-1px);
+    }
+
+    .btn {
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary, .btn-success{
+      background: var(--ubc-gradient);
+      border: none;
+      box-shadow: var(--shadow-soft);
+      transform: translateY(0);
+    }
+    
+    .btn-primary:hover, .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .btn-outline-secondary{
+      border: 2px solid var(--ubc-secondary);
+      color: var(--ubc-secondary);
+      background: rgba(255,255,255,0.8);
+    }
+    .btn-outline-secondary:hover{
+      background: var(--ubc-gradient);
+      border-color: transparent;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    :focus-visible { 
+      outline: 3px solid var(--ubc-action); 
+      outline-offset: 2px;
+      border-radius: 8px;
+    }
+
+    /* ======= SKIP LINK MEJORADO ======= */
+    .skip-link{
+      position:absolute;
+      top:-40px;
+      left:20px;
+      background: var(--ubc-gradient);
+      color: white;
+      padding: 12px 24px;
+      z-index:1100;
+      transition: all 0.3s ease;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .skip-link:focus{
+      top: 20px;
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* ======= NAVBAR ESPECTACULAR ======= */
+    .navbar-ubc.navbar { 
+      background: var(--ubc-gradient) !important;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .navbar-ubc .navbar-brand,
+    .navbar-ubc .nav-link,
+    .navbar-ubc .btn,
+    .navbar-ubc .navbar-toggler { 
+      color: var(--ubc-on-primary);
+      transition: all 0.3s ease;
+    }
+    .navbar-ubc .navbar-brand:hover,
+    .navbar-ubc .nav-link:hover { 
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    /* ======= SIDEBAR MEJORADO ======= */
+    .sidebar {
+      background: var(--ubc-gradient);
+      color: var(--ubc-on-primary);
+      min-height: 100vh;
+      position: sticky;
+      top: 0;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar .section-label { 
+      color: rgba(255,255,255,.7);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .sidebar .nav-link {
+      color: rgba(255,255,255,.92);
+      border-radius: 12px;
+      margin: 4px 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .sidebar .nav-link::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      transition: width 0.3s ease;
+    }
+    .sidebar .nav-link:hover::before { width: 100%; }
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link:focus { 
+      background: rgba(255,255,255,.12);
+      transform: translateX(8px);
+    }
+    .sidebar .nav-link.active { 
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* ======= CARDS ESPECTACULARES ======= */
+    .card-elevada { 
+      border: 0; 
+      box-shadow: var(--shadow-soft);
+      border-radius: var(--border-radius);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .card-elevada:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* ======= BREADCRUMBS MEJORADOS ======= */
+    .breadcrumb {
+      background: var(--ubc-gradient-light);
+      border-radius: 12px;
+      padding: 12px 20px;
+    }
+
+    .breadcrumb-item a {
+      color: var(--ubc-action);
+      font-weight: 500;
+    }
+
+    /* ======= FORMS MEJORADOS ======= */
+    .form-control, .form-select {
+      border-radius: 12px;
+      border: 2px solid rgba(28,0,88,0.1);
+      padding: 12px 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--ubc-action);
+      box-shadow: 0 0 0 0.2rem rgba(65,0,205,0.15);
+      transform: translateY(-2px);
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: var(--ubc-text);
+      margin-bottom: 8px;
+    }
+
+    /* ======= FOOTER MEJORADO ======= */
+    footer {
+      background: var(--ubc-gradient-light);
+      border-radius: 12px 12px 0 0;
+      margin-top: 40px !important;
+    }
+
+    /* ======= FILE INPUT STYLING ======= */
+    .form-control[type="file"] {
+      padding: 8px 12px;
+    }
+
+    /* ======= WARNINGS STYLING ======= */
+    .warnings {
+      background: rgba(220, 53, 69, 0.1);
+      border: 1px solid rgba(220, 53, 69, 0.2);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-top: 16px;
+      color: #dc3545;
+      font-weight: 500;
+    }
+  </style>
 </head>
-<body class="bg-light">
+<body>
+  <a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
 
-  <main class="container py-5">
-    <header class="mb-4">
-      <h1 class="text-start">Registrar nuevo evento</h1>
-      <p class="text-start text-muted">Complete los campos para crear un nuevo evento.</p>
-    </header>
-
-    <form id="form-registrar" class="needs-validation" novalidate enctype="multipart/form-data">
-      <!-- Nombre -->
-      <div class="mb-3">
-        <label for="nombre" class="form-label">Nombre del evento</label>
-        <input type="text" id="nombre" class="form-control" required>
+  <!-- NAV SUPERIOR -->
+  <header class="navbar navbar-expand-lg navbar-dark navbar-ubc sticky-top" role="banner">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#" aria-label="Inicio ubicaTEC">
+        <i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
+              aria-controls="menuLateral" aria-label="Abrir menú de navegación">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="d-none d-lg-flex gap-2">
+        <a class="btn btn-outline-light btn-sm" href="#"><i class="bi bi-life-preserver me-1"></i>Ayuda</a>
       </div>
+    </div>
+  </header>
 
-      <!-- Descripción -->
-      <div class="mb-3">
-        <label for="descripcion" class="form-label">Descripción</label>
-        <textarea id="descripcion" class="form-control" rows="4" required></textarea>
-      </div>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- SIDEBAR DESKTOP -->
+      <aside class="col-md-3 col-xl-2 d-none d-md-block border-end sidebar" aria-label="Navegación principal">
+        <nav class="py-4">
+          <div class="px-3 text-uppercase small section-label mb-2">Administrador</div>
+          <ul class="nav nav-pills flex-column gap-1 px-2">
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center" href="#">
+                <i class="bi bi-speedometer2 me-2"></i> Panel de eventos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center" href="listarEventos.html">
+                <i class="bi bi-calendar-event me-2"></i> Gestión de eventos
+              </a>
+            </li>
+            <li class="nav-item mt-2">
+              <a class="nav-link d-flex align-items-center" href="#">
+                <i class="bi bi-person-gear me-2"></i> Configuración de perfil
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
 
-      <!-- Fecha y hora -->
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label for="fecha" class="form-label">Fecha</label>
-          <input type="date" id="fecha" class="form-control" required>
+      <!-- OFFCANVAS MOBILE -->
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
+        <div class="offcanvas-header" style="background:var(--ubc-primary); color:#fff;">
+          <h5 class="offcanvas-title" id="menuLateralLabel"><i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
         </div>
-        <div class="col-md-6">
-          <label for="hora" class="form-label">Hora</label>
-          <input type="time" id="hora" class="form-control" required>
+        <div class="offcanvas-body">
+          <nav aria-label="Navegación móvil">
+            <ul class="nav nav-pills flex-column gap-1">
+              <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-speedometer2 me-2"></i> Panel de eventos</a></li>
+              <li class="nav-item"><a class="nav-link" href="listarEventos.html"><i class="bi bi-calendar-event me-2"></i> Gestión de eventos</a></li>
+              <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
+            </ul>
+          </nav>
         </div>
       </div>
 
-      <!-- Lugar -->
-      <div class="mb-3 mt-3">
-        <label for="lugar" class="form-label">Lugar</label>
-        <input type="text" id="lugar" class="form-control" placeholder="Ej: Auditorio D3" required>
-      </div>
+      <!-- CONTENIDO -->
+      <main id="contenido-principal" class="col-12 col-md-9 col-xl-10 px-4 py-4" tabindex="-1">
+        <!-- Migas -->
+        <nav aria-label="Ruta de navegación" class="mb-3">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="listarEventos.html">Gestión de eventos</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Registrar evento</li>
+          </ol>
+        </nav>
 
-      <!-- Capacidad -->
-      <div class="mb-3">
-        <label for="capacidad" class="form-label">Capacidad máxima</label>
-        <input type="number" id="capacidad" class="form-control" min="1" required>
-      </div>
+        <header class="mb-4">
+          <h1 class="display-5 fw-bold mb-2 text-gradient">Crear Nuevo Evento</h1>
+          <p class="lead text-muted mb-0">Complete la información para registrar un evento en ubicaTEC</p>
+        </header>
 
-      <!-- Costo -->
-      <div class="mb-3">
-        <label for="costo" class="form-label">Costo de entrada</label>
-        <input type="text" id="costo" class="form-control" placeholder="Ej: Gratis o ₡5000">
-      </div>
+        <!-- Estado accesible -->
+        <div id="live-status" class="visually-hidden" role="status" aria-live="polite"></div>
 
-      <!-- Acceso -->
-      <div class="mb-3">
-        <label for="acceso" class="form-label">Acceso</label>
-        <select id="acceso" class="form-select" required>
-          <option value="tec">Solo comunidad TEC</option>
-          <option value="todos">Comunidad TEC y visitantes</option>
-        </select>
-      </div>
+        <section class="card card-elevada">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-4">
+              <div class="me-3">
+                <div class="d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: var(--ubc-gradient-light); border-radius: 50%;">
+                  <i class="bi bi-plus-circle text-primary" style="font-size: 1.5rem;"></i>
+                </div>
+              </div>
+              <div>
+                <h2 class="h4 mb-1 text-gradient">Información del evento</h2>
+                <p class="text-muted mb-0">Todos los campos marcados con <span class="text-danger">*</span> son obligatorios</p>
+              </div>
+            </div>
 
-      <!-- Imagen -->
-      <div class="mb-3">
-        <label for="imagen" class="form-label">Imagen del evento</label>
-        <input type="file" id="imagen" class="form-control" accept="image/*" required>
-        <div class="form-text">Seleccione una imagen en formato JPG o PNG.</div>
-      </div>
+            <form id="form-registrar" class="needs-validation" novalidate enctype="multipart/form-data">
+              <!-- Nombre -->
+              <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre del evento <span class="text-danger">*</span></label>
+                <input type="text" id="nombre" class="form-control" placeholder="Ej: Conferencia de Tecnología 2025" required aria-required="true">
+                <div class="invalid-feedback">Por favor ingrese el nombre del evento.</div>
+              </div>
 
-      <button type="submit" class="btn btn-success w-100">Registrar evento</button>
-      <p class="warnings" id="warnings-evento"></p>
-    </form>
-  </main>
+              <!-- Descripción -->
+              <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción <span class="text-danger">*</span></label>
+                <textarea id="descripcion" class="form-control" rows="4" placeholder="Describa el evento, temas principales y beneficios para los asistentes..." required aria-required="true"></textarea>
+                <div class="form-text">Mínimo 20 caracteres, máximo 500 caracteres</div>
+                <div class="invalid-feedback">Por favor ingrese una descripción del evento.</div>
+              </div>
+
+              <!-- Fecha y hora -->
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="fecha" class="form-label">Fecha <span class="text-danger">*</span></label>
+                  <input type="date" id="fecha" class="form-control" required aria-required="true">
+                  <div class="invalid-feedback">Seleccione una fecha válida.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="hora" class="form-label">Hora <span class="text-danger">*</span></label>
+                  <input type="time" id="hora" class="form-control" required aria-required="true">
+                  <div class="invalid-feedback">Seleccione una hora.</div>
+                </div>
+              </div>
+
+              <!-- Lugar -->
+              <div class="mb-3">
+                <label for="lugar" class="form-label">Lugar <span class="text-danger">*</span></label>
+                <select id="lugar" class="form-select" required aria-required="true">
+                  <option value="">Seleccione un lugar...</option>
+                  <option value="Auditorio D3">Auditorio D3</option>
+                  <option value="Restaurante Institucional">Restaurante Institucional</option>
+                  <option value="Biblioteca Learning Commons">Biblioteca Learning Commons</option>
+                  <option value="Laboratorio de Computación">Laboratorio de Computación</option>
+                  <option value="Aula Magna">Aula Magna</option>
+                </select>
+                <div class="invalid-feedback">Seleccione un lugar para el evento.</div>
+              </div>
+
+              <!-- Capacidad -->
+              <div class="mb-3">
+                <label for="capacidad" class="form-label">Capacidad máxima <span class="text-danger">*</span></label>
+                <input type="number" id="capacidad" class="form-control" min="1" max="1000" placeholder="Ej: 200" required aria-required="true">
+                <div class="form-text">Número máximo de asistentes permitidos</div>
+                <div class="invalid-feedback">Ingrese una capacidad válida (entre 1 y 1000).</div>
+              </div>
+
+              <!-- Costo -->
+              <div class="mb-3">
+                <label for="costo" class="form-label">Costo de entrada</label>
+                <div class="input-group">
+                  <span class="input-group-text">₡</span>
+                  <input type="text" id="costo" class="form-control" placeholder="0" value="0" inputmode="numeric">
+                </div>
+                <div class="form-text">Deje 0 si el evento es gratuito. Solo números</div>
+              </div>
+
+              <!-- Acceso -->
+              <div class="mb-3">
+                <label for="acceso" class="form-label">Tipo de acceso <span class="text-danger">*</span></label>
+                <select id="acceso" class="form-select" required aria-required="true">
+                  <option value="">Seleccione el tipo de acceso...</option>
+                  <option value="tec">Solo comunidad TEC</option>
+                  <option value="todos">Comunidad TEC y visitantes</option>
+                </select>
+                <div class="invalid-feedback">Seleccione el tipo de acceso.</div>
+              </div>
+
+              <!-- Imagen -->
+              <div class="mb-4">
+                <label for="imagen" class="form-label">Imagen del evento <span class="text-danger">*</span></label>
+                <input type="file" id="imagen" class="form-control" accept="image/jpeg,image/png,image/webp" required aria-required="true">
+                <div class="form-text">
+                  <i class="bi bi-info-circle me-1"></i>
+                  Formatos permitidos: JPG, PNG, WebP. Tamaño máximo: 5MB
+                </div>
+                <div class="invalid-feedback">Por favor seleccione una imagen para el evento.</div>
+              </div>
+
+              <div class="d-flex gap-3 flex-wrap">
+                <button type="submit" class="btn btn-success flex-grow-1">
+                  <i class="bi bi-plus-circle me-2"></i>Registrar Evento
+                </button>
+                <button type="reset" class="btn btn-outline-secondary">
+                  <i class="bi bi-arrow-counterclockwise me-1"></i>Limpiar
+                </button>
+                <a href="listarEventos.html" class="btn btn-link">
+                  <i class="bi bi-arrow-left-short me-1"></i>Volver a eventos
+                </a>
+              </div>
+              
+              <div class="warnings" id="warnings-evento" style="display: none;"></div>
+            </form>
+          </div>
+        </section>
+
+        <footer class="mt-4 py-3 text-center text-muted border-top">
+          <small>© <span id="year"></span> ubicaTEC — Admin</small>
+        </footer>
+      </main>
+    </div>
+  </div>
 
   <script>
-    document.getElementById("form-registrar").addEventListener("submit", async function(e){
+    // Año dinámico
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Configurar fecha mínima (hoy)
+    const fechaInput = document.getElementById('fecha');
+    const hoy = new Date();
+    const fechaMinima = hoy.toISOString().split('T')[0];
+    fechaInput.min = fechaMinima;
+
+    // Referencias del DOM
+    const form = document.getElementById('form-registrar');
+    const warningsDiv = document.getElementById('warnings-evento');
+    const statusDiv = document.getElementById('live-status');
+
+    // Event listeners
+    form.addEventListener('submit', handleSubmit);
+    form.addEventListener('reset', handleReset);
+
+    // Validar en tiempo real
+    document.getElementById('nombre').addEventListener('blur', validateNombre);
+    document.getElementById('descripcion').addEventListener('blur', validateDescripcion);
+    document.getElementById('capacidad').addEventListener('blur', validateCapacidad);
+    document.getElementById('costo').addEventListener('blur', validateCosto);
+    document.getElementById('imagen').addEventListener('change', validateImagen);
+
+    async function handleSubmit(e) {
       e.preventDefault();
+      
+      // Limpiar warnings previos
+      hideWarnings();
+      
+      // Validar formulario
+      if (!validateForm()) {
+        showWarnings('Por favor corrige los errores marcados en rojo.');
+        return;
+      }
 
-      const formData = new FormData();
-      formData.append("nombre", document.getElementById("nombre").value);
-      formData.append("descripcion", document.getElementById("descripcion").value);
-      formData.append("fecha", document.getElementById("fecha").value);
-      formData.append("hora", document.getElementById("hora").value);
-      formData.append("lugar", document.getElementById("lugar").value);
-      formData.append("capacidad", document.getElementById("capacidad").value);
-      formData.append("costo", document.getElementById("costo").value);
-      formData.append("acceso", document.getElementById("acceso").value);
-      formData.append("imagen", document.getElementById("imagen").files[0]);
+      // Mostrar loading
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin me-2"></i>Registrando...';
 
-      // Aquí deberías enviar al backend (ejemplo con fetch)
       try {
-        const res = await fetch("http://localhost:3000/eventos", {
+        const formData = new FormData();
+        formData.append("nombre", document.getElementById("nombre").value.trim());
+        formData.append("descripcion", document.getElementById("descripcion").value.trim());
+        formData.append("fecha", document.getElementById("fecha").value);
+        formData.append("hora", document.getElementById("hora").value);
+        formData.append("lugar", document.getElementById("lugar").value);
+        formData.append("capacidad", document.getElementById("capacidad").value);
+        formData.append("costo", document.getElementById("costo").value || "0");
+        formData.append("acceso", document.getElementById("acceso").value);
+        formData.append("imagen", document.getElementById("imagen").files[0]);
+
+        // Simular envío al backend (reemplazar con tu API real)
+        const response = await fetch("http://localhost:3000/eventos", {
           method: "POST",
           body: formData
         });
 
-        if (res.ok) {
-          alert("Evento registrado correctamente ✅ (imagen subida a Cloudinary en backend).");
+        if (response.ok) {
+          showSuccess('¡Evento registrado exitosamente! 🎉');
+          form.reset();
+          setTimeout(() => {
+            window.location.href = 'listarEventos.html';
+          }, 2000);
         } else {
-          alert("Error al registrar evento ❌");
+          throw new Error('Error en el servidor');
         }
-      } catch (err) {
-        console.error(err);
-        alert("Error de conexión con el servidor.");
+      } catch (error) {
+        console.error('Error:', error);
+        showWarnings('Error al registrar el evento. Por favor intente nuevamente.');
+      } finally {
+        // Restaurar botón
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
       }
-    });
+    }
+
+    function handleReset(e) {
+      hideWarnings();
+      form.classList.remove('was-validated');
+    }
+
+    function validateForm() {
+      let isValid = true;
+      
+      // Validar HTML5 nativo
+      if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        isValid = false;
+      }
+
+      // Validaciones personalizadas
+      if (!validateNombre()) isValid = false;
+      if (!validateDescripcion()) isValid = false;
+      if (!validateCapacidad()) isValid = false;
+      if (!validateCosto()) isValid = false;
+      if (!validateImagen()) isValid = false;
+
+      return isValid;
+    }
+
+    function validateNombre() {
+      const nombre = document.getElementById('nombre');
+      const value = nombre.value.trim();
+      
+      if (value.length < 3 || value.length > 100) {
+        setFieldError(nombre, 'El nombre debe tener entre 3 y 100 caracteres');
+        return false;
+      }
+      
+      if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]+$/.test(value)) {
+        setFieldError(nombre, 'El nombre solo puede contener letras, números y espacios');
+        return false;
+      }
+      
+      setFieldValid(nombre);
+      return true;
+    }
+
+    function validateDescripcion() {
+      const descripcion = document.getElementById('descripcion');
+      const value = descripcion.value.trim();
+      
+      if (value.length < 20 || value.length > 500) {
+        setFieldError(descripcion, 'La descripción debe tener entre 20 y 500 caracteres');
+        return false;
+      }
+      
+      setFieldValid(descripcion);
+      return true;
+    }
+
+    function validateCapacidad() {
+      const capacidad = document.getElementById('capacidad');
+      const value = parseInt(capacidad.value);
+      
+      if (isNaN(value) || value < 1 || value > 1000) {
+        setFieldError(capacidad, 'La capacidad debe ser un número entre 1 y 1000');
+        return false;
+      }
+      
+      setFieldValid(capacidad);
+      return true;
+    }
+
+    function validateCosto() {
+      const costo = document.getElementById('costo');
+      const value = costo.value.trim();
+      
+      if (value && !/^\d+(\.\d{1,2})?$/.test(value)) {
+        setFieldError(costo, 'El costo debe ser un número válido (ej: 1000 o 1000.50)');
+        return false;
+      }
+      
+      setFieldValid(costo);
+      return true;
+    }
+
+    function validateImagen() {
+      const imagen = document.getElementById('imagen');
+      const file = imagen.files[0];
+      
+      if (!file) return true; // No es obligatorio en esta validación
+      
+      const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      
+      if (!validTypes.includes(file.type)) {
+        setFieldError(imagen, 'El archivo debe ser una imagen (JPG, PNG o WebP)');
+        return false;
+      }
+      
+      if (file.size > maxSize) {
+        setFieldError(imagen, 'La imagen no debe superar los 5MB');
+        return false;
+      }
+      
+      setFieldValid(imagen);
+      return true;
+    }
+
+    function setFieldError(field, message) {
+      field.classList.add('is-invalid');
+      field.classList.remove('is-valid');
+      const feedback = field.parentNode.querySelector('.invalid-feedback');
+      if (feedback) feedback.textContent = message;
+    }
+
+    function setFieldValid(field) {
+      field.classList.add('is-valid');
+      field.classList.remove('is-invalid');
+    }
+
+    function showWarnings(message) {
+      warningsDiv.innerHTML = `<i class="bi bi-exclamation-triangle me-2"></i>${message}`;
+      warningsDiv.style.display = 'block';
+      warningsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Anunciar a lectores de pantalla
+      statusDiv.textContent = message;
+      statusDiv.classList.remove('visually-hidden');
+    }
+
+    function showSuccess(message) {
+      const successDiv = document.createElement('div');
+      successDiv.className = 'alert alert-success';
+      successDiv.innerHTML = `<i class="bi bi-check-circle me-2"></i>${message}`;
+      successDiv.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 350px;
+        animation: slideInRight 0.3s ease-out;
+      `;
+      
+      document.body.appendChild(successDiv);
+      
+      setTimeout(() => {
+        successDiv.style.animation = 'fadeOut 0.3s ease-out forwards';
+        setTimeout(() => successDiv.remove(), 300);
+      }, 3000);
+    }
+
+    function hideWarnings() {
+      warningsDiv.style.display = 'none';
+      statusDiv.classList.add('visually-hidden');
+    }
+
+    // Añadir estilos de animación
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .spin { animation: spin 1s linear infinite; }
+      
+      @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(100px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      
+      @keyframes fadeOut {
+        to { opacity: 0; transform: translateX(100px); }
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="registrarEvento.js"></script>
 </body>
 </html>
