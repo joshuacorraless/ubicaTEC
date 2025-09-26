@@ -1,0 +1,66 @@
+<!-- Chatbot Container -->
+<div id="chatbot" class="chatbot-container">
+  <!-- Header -->
+  <div class="chatbot-header">
+    <div class="d-flex align-items-center gap-2">
+      <i class="bi bi-robot fs-5"></i>
+      <h6>Asistente ubicaTEC</h6>
+    </div>
+    <button class="chatbot-close" onclick="closeChatbot()" aria-label="Cerrar chatbot">
+      <i class="bi bi-x"></i>
+    </button>
+  </div>
+
+  <!-- Chat Body -->
+  <div class="chatbot-body" id="chatMessages">
+    <!-- Welcome Message -->
+    <div class="message bot">
+      <div class="message-avatar">
+        <i class="bi bi-robot"></i>
+      </div>
+      <div class="message-content">
+        ¡Hola! Soy tu asistente virtual de ubicaTEC. ¿En qué puedo ayudarte hoy?
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <div class="quick-action" onclick="sendQuickMessage('¿Cómo crear un evento?')">
+        <i class="bi bi-calendar-plus me-1"></i>Crear evento
+      </div>
+      <div class="quick-action" onclick="sendQuickMessage('¿Dónde está el Auditorio D3?')">
+        <i class="bi bi-geo-alt me-1"></i>Ubicaciones
+      </div>
+      <div class="quick-action" onclick="sendQuickMessage('Ayuda con mi perfil')">
+        <i class="bi bi-person me-1"></i>Mi perfil
+      </div>
+      <div class="quick-action" onclick="sendQuickMessage('Eventos disponibles')">
+        <i class="bi bi-calendar-event me-1"></i>Ver eventos
+      </div>
+    </div>
+
+    <!-- Typing Indicator -->
+    <div class="message bot" id="typingIndicator">
+      <div class="message-avatar">
+        <i class="bi bi-robot"></i>
+      </div>
+      <div class="typing-indicator">
+        <div class="typing-dots">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="chatbot-input">
+    <div class="input-group">
+      <input type="text" id="messageInput" class="form-control" placeholder="Escribe tu mensaje aquí..." onkeypress="handleKeyPress(event)">
+      <button class="btn-send" onclick="sendMessage()" aria-label="Enviar mensaje">
+        <i class="bi bi-send-fill"></i>
+      </button>
+    </div>
+  </div>
+</div>

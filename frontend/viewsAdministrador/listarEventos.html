@@ -371,7 +371,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="d-none d-lg-flex gap-2">
-        <a class="btn btn-outline-light btn-sm" href="#"><i class="bi bi-life-preserver me-1"></i>Ayuda</a>
+        <button class="btn btn-outline-light btn-sm" onclick="openChatbot()" type="button"><i class="bi bi-life-preserver me-1"></i>Ayuda</button>
       </div>
     </div>
   </header>
@@ -935,6 +935,16 @@
     `;
     
     document.head.insertAdjacentHTML('beforeend', additionalStyles);
+  </script>
+
+  <!-- Universal Chatbot Integration -->
+  <link rel="stylesheet" href="../viewsChatbot/chatbot.css">
+  <script src="../viewsChatbot/ubica-chatbot.js"></script>
+  <script>
+    // Initialize universal chatbot when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      UbicaChatbot.init();
+    });
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
