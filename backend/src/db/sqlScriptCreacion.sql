@@ -7,6 +7,7 @@ CREATE TABLE Roles (
   id_rol INT AUTO_INCREMENT PRIMARY KEY,
   tipo_rol ENUM('Administrador', 'Estudiante', 'Visitante') NOT NULL
 );
+
 CREATE TABLE Usuarios (
   id_usuario INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL,
@@ -17,9 +18,6 @@ CREATE TABLE Usuarios (
   id_rol INT NOT NULL,
   FOREIGN KEY (id_rol) REFERENCES Roles(id_rol)
 );
-
-
-
 
 CREATE TABLE Eventos (
   id_evento INT AUTO_INCREMENT PRIMARY KEY,
