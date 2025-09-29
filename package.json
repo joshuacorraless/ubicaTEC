@@ -2,6 +2,7 @@
   "name": "ubicatec",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "backend/src/index.js",
   "scripts": {
     "dev": "nodemon backend/src/index.js",
@@ -18,7 +19,6 @@
     "url": "https://github.com/joshuacorraless/ubicaTEC/issues"
   },
   "homepage": "https://github.com/joshuacorraless/ubicaTEC#readme",
-  "type": "module",
   "dependencies": {
     "axios": "^1.11.0",
     "cors": "^2.8.5",
