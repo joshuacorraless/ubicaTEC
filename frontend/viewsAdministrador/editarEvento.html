@@ -14,18 +14,18 @@
   <link href="../viewsChatbot/chatbot.css" rel="stylesheet" />
 
   <style>
-    /* ======= PALETA ubicaTEC ======= */
+    /* ======= PALETA ubicaTEC - AZUL Y BLANCO ======= */
     :root{
-      --ubc-primary:#1C0058;     
-      --ubc-secondary:#3800B0;   
-      --ubc-action:#4100CD;      
-      --ubc-on-primary:#ffffff;
-      --ubc-surface:#f6f7fb;
-      --ubc-text:#1d1f21;
-      --ubc-gradient: linear-gradient(135deg, #1C0058 0%, #3800B0 50%, #4100CD 100%);
-      --ubc-gradient-light: linear-gradient(135deg, rgba(28,0,88,0.1) 0%, rgba(56,0,176,0.05) 100%);
-      --shadow-soft: 0 10px 40px rgba(28,0,88,0.1);
-      --shadow-hover: 0 20px 60px rgba(28,0,88,0.15);
+      --ubc-primary: #0052CC;
+      --ubc-secondary: #0065FF;
+      --ubc-action: #2684FF;
+      --ubc-on-primary: #ffffff;
+      --ubc-surface: #f6f7fb;
+      --ubc-text: #1d1f21;
+      --ubc-gradient: linear-gradient(135deg, #0052CC 0%, #0065FF 50%, #2684FF 100%);
+      --ubc-gradient-light: linear-gradient(135deg, rgba(0,82,204,0.1) 0%, rgba(0,101,255,0.05) 100%);
+      --shadow-soft: 0 10px 40px rgba(0,82,204,0.1);
+      --shadow-hover: 0 20px 60px rgba(0,82,204,0.15);
       --border-radius: 16px;
     }
 
@@ -126,25 +126,6 @@
       outline: 3px solid var(--ubc-action); 
       outline-offset: 2px;
       border-radius: 8px;
-    }
-
-    /* ======= SKIP LINK MEJORADO ======= */
-    .skip-link{
-      position:absolute;
-      top:-40px;
-      left:20px;
-      background: var(--ubc-gradient);
-      color: white;
-      padding: 12px 24px;
-      z-index:1100;
-      transition: all 0.3s ease;
-      border-radius: var(--border-radius);
-      font-weight: 600;
-      text-decoration: none;
-    }
-    .skip-link:focus{
-      top: 20px;
-      box-shadow: var(--shadow-hover);
     }
 
     /* ======= NAVBAR ESPECTACULAR ======= */
@@ -248,8 +229,6 @@
   </style>
 </head>
 <body>
-  <a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
-
   <!-- NAV SUPERIOR -->
   <header class="navbar navbar-expand-lg navbar-dark navbar-ubc sticky-top" role="banner">
     <div class="container-fluid">
@@ -319,9 +298,9 @@
           </ol>
         </nav>
 
-        <header class="mb-3">
-          <h1 class="h2 mb-1">Editar evento</h1>
-          <p class="text-muted mb-0">Modifique los datos del evento y guarde los cambios. <small>(<span aria-hidden="true">*</span> obligatorio)</small></p>
+        <header class="mb-4">
+          <h1 class="display-5 fw-bold mb-2 text-gradient">Editar Evento</h1>
+          <p class="lead text-muted mb-0">Modifique los datos del evento y guarde los cambios</p>
         </header>
 
         <!-- Estado accesible -->
