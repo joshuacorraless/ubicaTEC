@@ -16,6 +16,8 @@ CREATE TABLE Usuarios (
   usuario VARCHAR(50) UNIQUE NOT NULL,
   contrasena VARCHAR(255) NOT NULL, -- encriptada con bcrypt
   id_rol INT NOT NULL,
+  carrera VARCHAR(200) NULL, -- Solo para estudiantes
+  codigo_admin VARCHAR(50) NULL, -- Solo para administradores
   FOREIGN KEY (id_rol) REFERENCES Roles(id_rol)
 );
 
@@ -27,9 +29,12 @@ CREATE TABLE Eventos (
   hora TIME NOT NULL,
   lugar VARCHAR(200) NOT NULL,
   capacidad INT NOT NULL,
+  asistencia INT DEFAULT 0, -- Número actual de asistentes
   precio DECIMAL(10,2) DEFAULT 0, -- 0 = Gratis
   acceso ENUM('tec', 'todos') NOT NULL, -- Solo TEC o TEC+Visitantes
-  imagen_url VARCHAR(500), -- link Cloudinary
+  imagen_url VARCHAR(500), -- link Cloudinary o ruta local
+  alt_imagen VARCHAR(300), -- Texto alternativo para accesibilidad
+  estado ENUM('disponible', 'agotado', 'cancelado') DEFAULT 'disponible',
   creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

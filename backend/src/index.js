@@ -1,19 +1,11 @@
-//archivo que arranca  todo, el servidor
-//pone el puerto a escuchar
-import 'dotenv/config';
-import app, { testDatabaseConnection } from "./app.js";
 
-const PORT = process.env.PORT || 3000;
+//* este archivo es el que arranca todo, el servidor y pone el puerto a escuchar
 
-// Iniciar servidor y probar DB
-app.listen(PORT, async () => {
-    console.log(`Server running on port ${PORT}`);
-    
-    // Probar conexión a DB
-    try {
-        await testDatabaseConnection();
-        console.log('✅ Database connected');
-    } catch (error) {
-        console.log('❌ Database connection failed');
-    }
+
+
+import app from './app.js';
+
+
+app.listen(3000, async () => {
+    console.log(`server running on port 3000`);
 });
