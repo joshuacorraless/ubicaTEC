@@ -13,16 +13,16 @@
   <style>
     /* ======= PALETA ubicaTEC - AZUL Y BLANCO ======= */
     :root{
-      --ubc-primary: #0052CC;
-      --ubc-secondary: #0065FF;
-      --ubc-action: #2684FF;
-      --ubc-on-primary: #ffffff;
-      --ubc-surface: #f6f7fb;
-      --ubc-text: #1d1f21;
-      --ubc-gradient: linear-gradient(135deg, #0052CC 0%, #0065FF 50%, #2684FF 100%);
-      --ubc-gradient-light: linear-gradient(135deg, rgba(0,82,204,0.1) 0%, rgba(0,101,255,0.05) 100%);
-      --shadow-soft: 0 10px 40px rgba(0,82,204,0.1);
-      --shadow-hover: 0 20px 60px rgba(0,82,204,0.15);
+      --tec-primary: #0052CC;
+      --tec-secondary: #0065FF;
+      --tec-accent: #2684FF;
+      --tec-white: #ffffff;
+      --tec-surface: #f6f7fb;
+      --tec-text: #1d1f21;
+      --tec-gradient: linear-gradient(135deg, #0052CC 0%, #0065FF 50%, #2684FF 100%);
+      --tec-gradient-light: linear-gradient(135deg, rgba(0,82,204,0.1) 0%, rgba(0,101,255,0.05) 100%);
+      --shadow-md: 0 10px 40px rgba(0,82,204,0.1);
+      --shadow-lg: 0 20px 60px rgba(0,82,204,0.15);
       --border-radius: 16px;
     }
 
@@ -52,14 +52,14 @@
     
     body { 
       background: linear-gradient(135deg, #f6f7fb 0%, #e8eaf6 100%);
-      color: var(--ubc-text);
+      color: var(--tec-text);
       font-family: 'Segoe UI', system-ui, sans-serif;
       line-height: 1.6;
     }
 
     /* ======= GRADIENTE DE TEXTO ======= */
     .text-gradient {
-      background: var(--ubc-gradient);
+      background: var(--tec-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -69,11 +69,11 @@
 
     /* ======= THEMING AVANZADO ======= */
     a { 
-      color: var(--ubc-action); 
+      color: var(--tec-accent); 
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     a:hover, a:focus { 
-      color: var(--ubc-secondary);
+      color: var(--tec-secondary);
       transform: translateY(-1px);
     }
 
@@ -101,24 +101,24 @@
     }
 
     .btn-primary{
-      background: var(--ubc-gradient);
+      background: var(--tec-gradient);
       border: none;
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--shadow-md);
       transform: translateY(0);
     }
     
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: var(--shadow-hover);
+      box-shadow: var(--shadow-lg);
     }
 
     .btn-outline-secondary{
-      border: 2px solid var(--ubc-secondary);
-      color: var(--ubc-secondary);
+      border: 2px solid var(--tec-secondary);
+      color: var(--tec-secondary);
       background: rgba(255,255,255,0.8);
     }
     .btn-outline-secondary:hover{
-      background: var(--ubc-gradient);
+      background: var(--tec-gradient);
       border-color: transparent;
       color: white;
       transform: translateY(-2px);
@@ -130,14 +130,14 @@
     }
 
     :focus-visible { 
-      outline: 3px solid var(--ubc-action); 
+      outline: 3px solid var(--tec-accent); 
       outline-offset: 2px;
       border-radius: 8px;
     }
 
     /* ======= NAVBAR ESPECTACULAR ======= */
     .navbar-ubc.navbar { 
-      background: var(--ubc-gradient) !important;
+      background: var(--tec-gradient) !important;
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
@@ -145,7 +145,7 @@
     .navbar-ubc .nav-link,
     .navbar-ubc .btn,
     .navbar-ubc .navbar-toggler { 
-      color: var(--ubc-on-primary);
+      color: var(--tec-white);
       transition: all 0.3s ease;
     }
     .navbar-ubc .navbar-brand:hover,
@@ -156,8 +156,8 @@
 
     /* ======= SIDEBAR MEJORADO ======= */
     .sidebar {
-      background: var(--ubc-gradient);
-      color: var(--ubc-on-primary);
+      background: var(--tec-gradient);
+      color: var(--tec-white);
       min-height: 100vh;
       position: sticky;
       top: 0;
@@ -202,7 +202,7 @@
     /* ======= CARDS ESPECTACULARES ======= */
     .card-elevada { 
       border: 0; 
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--shadow-md);
       border-radius: var(--border-radius);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       background: rgba(255,255,255,0.95);
@@ -212,17 +212,17 @@
 
     .card-elevada:hover {
       transform: translateY(-8px);
-      box-shadow: var(--shadow-hover);
+      box-shadow: var(--shadow-lg);
     }
 
     /* ======= STATS CARD ======= */
     .stats-card {
-      background: var(--ubc-gradient);
+      background: var(--tec-gradient);
       color: white;
       padding: 20px;
       border-radius: var(--border-radius);
       text-align: center;
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--shadow-md);
       animation: slideInRight 0.6s ease-out;
       transition: transform 0.3s ease;
     }
@@ -253,7 +253,7 @@
     
     .table-eventos th { 
       border-top: none;
-      background: var(--ubc-gradient);
+      background: var(--tec-gradient);
       color: white;
       font-weight: 600;
       text-transform: uppercase;
@@ -268,7 +268,7 @@
     }
 
     .table-eventos tbody tr:hover {
-      background: var(--ubc-gradient-light);
+      background: var(--tec-gradient-light);
       transform: scale(1.01);
       box-shadow: 0 4px 12px rgba(28,0,88,0.1);
     }
@@ -301,13 +301,13 @@
 
     /* ======= BREADCRUMBS MEJORADOS ======= */
     .breadcrumb {
-      background: var(--ubc-gradient-light);
+      background: var(--tec-gradient-light);
       border-radius: 12px;
       padding: 12px 20px;
     }
 
     .breadcrumb-item a {
-      color: var(--ubc-action);
+      color: var(--tec-accent);
       font-weight: 500;
     }
 
@@ -332,7 +332,7 @@
 
     /* ======= FOOTER MEJORADO ======= */
     footer {
-      background: var(--ubc-gradient-light);
+      background: var(--tec-gradient-light);
       border-radius: 12px 12px 0 0;
       margin-top: 40px !important;
     }
@@ -383,7 +383,7 @@
 
       <!-- OFFCANVAS MOBILE -->
       <div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
-        <div class="offcanvas-header" style="background:var(--ubc-primary); color:#fff;">
+        <div class="offcanvas-header" style="background:var(--tec-primary); color:#fff;">
           <h5 class="offcanvas-title" id="menuLateralLabel"><i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
         </div>
@@ -629,7 +629,7 @@
               <div class="fw-bold text-primary">${evento.asistencia}/${evento.capacidad}</div>
               <div class="progress mt-1" style="height: 4px;">
                 <div class="progress-bar" role="progressbar" 
-                     style="width: ${porcentajeOcupacion}%; background: var(--ubc-gradient);" 
+                     style="width: ${porcentajeOcupacion}%; background: var(--tec-gradient);" 
                      aria-valuenow="${porcentajeOcupacion}" aria-valuemin="0" aria-valuemax="100">
                 </div>
               </div>
@@ -769,7 +769,7 @@
         <div class="modal fade" id="eventoModal" tabindex="-1" aria-hidden="true">
           <div class="modal-dialog modal-lg">
             <div class="modal-content" style="border-radius: var(--border-radius); border: none;">
-              <div class="modal-header" style="background: var(--ubc-gradient); color: white;">
+              <div class="modal-header" style="background: var(--tec-gradient); color: white;">
                 <h5 class="modal-title">
                   <i class="bi bi-calendar-event me-2"></i>${evento.nombre}
                 </h5>
@@ -791,7 +791,7 @@
                     <h6><i class="bi bi-people me-2"></i>Capacidad</h6>
                     <p><strong>Asistentes:</strong> ${evento.asistencia}/${evento.capacidad}</p>
                     <div class="progress mb-3">
-                      <div class="progress-bar" style="width: ${(evento.asistencia/evento.capacidad)*100}%; background: var(--ubc-gradient);"></div>
+                      <div class="progress-bar" style="width: ${(evento.asistencia/evento.capacidad)*100}%; background: var(--tec-gradient);"></div>
                     </div>
                   </div>
                 </div>
@@ -881,12 +881,12 @@
         .evento-icon {
           width: 40px;
           height: 40px;
-          background: var(--ubc-gradient-light);
+          background: var(--tec-gradient-light);
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: var(--ubc-action);
+          color: var(--tec-accent);
           font-size: 1.2rem;
         }
         

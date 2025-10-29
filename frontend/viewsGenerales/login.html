@@ -11,49 +11,41 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
 
   <style>
-    /* ======= PALETA ubicaTEC - AZUL Y BLANCO ======= */
+    /* ======= PALETA TEC INSTITUCIONAL - AAA COMPLIANT ======= */
     :root {
-      --ubc-primary: #0052CC;     
-      --ubc-secondary: #0065FF;   
-      --ubc-action: #2684FF;      
-      --ubc-on-primary: #ffffff;
-      --ubc-surface: #f6f9fc;
-      --ubc-text: #1d1f21;
-      --ubc-gradient: linear-gradient(135deg, #0052CC 0%, #0065FF 50%, #2684FF 100%);
-      --ubc-gradient-radial: radial-gradient(ellipse at top, #0052CC, #0065FF, #2684FF);
-      --ubc-gradient-light: linear-gradient(135deg, rgba(0,82,204,0.1) 0%, rgba(0,101,255,0.05) 100%);
-      --shadow-soft: 0 10px 40px rgba(0,82,204,0.15);
-      --shadow-hover: 0 15px 50px rgba(0,82,204,0.25);
-      --border-radius: 16px;
+      --tec-primary: #003C7D;        /* Azul TEC oficial - contraste AAA */
+      --tec-secondary: #0052CC;      /* Azul intermedio */
+      --tec-accent: #2684FF;         /* Azul claro acentos */
+      --tec-white: #FFFFFF;
+      --tec-text: #1A1A1A;           /* Texto principal - contraste 16:1 */
+      --tec-text-secondary: #4A4A4A; /* Texto secundario - contraste 10:1 */
+      --tec-surface: #F8FAFB;        /* Fondo suave */
+      --tec-border: #E1E8ED;
+      --tec-gradient: linear-gradient(135deg, #003C7D 0%, #0052CC 100%);
+      --tec-gradient-subtle: linear-gradient(180deg, #F8FAFB 0%, #FFFFFF 100%);
+      --shadow-sm: 0 2px 8px rgba(0, 60, 125, 0.08);
+      --shadow-md: 0 4px 16px rgba(0, 60, 125, 0.12);
+      --shadow-lg: 0 8px 24px rgba(0, 60, 125, 0.16);
+      --border-radius: 12px;
     }
 
-    /* ======= ANIMACIONES AVANZADAS ======= */
-    @keyframes floating {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      33% { transform: translateY(-10px) rotate(1deg); }
-      66% { transform: translateY(5px) rotate(-1deg); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.8; }
-    }
-
-    @keyframes slideInUp {
-      from { opacity: 0; transform: translateY(50px); }
+    /* ======= ANIMACIONES PROFESIONALES Y SUTILES ======= */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes shimmer {
-      0% { background-position: -200px 0; }
-      100% { background-position: calc(200px + 100%) 0; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
-    @keyframes ripple {
-      to { transform: scale(4); opacity: 0; }
+    @keyframes gentlePulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
     }
 
-    /* ======= BODY Y LAYOUT PRINCIPAL ======= */
+    /* ======= BODY Y LAYOUT PRINCIPAL - DISEÑO ALEGRE CON IMAGEN ======= */
     * { 
       scroll-behavior: smooth; 
       box-sizing: border-box;
@@ -62,60 +54,55 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: var(--ubc-gradient-radial);
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, rgba(0, 60, 125, 0.95) 0%, rgba(0, 82, 204, 0.9) 100%), 
+                  url('../images/charlieLogo.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--tec-text);
       overflow-x: hidden;
       position: relative;
     }
 
-    /* ======= ELEMENTOS DECORATIVOS FLOTANTES ======= */
-    .floating-elements {
-      position: absolute;
+    /* ======= PARTÍCULAS ANIMADAS DE EVENTOS ======= */
+    body::before {
+      content: '🎉 🎊 🎈 ✨ 🎯 🎪 🎭 🎨 🎵 🎸 🎤 📅 🎓 🏆 🌟 💫';
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
+      font-size: 2rem;
+      opacity: 0.08;
       pointer-events: none;
-      z-index: 1;
+      z-index: 0;
+      animation: float 30s linear infinite;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
-    .floating-element {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      animation: floating 6s ease-in-out infinite;
+    @keyframes float {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100%); }
     }
 
-    .floating-element:nth-child(1) {
-      width: 80px;
-      height: 80px;
-      top: 10%;
-      left: 10%;
-      animation-delay: -2s;
+    /* ======= BARRA SUPERIOR INSTITUCIONAL TEC ======= */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #FFD700, #FFA500, #FF6B6B, #4ECDC4, #2684FF, #003C7D);
+      z-index: 9999;
+      animation: rainbowSlide 3s linear infinite;
     }
 
-    .floating-element:nth-child(2) {
-      width: 120px;
-      height: 120px;
-      top: 20%;
-      right: 15%;
-      animation-delay: -4s;
-    }
-
-    .floating-element:nth-child(3) {
-      width: 60px;
-      height: 60px;
-      bottom: 20%;
-      left: 20%;
-      animation-delay: -1s;
-    }
-
-    .floating-element:nth-child(4) {
-      width: 100px;
-      height: 100px;
-      bottom: 15%;
-      right: 10%;
-      animation-delay: -3s;
+    @keyframes rainbowSlide {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
     }
 
     /* ======= CONTAINER PRINCIPAL ======= */
@@ -124,163 +111,187 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
+      padding: 2rem 1rem;
       position: relative;
       z-index: 10;
     }
 
-    /* ======= CARD DE LOGIN GLASSMORPHISM - FORMATO CUADRADO ======= */
+    /* ======= CARD DE LOGIN - DISEÑO HORIZONTAL ALEGRE ======= */
     .login-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      border: 2px solid rgba(255, 255, 255, 0.8);
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow-soft);
-      padding: 1.8rem 2rem;
+      background: var(--tec-white);
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 0;
       width: 100%;
-      max-width: 450px;
-      animation: slideInUp 0.8s ease-out;
+      max-width: 950px;
+      animation: fadeInUp 0.8s ease-out;
       position: relative;
-      overflow: visible;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 40% 60%;
+      min-height: 550px;
     }
 
+    /* Lado izquierdo con gradiente colorido y logo */
     .login-card::before {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
-      right: 0;
-      height: 4px;
-      background: var(--ubc-gradient);
-      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(135deg, #003C7D 0%, #0052CC 50%, #2684FF 100%);
+      z-index: 0;
     }
 
-    /* ======= LOGO SECTION - COMPACTO ======= */
+    .login-left-panel {
+      position: relative;
+      z-index: 1;
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+    }
+
+    .login-right-panel {
+      padding: 3rem 3.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* ======= LOGO SECTION - LADO IZQUIERDO COLORIDO ======= */
     .logo-section {
       text-align: center;
-      margin-bottom: 1.2rem;
+      margin-bottom: 2rem;
       position: relative;
-      z-index: 2;
+      animation: slideIn 0.6s ease-out 0.2s both;
     }
 
     .logo-container {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 80px;
-      height: 80px;
-      background: var(--ubc-gradient);
-      border-radius: 14px;
-      margin: 0 auto 0.8rem;
-      position: relative;
-      box-shadow: 0 4px 12px rgba(0,82,204,0.2);
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      transition: transform 0.3s ease;
+      animation: gentlePulse 3s ease-in-out infinite;
     }
 
-    .logo-container::before {
-      display: none;
+    .logo-container:hover {
+      transform: scale(1.1) rotate(5deg);
     }
 
     .logo-img {
-      width: 55px;
-      height: 55px;
+      width: 80px;
+      height: 80px;
       object-fit: contain;
       filter: brightness(0) invert(1);
-    }
-
-    .logo-img:hover {
-      transform: scale(1.05);
-    }
-
-    .logo-icon {
-      font-size: 2rem;
-      color: white;
+      animation: gentlePulse 2s ease-in-out infinite;
     }
 
     .brand-text {
-      color: var(--ubc-primary);
-      font-size: 1.6rem;
-      font-weight: 700;
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 800;
       margin: 0;
-      letter-spacing: -0.5px;
+      letter-spacing: -1px;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .brand-subtitle {
-      color: var(--ubc-secondary);
-      font-size: 0.8rem;
-      margin: 0.2rem 0 0;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1rem;
+      margin: 0.5rem 0 0;
       font-weight: 500;
     }
 
-    /* ======= FORMULARIO AVANZADO ======= */
+    .welcome-message {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.95rem;
+      margin-top: 2rem;
+      line-height: 1.6;
+    }
+
+    /* ======= FORMULARIO PROFESIONAL AAA ======= */
     .form-group {
-      margin-bottom: 1rem;
+      margin-bottom: 1.2rem;
     }
 
     .form-label {
-      color: var(--ubc-primary);
+      color: var(--tec-primary);
       font-weight: 600;
-      font-size: 0.85rem;
-      margin-bottom: 0.4rem;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.5rem;
     }
 
     .form-control {
-      background: #ffffff;
-      border: 2px solid #E5E7EB;
-      border-radius: 10px;
-      color: var(--ubc-text);
-      font-size: 0.9rem;
-      padding: 0.7rem 0.9rem;
+      background: var(--tec-white);
+      border: 2px solid var(--tec-border);
+      border-radius: 8px;
+      color: var(--tec-text);
+      font-size: 0.95rem;
+      padding: 0.75rem 1rem;
       transition: all 0.3s ease;
       width: 100%;
     }
 
     .form-control:focus {
-      background: #ffffff;
-      border-color: var(--ubc-secondary);
-      box-shadow: 0 0 0 3px rgba(0,101,255,0.1);
-      color: var(--ubc-text);
+      background: var(--tec-white);
+      border-color: var(--tec-secondary);
+      box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.1);
+      color: var(--tec-text);
       outline: none;
     }
 
     .form-control::placeholder {
-      color: #9CA3AF;
+      color: var(--tec-text-secondary);
+      opacity: 0.6;
     }
 
-    /* ======= BOTÓN ESPECTACULAR ======= */
+    /* ======= BOTÓN PRIMARIO TEC - AAA COMPLIANT ======= */
     .btn-login {
-      background: var(--ubc-gradient);
+      background: var(--tec-gradient);
       border: none;
-      color: white;
+      color: var(--tec-white);
       font-weight: 600;
-      font-size: 0.95rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: 10px;
+      font-size: 1rem;
+      padding: 0.85rem 1.5rem;
+      border-radius: 8px;
       width: 100%;
-      margin-top: 0.8rem;
+      margin-top: 1rem;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0,82,204,0.2);
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
     }
 
     .btn-login:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,82,204,0.3);
-      background: linear-gradient(135deg, #0065FF 0%, #2684FF 100%);
+      box-shadow: var(--shadow-lg);
+      background: linear-gradient(135deg, #004A94 0%, #0065FF 100%);
     }
 
     .btn-login:active {
       transform: translateY(0);
+      box-shadow: var(--shadow-sm);
     }
 
-    .btn-login .btn-text {
-      position: relative;
-      z-index: 2;
-    }
-
-    .btn-login::before {
-      display: none;
+    .btn-login:focus-visible {
+      outline: 3px solid var(--tec-accent);
+      outline-offset: 2px;
     }
 
     /* ======= LOADING STATE ======= */
@@ -304,67 +315,78 @@
       to { transform: rotate(360deg); }
     }
 
-    /* ======= LINKS ADICIONALES ======= */
+    /* ======= LINKS ADICIONALES - AAA ======= */
     .additional-links {
       text-align: center;
-      margin-top: 1rem;
+      margin-top: 1.2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--tec-border);
     }
 
     .additional-links a {
-      color: var(--ubc-secondary);
+      color: var(--tec-secondary);
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       transition: all 0.3s ease;
       font-weight: 500;
     }
 
     .additional-links a:hover {
-      color: var(--ubc-primary);
+      color: var(--tec-primary);
       text-decoration: underline;
+    }
+
+    .additional-links a:focus-visible {
+      outline: 2px solid var(--tec-accent);
+      outline-offset: 2px;
+      border-radius: 4px;
     }
 
     /* ======= RESPONSIVE DESIGN ======= */
     @media (max-width: 768px) {
       .login-card {
-        padding: 1.5rem;
-        margin: 0.5rem;
-        max-width: 400px;
+        grid-template-columns: 1fr;
+        max-width: 440px;
+        min-height: auto;
+      }
+
+      .login-card::before {
+        width: 100%;
+        height: 200px;
+      }
+
+      .login-left-panel {
+        padding: 2rem 1.5rem;
+      }
+
+      .login-right-panel {
+        padding: 2rem 1.5rem;
       }
 
       .logo-container {
-        width: 50px;
-        height: 50px;
+        width: 90px;
+        height: 90px;
       }
 
       .logo-img {
-        width: 35px;
-        height: 35px;
+        width: 60px;
+        height: 60px;
       }
 
       .brand-text {
-        font-size: 1.4rem;
-      }
-
-      .login-title {
-        font-size: 1.2rem;
+        font-size: 2rem;
       }
 
       .form-control {
-        font-size: 0.85rem;
-        padding: 0.65rem 0.8rem;
+        font-size: 0.9rem;
       }
 
       .btn-login {
-        font-size: 0.9rem;
-        padding: 0.7rem 1.2rem;
-      }
-
-      .form-label {
-        font-size: 0.8rem;
+        font-size: 0.95rem;
       }
     }
 
-    /* ======= ACCESIBILIDAD ======= */
+    /* ======= ACCESIBILIDAD AAA ======= */
     .visually-hidden {
       position: absolute !important;
       width: 1px !important;
@@ -376,40 +398,46 @@
       border: 0 !important;
     }
 
-    /* ======= ESTADOS DE VALIDACIÓN ======= */
+    /* Mejor contraste para focus */
+    *:focus-visible {
+      outline: 3px solid var(--tec-accent);
+      outline-offset: 2px;
+    }
+
+    /* ======= ESTADOS DE VALIDACIÓN AAA ======= */
     .form-control.is-invalid {
-      border-color: #EF4444;
-      background: #FEE2E2;
+      border-color: #C81E1E;
+      background: #FEF2F2;
     }
 
     .invalid-feedback {
-      color: #DC2626;
-      font-weight: 500;
-      margin-top: 0.4rem;
+      color: #991B1B;
+      font-weight: 600;
+      margin-top: 0.5rem;
       display: block;
       width: 100%;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
     }
 
     .form-text {
-      margin-top: 0.25rem;
-      font-size: 0.75rem;
-      color: #6B7280;
+      margin-top: 0.3rem;
+      font-size: 0.8rem;
+      color: var(--tec-text-secondary);
     }
 
-    /* ======= REGISTRO LINK ======= */
+    /* ======= REGISTRO LINK - AAA ======= */
     .register-section {
       text-align: center;
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid #E5E7EB;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--tec-border);
     }
 
     .register-link {
-      color: var(--ubc-secondary);
+      color: var(--tec-secondary);
       text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 500;
+      font-size: 0.9rem;
+      font-weight: 600;
       transition: all 0.3s ease;
       display: inline-flex;
       align-items: center;
@@ -417,39 +445,46 @@
     }
 
     .register-link:hover {
-      color: var(--ubc-primary);
+      color: var(--tec-primary);
       text-decoration: underline;
+    }
+
+    .register-link:focus-visible {
+      outline: 2px solid var(--tec-accent);
+      outline-offset: 2px;
+      border-radius: 4px;
     }
   </style>
 </head>
 
 <body>
-  <!-- Elementos flotantes decorativos -->
-  <div class="floating-elements">
-    <div class="floating-element"></div>
-    <div class="floating-element"></div>
-    <div class="floating-element"></div>
-    <div class="floating-element"></div>
-  </div>
-
   <main id="main-login" class="login-container" tabindex="-1">
     <div class="login-card">
-      <!-- Logo Section -->
-      <div class="logo-section">
-        <div class="logo-container">
-          <img src="../images/charlieLogo.png" alt="ubicaTEC Logo" class="logo-img">
+      <!-- Panel Izquierdo: Logo y Bienvenida -->
+      <div class="login-left-panel">
+        <div class="logo-section">
+          <div class="logo-container">
+            <img src="../images/charlieLogo.png" alt="ubicaTEC Logo" class="logo-img">
+          </div>
+          <h1 class="brand-text">ubicaTEC</h1>
+          <p class="brand-subtitle">Portal de Eventos del TEC</p>
         </div>
-        <h1 class="brand-text">ubicaTEC</h1>
-        <p class="brand-subtitle">Portal de Eventos</p>
+        <p class="welcome-message">
+          <strong>¡Bienvenido!</strong><br>
+          Conecta con la comunidad TEC.<br>
+          Descubre eventos, talleres y actividades increíbles. 🎉
+        </p>
       </div>
 
-      <!-- Dynamic Title -->
-      <div id="title-section">
-        <h2 id="login-title" class="h4 fw-bold mb-2 text-center" style="color: var(--ubc-primary);">Iniciar Sesión</h2>
-        <p id="login-subtitle" class="text-muted text-center mb-3" style="font-size: 0.9rem;">Ingresa tus credenciales para continuar</p>
-      </div>
+      <!-- Panel Derecho: Formulario -->
+      <div class="login-right-panel">
+        <!-- Dynamic Title -->
+        <div id="title-section">
+          <h2 id="login-title" class="h4 fw-bold mb-2" style="color: var(--tec-primary);">Iniciar Sesión</h2>
+          <p id="login-subtitle" class="mb-4" style="font-size: 0.9rem; color: var(--tec-text-secondary);">Ingresa tus credenciales para continuar</p>
+        </div>
 
-      <!-- Form -->
+        <!-- Form -->
       <form id="form-login" class="needs-validation" novalidate>
         <div class="form-group">
           <label for="correo" class="form-label">
@@ -512,21 +547,22 @@
             ¿Olvidaste tu contraseña?
           </a>
           <a href="#">
-            <i class="bi bi-person-plus me-1"></i>
+            <i class="bi bi-info-circle me-1"></i>
             Ayuda
           </a>
         </div>
 
         <div class="register-section">
-          <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 0.5rem; font-size: 0.9rem;">
+          <p style="color: var(--tec-text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem;">
             ¿No tienes cuenta aún?
           </p>
-          <a href="#" class="register-link">
+          <a href="registroUsuario.html" class="register-link">
             <i class="bi bi-person-plus-fill"></i>
             Registrarse aquí
           </a>
         </div>
       </form>
+      </div>
     </div>
   </main>
 

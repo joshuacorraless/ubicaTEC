@@ -1,9 +1,9 @@
-/* ======= CHATBOT STYLES - AZUL Y BLANCO ======= */
+/* ======= CHATBOT STYLES - TEC INSTITUCIONAL ======= */
 :root {
-  --ubc-primary: #0052CC;
-  --ubc-secondary: #0065FF;
-  --ubc-action: #2684FF;
-  --ubc-gradient: linear-gradient(135deg, #0052CC 0%, #0065FF 50%, #2684FF 100%);
+  --tec-primary: #003C7D;
+  --tec-secondary: #0052CC;
+  --tec-accent: #2684FF;
+  --tec-gradient: linear-gradient(135deg, #003C7D 0%, #0052CC 100%);
 }
 
 .chatbot-container {

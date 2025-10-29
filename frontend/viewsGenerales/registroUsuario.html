@@ -11,49 +11,41 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
 
   <style>
-    /* ======= PALETA ubicaTEC - AZUL Y BLANCO ======= */
+    /* ======= PALETA TEC INSTITUCIONAL - AAA COMPLIANT ======= */
     :root {
-      --ubc-primary: #0052CC;     
-      --ubc-secondary: #0065FF;   
-      --ubc-action: #2684FF;      
-      --ubc-on-primary: #ffffff;
-      --ubc-surface: #f6f9fc;
-      --ubc-text: #1d1f21;
-      --ubc-gradient: linear-gradient(135deg, #0052CC 0%, #0065FF 50%, #2684FF 100%);
-      --ubc-gradient-radial: radial-gradient(ellipse at top, #0052CC, #0065FF, #2684FF);
-      --ubc-gradient-light: linear-gradient(135deg, rgba(0,82,204,0.1) 0%, rgba(0,101,255,0.05) 100%);
-      --shadow-soft: 0 10px 40px rgba(0,82,204,0.15);
-      --shadow-hover: 0 15px 50px rgba(0,82,204,0.25);
-      --border-radius: 16px;
+      --tec-primary: #003C7D;        /* Azul TEC oficial - contraste AAA */
+      --tec-secondary: #0052CC;      /* Azul intermedio */
+      --tec-accent: #2684FF;         /* Azul claro acentos */
+      --tec-white: #FFFFFF;
+      --tec-text: #1A1A1A;           /* Texto principal - contraste 16:1 */
+      --tec-text-secondary: #4A4A4A; /* Texto secundario - contraste 10:1 */
+      --tec-surface: #F8FAFB;        /* Fondo suave */
+      --tec-border: #E1E8ED;
+      --tec-gradient: linear-gradient(135deg, #003C7D 0%, #0052CC 100%);
+      --tec-gradient-subtle: linear-gradient(180deg, #F8FAFB 0%, #FFFFFF 100%);
+      --shadow-sm: 0 2px 8px rgba(0, 60, 125, 0.08);
+      --shadow-md: 0 4px 16px rgba(0, 60, 125, 0.12);
+      --shadow-lg: 0 8px 24px rgba(0, 60, 125, 0.16);
+      --border-radius: 12px;
     }
 
-    /* ======= ANIMACIONES AVANZADAS ======= */
-    @keyframes floating {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      33% { transform: translateY(-10px) rotate(1deg); }
-      66% { transform: translateY(5px) rotate(-1deg); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.8; }
-    }
-
-    @keyframes slideInUp {
-      from { opacity: 0; transform: translateY(50px); }
+    /* ======= ANIMACIONES PROFESIONALES Y SUTILES ======= */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes shimmer {
-      0% { background-position: -200px 0; }
-      100% { background-position: calc(200px + 100%) 0; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
-    @keyframes ripple {
-      to { transform: scale(4); opacity: 0; }
+    @keyframes gentlePulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
     }
 
-    /* ======= BODY Y LAYOUT PRINCIPAL ======= */
+    /* ======= BODY Y LAYOUT PRINCIPAL - DISEÑO ALEGRE CON IMAGEN ======= */
     * { 
       scroll-behavior: smooth; 
       box-sizing: border-box;
@@ -62,60 +54,56 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: var(--ubc-gradient-radial);
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, rgba(0, 60, 125, 0.95) 0%, rgba(0, 82, 204, 0.9) 100%), 
+                  url('../images/charlieLogo.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--tec-text);
       overflow-x: hidden;
       position: relative;
     }
 
-    /* ======= ELEMENTOS DECORATIVOS FLOTANTES ======= */
-    .floating-elements {
-      position: absolute;
+    /* ======= PARTÍCULAS ANIMADAS DE EVENTOS ======= */
+    body::before {
+      content: '🎉 🎊 🎈 ✨ 🎯 🎪 🎭 🎨 🎵 🎸 🎤 📅 🎓 🏆 🌟 💫';
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
+      font-size: 2rem;
+      opacity: 0.08;
       pointer-events: none;
-      z-index: 1;
+      z-index: 0;
+      animation: float 30s linear infinite;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
-    .floating-element {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      animation: floating 6s ease-in-out infinite;
+    @keyframes float {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100%); }
     }
 
-    .floating-element:nth-child(1) {
-      width: 80px;
-      height: 80px;
-      top: 10%;
-      left: 10%;
-      animation-delay: -2s;
+    /* ======= BARRA SUPERIOR INSTITUCIONAL TEC ======= */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #FFD700, #FFA500, #FF6B6B, #4ECDC4, #2684FF, #003C7D);
+      z-index: 9999;
+      animation: rainbowSlide 3s linear infinite;
+      background-size: 200% 100%;
     }
 
-    .floating-element:nth-child(2) {
-      width: 120px;
-      height: 120px;
-      top: 20%;
-      right: 15%;
-      animation-delay: -4s;
-    }
-
-    .floating-element:nth-child(3) {
-      width: 60px;
-      height: 60px;
-      bottom: 20%;
-      left: 20%;
-      animation-delay: -1s;
-    }
-
-    .floating-element:nth-child(4) {
-      width: 100px;
-      height: 100px;
-      bottom: 15%;
-      right: 10%;
-      animation-delay: -3s;
+    @keyframes rainbowSlide {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
     }
 
     /* ======= CONTAINER PRINCIPAL ======= */
@@ -129,19 +117,18 @@
       z-index: 10;
     }
 
-    /* ======= CARD DE REGISTRO - FORMATO CUADRADO CON 2 COLUMNAS ======= */
+    /* ======= CARD DE REGISTRO - DISEÑO ALEGRE Y AMPLIO ======= */
     .register-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      border: 2px solid rgba(255, 255, 255, 0.8);
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow-soft);
-      padding: 1.8rem 2rem;
+      background: var(--tec-white);
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 3rem 3.5rem;
       width: 100%;
-      max-width: 700px;
-      animation: slideInUp 0.8s ease-out;
+      max-width: 900px;
+      animation: fadeInUp 0.8s ease-out;
       position: relative;
-      overflow: visible;
+      overflow: hidden;
     }
 
     .register-card::before {
@@ -150,29 +137,34 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 4px;
-      background: var(--ubc-gradient);
-      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      height: 6px;
+      background: linear-gradient(90deg, #FFD700, #FFA500, #FF6B6B, #4ECDC4, #2684FF, #003C7D);
+      animation: rainbowSlide 3s linear infinite;
+      background-size: 200% 100%;
     }
 
     /* ======= GRID DE 2 COLUMNAS ======= */
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+      gap: 1.2rem;
     }
 
     @media (max-width: 768px) {
       .form-row {
         grid-template-columns: 1fr;
-        gap: 0.8rem;
+        gap: 1rem;
+      }
+      
+      .register-card {
+        padding: 2.5rem 2rem;
       }
     }
 
-    /* ======= LOGO SECTION - COMPACTO ======= */
+    /* ======= LOGO SECTION - ALEGRE Y VIBRANTE ======= */
     .logo-section {
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       position: relative;
       z-index: 2;
     }
@@ -181,40 +173,38 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 70px;
-      height: 70px;
-      background: var(--ubc-gradient);
-      border-radius: 12px;
-      margin: 0 auto 0.6rem;
+      width: 90px;
+      height: 90px;
+      background: var(--tec-gradient);
+      border-radius: 50%;
+      margin: 0 auto 1rem;
       position: relative;
-      box-shadow: 0 4px 12px rgba(0,82,204,0.2);
+      box-shadow: 0 8px 24px rgba(0, 82, 204, 0.3);
+      transition: transform 0.3s ease;
+      animation: gentlePulse 3s ease-in-out infinite;
     }
 
-    .logo-container::before {
-      display: none;
+    .logo-container:hover {
+      transform: scale(1.1) rotate(5deg);
     }
 
     .logo-img {
-      width: 48px;
-      height: 48px;
+      width: 60px;
+      height: 60px;
       object-fit: contain;
       filter: brightness(0) invert(1);
     }
 
-    .logo-img:hover {
-      transform: scale(1.05);
-    }
-
     .brand-text {
-      color: var(--ubc-primary);
-      font-size: 1.5rem;
-      font-weight: 700;
+      color: var(--tec-primary);
+      font-size: 2rem;
+      font-weight: 800;
       margin: 0;
       letter-spacing: -0.5px;
     }
 
     .brand-subtitle {
-      color: var(--ubc-secondary);
+      color: var(--tec-secondary);
       font-size: 0.75rem;
       margin: 0.2rem 0 0;
       font-weight: 500;
@@ -226,7 +216,7 @@
     }
 
     .form-label {
-      color: var(--ubc-primary);
+      color: var(--tec-primary);
       font-weight: 600;
       font-size: 0.8rem;
       margin-bottom: 0.3rem;
@@ -239,7 +229,7 @@
       background: #ffffff;
       border: 2px solid #E5E7EB;
       border-radius: 8px;
-      color: var(--ubc-text);
+      color: var(--tec-text);
       font-size: 0.85rem;
       padding: 0.6rem 0.8rem;
       transition: all 0.3s ease;
@@ -248,9 +238,9 @@
 
     .form-control:focus, .form-select:focus {
       background: #ffffff;
-      border-color: var(--ubc-secondary);
+      border-color: var(--tec-secondary);
       box-shadow: 0 0 0 3px rgba(0,101,255,0.1);
-      color: var(--ubc-text);
+      color: var(--tec-text);
       outline: none;
     }
 
@@ -260,7 +250,7 @@
 
     .form-select option {
       background: white;
-      color: var(--ubc-text);
+      color: var(--tec-text);
     }
 
     /* ======= CAMPOS CONDICIONALES ======= */
@@ -283,7 +273,7 @@
 
     /* ======= BOTÓN ESPECTACULAR ======= */
     .btn-register {
-      background: var(--ubc-gradient);
+      background: var(--tec-gradient);
       border: none;
       color: white;
       font-weight: 600;
@@ -366,7 +356,7 @@
     }
 
     .login-link {
-      color: var(--ubc-secondary);
+      color: var(--tec-secondary);
       text-decoration: none;
       font-size: 0.8rem;
       font-weight: 500;
@@ -377,7 +367,7 @@
     }
 
     .login-link:hover {
-      color: var(--ubc-primary);
+      color: var(--tec-primary);
       text-decoration: underline;
     }
 
@@ -439,14 +429,6 @@
 </head>
 
 <body>
-  <!-- Elementos flotantes decorativos -->
-  <div class="floating-elements">
-    <div class="floating-element"></div>
-    <div class="floating-element"></div>
-    <div class="floating-element"></div>
-    <div class="floating-element"></div>
-  </div>
-
   <main id="main-register" class="register-container" tabindex="-1">
     <div class="register-card">
       <!-- Logo Section -->
@@ -460,7 +442,7 @@
 
       <!-- Title -->
       <div id="title-section">
-        <h2 class="h4 fw-bold mb-2 text-center" style="color: var(--ubc-primary);">Registro de Usuario</h2>
+        <h2 class="h4 fw-bold mb-2 text-center" style="color: var(--tec-primary);">Registro de Usuario</h2>
         <p class="text-muted text-center mb-3" style="font-size: 0.9rem;">Complete los campos para crear su cuenta</p>
       </div>
 
