@@ -385,7 +385,7 @@
   <!-- NAV SUPERIOR -->
   <header class="navbar navbar-expand-lg navbar-dark navbar-ubc sticky-top" role="banner">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="#" aria-label="Inicio ubicaTEC">
+  <a class="navbar-brand fw-bold" href="eventos.html" aria-label="Inicio ubicaTEC">
         <i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
@@ -393,7 +393,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="d-none d-lg-flex gap-2">
-        <a class="btn btn-outline-light btn-sm" href="#"><i class="bi bi-life-preserver me-1"></i>Ayuda</a>
+  <a class="btn btn-outline-light btn-sm" href="../viewsChatbot/chatbot.html"><i class="bi bi-life-preserver me-1"></i>Ayuda</a>
       </div>
     </div>
   </header>
@@ -416,7 +416,7 @@
               </a>
             </li>
             <li class="nav-item mt-2">
-              <a class="nav-link d-flex align-items-center" href="#">
+              <a class="nav-link d-flex align-items-center" href="../viewsEstudiante/viewPerfilEstudiante.html">
                 <i class="bi bi-person-gear me-2"></i> Configuración de perfil
               </a>
             </li>
@@ -435,7 +435,7 @@
             <ul class="nav nav-pills flex-column gap-1">
               <li class="nav-item"><a class="nav-link" href="eventos.html"><i class="bi bi-speedometer2 me-2"></i> Panel de eventos</a></li>
               <li class="nav-item"><a class="nav-link" href="../viewsAdministrador/listarEventos.html"><i class="bi bi-calendar-event me-2"></i> Gestión de eventos</a></li>
-              <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
+              <li class="nav-item"><a class="nav-link" href="../viewsEstudiante/viewPerfilEstudiante.html"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
             </ul>
           </nav>
         </div>
@@ -599,8 +599,7 @@
 
               <!-- Botón de reserva -->
               <button type="button" class="btn btn-primary btn-lg w-100 mb-3" id="btn-reservar">
-                <i class="bi bi-bookmark-plus me-2"></i>
-                <span class="btn-text">Confirmar Reserva</span>
+                <span class="btn-text"><i class="bi bi-bookmark-plus me-2"></i>Confirmar Reserva</span>
               </button>
 
               <div class="text-center">
@@ -753,13 +752,8 @@
         // Simular proceso de reserva
         await simulateReservation();
         
-        // Éxito
+        // Éxito (mostrar feedback visual, sin navegación)
         showSuccess();
-        
-        // Redireccionar después de 3 segundos
-        setTimeout(() => {
-          window.location.href = 'eventos.html';
-        }, 3000);
         
       } catch (error) {
         showError(error.message);
@@ -798,9 +792,24 @@
       const btnText = btnReservar.querySelector('.btn-text');
       btnReservar.className = 'btn btn-success btn-lg w-100 mb-3';
       btnText.innerHTML = '<i class="bi bi-check-circle me-2"></i>¡Reserva confirmada!';
-      
-      announceToScreenReader('Reserva confirmada exitosamente. Redirigiendo al panel de eventos...');
-      
+
+      // Anunciar para lectores de pantalla (mensaje sin mencionar redirección)
+      announceToScreenReader('Reserva confirmada exitosamente. Se envió el correo de confirmación.');
+
+      // Mostrar toast visual indicando que se envió el correo
+      try {
+        const toastBody = document.getElementById('emailToastBody');
+        if (toastBody) toastBody.textContent = 'Correo de confirmación enviado correctamente.';
+        const toastEl = document.getElementById('emailToast');
+        if (toastEl && window.bootstrap && bootstrap.Toast) {
+          const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+          toast.show();
+        }
+      } catch (e) {
+        // No interrumpir por fallas visuales
+        console.warn('No se pudo mostrar el toast:', e);
+      }
+
       // Crear efecto de éxito
       createSuccessEffect();
     }
@@ -864,6 +873,18 @@
     `;
     document.head.appendChild(style);
   </script>
+
+  <!-- Toast container: aviso visual al confirmar reserva (solo visual) -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1200;">
+    <div id="emailToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true" data-bs-autohide="true" data-bs-delay="4000">
+      <div class="d-flex">
+        <div class="toast-body" id="emailToastBody">
+          Correo de confirmación enviado correctamente.
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
