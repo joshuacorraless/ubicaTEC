@@ -1,13 +1,21 @@
 
+//* en este archivo esta toda la logica backend para el login de usuario
 
+
+//* imports:
 import { getConnection } from "../db/connection.js";
 
+
+
+
+// funcion para login de usuario:
 export const loginUsuario = async (req, res) => {
     let connection;
     try {
         const { correo, contrasena } = req.body;
 
-    // Validar que se envíen los datos requeridos
+
+    // validar que se envíen los datos requeridos (campos no vacios)
     if (!correo || !contrasena) {
         return res.status(400).json({
         success: false,
@@ -15,21 +23,21 @@ export const loginUsuario = async (req, res) => {
         });
     }
 
+
     // conexión a la base de datos
     connection = await getConnection();
-
     // llamar al stored procedure
     const [rows] = await connection.query(
         "CALL sp_verificar_login(?, ?, @outResultCode)",
         [correo, contrasena]
     );
-
-    // obtener el código de resultado
+    // obtener el código de resultado (1=usuario no existe, 2=contraseña incorrecta, 0=ok)
     const [[{ outResultCode }]] = await connection.query(
         "SELECT @outResultCode as outResultCode"
     );
 
-    // validar el resultado del SP
+    
+    // validar el resultado del sp
     if (outResultCode === 1) {
         return res.status(401).json({
             success: false,
