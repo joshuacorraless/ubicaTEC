@@ -36,7 +36,7 @@ export const loginUsuario = async (req, res) => {
         "SELECT @outResultCode as outResultCode"
     );
 
-    
+
     // validar el resultado del sp
     if (outResultCode === 1) {
         return res.status(401).json({
@@ -61,6 +61,7 @@ export const loginUsuario = async (req, res) => {
         data: {
             id_usuario: usuario.id_usuario,
             tipo_rol: usuario.tipo_rol,
+            carrera: usuario.carrera || null, // null para administradores y visitantes
         },
     });
     } catch (error) {

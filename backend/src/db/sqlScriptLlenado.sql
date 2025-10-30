@@ -14,7 +14,7 @@ INSERT INTO Usuarios (nombre, apellido, correo, usuario, contrasena, id_rol, car
 ('Victor', 'Garro Abarca', 'v.garro.1@tec.ac.cr', 'victorabark', 'Ubica,1234', 1, NULL, 'ADMIN-2024-001'),
 ('Mariel', 'Abarca Marín', 'marielmarin@gmail.com', 'marielmarin', 'Ubica,1234', 3, NULL, NULL);
 
-INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asistencia, precio, acceso, imagen_url, alt_imagen, estado) VALUES
+INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asistencia, precio, acceso, carrera, imagen_url, alt_imagen, estado) VALUES
 (
   'Conferencia de Tecnología e Innovación',
   'Una conferencia sobre las últimas tendencias en inteligencia artificial, ciberseguridad y desarrollo de software, organizada por la Escuela de Ingeniería en Computación.',
@@ -25,6 +25,7 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   50,
   0,
   'todos',
+  'Ingeniería en Computación',
   '../images/auditorioD3.webp',
   'Conferencia de tecnología en el Auditorio D3',
   'disponible'
@@ -39,6 +40,7 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   150,
   0,
   'todos',
+  'Ingeniería en Computación',
   '../images/learningCommons.jpg',
   'Taller de desarrollo web en Learning Commons',
   'agotado'
@@ -53,6 +55,7 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   11,
   0,
   'tec',
+  'Ingeniería en Computación',
   '../images/laboratorioComputacion.jpg',
   'Hackathon en laboratorio de computación',
   'disponible'
@@ -67,6 +70,7 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   25,
   0,
   'todos',
+  NULL,
   '../images/restauranteInstitucional.webp',
   'Recital musical en restaurante institucional',
   'disponible'
@@ -81,6 +85,7 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   45,
   0,
   'todos',
+  NULL,
   '../images/auditorioD3.webp',
   'Seminario de investigación en Auditorio D3',
   'disponible'
@@ -95,6 +100,7 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   78,
   5000,
   'todos',
+  NULL,
   '../images/restauranteInstitucional.webp',
   'Festival gastronómico en restaurante institucional',
   'disponible'

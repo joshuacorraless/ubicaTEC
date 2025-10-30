@@ -395,14 +395,14 @@
       <!-- SIDEBAR DESKTOP -->
       <aside class="col-md-3 col-xl-2 d-none d-md-block border-end sidebar" aria-label="Navegación principal">
         <nav class="py-4">
-          <div class="px-3 text-uppercase small section-label mb-2">Administrador</div>
+          <div id="role-label" class="px-3 text-uppercase small section-label mb-2">Administrador</div>
           <ul class="nav nav-pills flex-column gap-1 px-2">
             <li class="nav-item">
               <a class="nav-link active d-flex align-items-center" href="eventos.html">
                 <i class="bi bi-speedometer2 me-2"></i> Panel de eventos
               </a>
             </li>
-            <li class="nav-item">
+            <li id="gestion-eventos-item" class="nav-item">
               <a class="nav-link d-flex align-items-center" href="../viewsAdministrador/listarEventos.html">
                 <i class="bi bi-calendar-event me-2"></i> Gestión de eventos
               </a>
@@ -424,9 +424,9 @@
         </div>
         <div class="offcanvas-body">
           <nav aria-label="Navegación móvil">
-            <ul class="nav nav-pills flex-column gap-1">
+            <ul id="mobile-nav" class="nav nav-pills flex-column gap-1">
               <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-speedometer2 me-2"></i> Panel de eventos</a></li>
-              <li class="nav-item"><a class="nav-link" href="../viewsAdministrador/listarEventos.html"><i class="bi bi-calendar-event me-2"></i> Gestión de eventos</a></li>
+              <li id="gestion-eventos-mobile" class="nav-item"><a class="nav-link" href="../viewsAdministrador/listarEventos.html"><i class="bi bi-calendar-event me-2"></i> Gestión de eventos</a></li>
               <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
             </ul>
           </nav>
@@ -624,11 +624,16 @@
       // Simular carga
       await new Promise(resolve => setTimeout(resolve, 800));
 
-      // Filtrar según usuario
-      if (tipo === "visitante") {
-        eventosFiltrados = eventos.filter(e => e.acceso === "todos");
+      // Filtrar eventos según el rol del usuario (usando auth.js)
+      if (typeof window.filtrarEventosSegunRol === 'function') {
+        eventosFiltrados = window.filtrarEventosSegunRol(eventos);
       } else {
-        eventosFiltrados = eventos; // estudiantes y administradores ven todos
+        // Fallback al código anterior
+        if (tipo === "visitante") {
+          eventosFiltrados = eventos.filter(e => e.acceso === "todos");
+        } else {
+          eventosFiltrados = eventos;
+        }
       }
 
       eventosActuales = [...eventosFiltrados];
@@ -868,6 +873,9 @@
     // Funciones de utilidad
     window.limpiarFiltros = limpiarFiltros;
   </script>
+
+  <!-- Sistema de Autorización -->
+  <script src="auth.js"></script>
 
   <!-- Universal Chatbot Integration -->
   <link rel="stylesheet" href="../viewsChatbot/chatbot.css">

@@ -37,8 +37,8 @@ BEGIN
     ELSE
         SET outResultCode = 0; -- Login exitoso
         
-        -- Retornar ID del usuario y tipo de rol
-        SELECT u.id_usuario, r.tipo_rol
+        -- Retornar ID del usuario, tipo de rol y carrera
+        SELECT u.id_usuario, r.tipo_rol, u.carrera
         FROM Usuarios u
         INNER JOIN Roles r ON u.id_rol = r.id_rol
         WHERE u.correo = inCorreo
