@@ -1,11 +1,11 @@
-//* en este archivo ocurre la restructuracion del panel de eventos egun el rol del usuario
+//* en este archivo ocurre la reestructuración del panel de eventos según el rol del usuario
 
 // Verificar autenticación y configurar UI según el rol
 document.addEventListener('DOMContentLoaded', () => {
     // Obtener datos de sessionStorage
     const tipo_rol = sessionStorage.getItem('tipo_rol');
     const id_usuario = sessionStorage.getItem('id_usuario');
-    const carrera = sessionStorage.getItem('carrera');
+    const escuela = sessionStorage.getItem('escuela');
 
     // Si no hay sesión, redirigir a login
     if (!tipo_rol || !id_usuario) {
@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Configurar UI según el rol
-    configurarUISegunRol(tipo_rol, carrera);
+    configurarUISegunRol(tipo_rol, escuela);
 });
 
-function configurarUISegunRol(tipo_rol, carrera) {
+function configurarUISegunRol(tipo_rol, escuela) {
     const roleLabel = document.getElementById('role-label');
     const gestionEventosItem = document.getElementById('gestion-eventos-item');
     const gestionEventosMobile = document.getElementById('gestion-eventos-mobile');
@@ -28,13 +28,13 @@ function configurarUISegunRol(tipo_rol, carrera) {
 
     if (rol === 'administrador') {
         // ADMINISTRADOR: Ver todo, sin cambios
-        roleLabel.textContent = 'Administrador';
+        roleLabel.textContent = 'ADMINISTRADOR';
         // Gestión de eventos visible (ya está por defecto)
         // Filtro de acceso visible (ya está por defecto)
         
     } else if (rol === 'estudiante') {
         // ESTUDIANTE: Sin gestión de eventos, sin filtro de acceso
-        roleLabel.textContent = 'Estudiante';
+        roleLabel.textContent = 'ESTUDIANTE';
         
         // Ocultar gestión de eventos
         if (gestionEventosItem) gestionEventosItem.style.display = 'none';
@@ -46,12 +46,12 @@ function configurarUISegunRol(tipo_rol, carrera) {
             if (filtroAccesoContainer) filtroAccesoContainer.style.display = 'none';
         }
         
-        // Guardar carrera en variable global para filtrado
-        window.carreraEstudiante = carrera;
+        // Guardar escuela en variable global para filtrado
+        window.escuelaEstudiante = escuela;
         
     } else if (rol === 'visitante') {
         // VISITANTE: Sin gestión de eventos, sin filtro de acceso
-        roleLabel.textContent = 'Visitante';
+        roleLabel.textContent = 'VISITANTE';
         
         // Ocultar gestión de eventos
         if (gestionEventosItem) gestionEventosItem.style.display = 'none';
@@ -71,7 +71,7 @@ function configurarUISegunRol(tipo_rol, carrera) {
 // Función para filtrar eventos según el rol
 function filtrarEventosSegunRol(eventos) {
     const tipo_rol = sessionStorage.getItem('tipo_rol');
-    const carrera = sessionStorage.getItem('carrera');
+    const escuela = sessionStorage.getItem('escuela');
     const rol = tipo_rol ? tipo_rol.toLowerCase() : '';
 
     if (rol === 'administrador') {
@@ -79,11 +79,16 @@ function filtrarEventosSegunRol(eventos) {
         return eventos;
         
     } else if (rol === 'estudiante') {
-        // Estudiantes solo ven eventos de su carrera
+        // Estudiantes solo ven eventos de su escuela o eventos para todas las escuelas
         return eventos.filter(evento => {
-            // Si el evento tiene carrera asignada, debe coincidir con la del estudiante
-            // Si no tiene carrera (evento general), también se muestra
-            return !evento.carrera || evento.carrera === carrera;
+            // Si el evento tiene escuela asignada, debe coincidir con la del estudiante
+            // Si no tiene escuela (evento general para todas), también se muestra
+            // Si evento.escuelas es un array, verificar si incluye la escuela del estudiante
+            if (Array.isArray(evento.escuelas)) {
+                return evento.escuelas.length === 0 || evento.escuelas.includes(escuela);
+            }
+            // Compatibilidad con campo único "escuela"
+            return !evento.escuela || evento.escuela === escuela || evento.escuela === 'Todas';
         });
         
     } else if (rol === 'visitante') {

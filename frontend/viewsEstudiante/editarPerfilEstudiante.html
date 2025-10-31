@@ -378,20 +378,18 @@
                     <div class="invalid-feedback">Ingresa un número de carné válido (10 dígitos).</div>
                   </div>
 
-                  <!-- Carrera -->
-                  <div class="mb-3" id="campo-carrera">
-                    <label for="carrera" class="form-label">Carrera <span aria-hidden="true">*</span></label>
-                    <select id="carrera" class="form-select" required aria-required="true">
-                      <option value="">Selecciona tu carrera</option>
-                      <option value="ing-computacion" selected>Ingeniería en Computación</option>
-                      <option value="ing-sistemas">Ingeniería en Sistemas</option>
-                      <option value="ing-electronica">Ingeniería Electrónica</option>
-                      <option value="ing-civil">Ingeniería Civil</option>
-                      <option value="ing-industrial">Ingeniería Industrial</option>
-                      <option value="administracion">Administración de Empresas</option>
-                      <option value="otra">Otra</option>
+                  <!-- Escuela -->
+                  <div class="mb-3" id="campo-escuela">
+                    <label for="escuela" class="form-label">Escuela <span aria-hidden="true">*</span></label>
+                    <select id="escuela" class="form-select" required aria-required="true">
+                      <option value="">Selecciona tu escuela</option>
+                      <option value="Escuela de Administración de Empresas">Escuela de Administración de Empresas</option>
+                      <option value="Escuela de Ingeniería Electrónica">Escuela de Ingeniería Electrónica</option>
+                      <option value="Escuela de Física">Escuela de Física</option>
+                      <option value="Escuela de Ingeniería en Computación" selected>Escuela de Ingeniería en Computación</option>
+                      <option value="Escuela de Ingeniería en Producción Industrial">Escuela de Ingeniería en Producción Industrial</option>
                     </select>
-                    <div class="invalid-feedback">Selecciona tu carrera.</div>
+                    <div class="invalid-feedback">Selecciona tu escuela.</div>
                   </div>
 
                   <!-- Año de ingreso -->
@@ -428,10 +426,10 @@
     const status = document.getElementById('live-status');
     const tipoUsuarioSelect = document.getElementById('tipo-usuario');
     const campoCarne = document.getElementById('campo-carne');
-    const campoCarrera = document.getElementById('campo-carrera');
+    const campoEscuela = document.getElementById('campo-escuela');
     const campoIngreso = document.getElementById('campo-ingreso');
     const carneInput = document.getElementById('numero-carne');
-    const carreraSelect = document.getElementById('carrera');
+    const escuelaSelect = document.getElementById('escuela');
     const ingresoInput = document.getElementById('ano-ingreso');
 
     // Inicialización
@@ -462,29 +460,29 @@
       if (tipo === 'estudiante' || tipo === 'profesor') {
         // Mostrar campos académicos
         campoCarne.style.display = 'block';
-        campoCarrera.style.display = 'block';
+        campoEscuela.style.display = 'block';
         campoIngreso.style.display = 'block';
         
         carneInput.required = true;
-        carreraSelect.required = true;
+        escuelaSelect.required = true;
         ingresoInput.required = true;
       } else if (tipo === 'admin') {
         // Mostrar solo carné para admin
         campoCarne.style.display = 'block';
-        campoCarrera.style.display = 'none';
+        campoEscuela.style.display = 'none';
         campoIngreso.style.display = 'none';
         
         carneInput.required = true;
-        carreraSelect.required = false;
+        escuelaSelect.required = false;
         ingresoInput.required = false;
       } else {
         // Ocultar todos los campos académicos para visitantes
         campoCarne.style.display = 'none';
-        campoCarrera.style.display = 'none';
+        campoEscuela.style.display = 'none';
         campoIngreso.style.display = 'none';
         
         carneInput.required = false;
-        carreraSelect.required = false;
+        escuelaSelect.required = false;
         ingresoInput.required = false;
       }
     }

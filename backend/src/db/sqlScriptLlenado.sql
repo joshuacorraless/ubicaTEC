@@ -1,3 +1,6 @@
+
+
+
 -- Poblado de Datos
 
 use ubicatec;
@@ -7,14 +10,23 @@ INSERT INTO Roles (tipo_rol) VALUES
 ('Estudiante'),
 ('Visitante');
 
-INSERT INTO Usuarios (nombre, apellido, correo, usuario, contrasena, id_rol, carrera, codigo_admin) VALUES
-('Carlos Andrés', 'Abarca Mora', 'c.abarca.1@estudiantec.cr', 'charlieabark', 'Ubica,1234', 2, 'Ingeniería en Computación', NULL),
-('Joshua', 'Corrales Retana', 'j.retana.1@estudiantec.cr', 'joshuacorrales_', 'Ubica,1234', 2, 'Ingeniería en Computación', NULL),
-('Dilan', 'Hernandez', 'd.hernandez.1@estudiantec.cr', '_dyyylannn', 'Ubica,1234', 2, 'Administración de Empresas', NULL),
-('Victor', 'Garro Abarca', 'v.garro.1@tec.ac.cr', 'victorabark', 'Ubica,1234', 1, NULL, 'ADMIN-2024-001'),
-('Mariel', 'Abarca Marín', 'marielmarin@gmail.com', 'marielmarin', 'Ubica,1234', 3, NULL, NULL);
+-- Insertar las escuelas del TEC
+INSERT INTO EscuelasTEC (nombre_escuela) VALUES 
+('Escuela de Administración de Empresas'),
+('Escuela de Ingeniería Electrónica'),
+('Escuela de Física'),
+('Escuela de Ingeniería en Computación'),
+('Escuela de Ingeniería en Producción Industrial'),
+('Todas');
 
-INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asistencia, precio, acceso, carrera, imagen_url, alt_imagen, estado) VALUES
+INSERT INTO Usuarios (nombre, apellido, correo, usuario, contrasena, id_rol, id_escuela, codigo_admin) VALUES
+('Carlos Andrés', 'Abarca Mora', 'c.abarca.1@estudiantec.cr', 'charlieabark', 'Ubica,1234', 2, 4, NULL), -- Ing. Computación
+('Joshua', 'Corrales Retana', 'j.retana.1@estudiantec.cr', 'joshuacorrales_', 'Ubica,1234', 2, 4, NULL), -- Ing. Computación
+('Dilan', 'Hernandez', 'd.hernandez.1@estudiantec.cr', '_dyyylannn', 'Ubica,1234', 2, 1, NULL), -- Administración
+('Victor', 'Garro Abarca', 'v.garro.1@tec.ac.cr', 'victorabark', 'Ubica,1234', 1, NULL, 'ADMIN-2024-001'), -- Admin
+('Mariel', 'Abarca Marín', 'marielmarin@gmail.com', 'marielmarin', 'Ubica,1234', 3, NULL, NULL); -- Visitante
+
+INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asistencia, precio, acceso, id_creador, imagen_url, alt_imagen, estado) VALUES
 (
   'Conferencia de Tecnología e Innovación',
   'Una conferencia sobre las últimas tendencias en inteligencia artificial, ciberseguridad y desarrollo de software, organizada por la Escuela de Ingeniería en Computación.',
@@ -25,7 +37,7 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   50,
   0,
   'todos',
-  'Ingeniería en Computación',
+  4, -- Creado por Victor (admin)
   '../images/auditorioD3.webp',
   'Conferencia de tecnología en el Auditorio D3',
   'disponible'
@@ -40,7 +52,7 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   150,
   0,
   'todos',
-  'Ingeniería en Computación',
+  4, -- Creado por Victor (admin)
   '../images/learningCommons.jpg',
   'Taller de desarrollo web en Learning Commons',
   'agotado'
@@ -54,8 +66,8 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   100,
   11,
   0,
-  'tec',
-  'Ingeniería en Computación',
+  'solo_tec',
+  4, -- Creado por Victor (admin)
   '../images/laboratorioComputacion.jpg',
   'Hackathon en laboratorio de computación',
   'disponible'
@@ -70,7 +82,7 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   25,
   0,
   'todos',
-  NULL,
+  4, -- Creado por Victor (admin)
   '../images/restauranteInstitucional.webp',
   'Recital musical en restaurante institucional',
   'disponible'
@@ -85,7 +97,7 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   45,
   0,
   'todos',
-  NULL,
+  4, -- Creado por Victor (admin)
   '../images/auditorioD3.webp',
   'Seminario de investigación en Auditorio D3',
   'disponible'
@@ -100,11 +112,27 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   78,
   5000,
   'todos',
-  NULL,
+  4, -- Creado por Victor (admin)
   '../images/restauranteInstitucional.webp',
   'Festival gastronómico en restaurante institucional',
   'disponible'
 );
+
+-- Asignar escuelas a los eventos
+INSERT INTO Eventos_Escuelas (id_evento, id_escuela) VALUES
+-- Evento 1: Conferencia de Tecnología - Solo Ing. Computación
+(1, 4),
+
+-- Evento 2: Taller Web - Solo Ing. Computación
+(2, 4),
+
+-- Evento 3: Hackathon - Ing. Computación e Ing. Electrónica
+(3, 4),
+(3, 2),
+
+-- Eventos 4, 5, 6: Sin registros = Para TODAS las escuelas
+-- (Recital, Seminario, Festival)
+;
 
 -- Insertar algunas reservas de ejemplo
 INSERT INTO Reservas (id_usuario, id_evento, cantidad, metodo_pago, estado) VALUES

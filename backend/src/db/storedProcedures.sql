@@ -37,10 +37,11 @@ BEGIN
     ELSE
         SET outResultCode = 0; -- Login exitoso
         
-        -- Retornar ID del usuario, tipo de rol y carrera
-        SELECT u.id_usuario, r.tipo_rol, u.carrera
+        -- Retornar ID del usuario, tipo de rol y escuela
+        SELECT u.id_usuario, r.tipo_rol, e.nombre_escuela AS escuela
         FROM Usuarios u
         INNER JOIN Roles r ON u.id_rol = r.id_rol
+        LEFT JOIN EscuelasTEC e ON u.id_escuela = e.id_escuela
         WHERE u.correo = inCorreo
         LIMIT 1;
     END IF;

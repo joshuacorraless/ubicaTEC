@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Guardar en sessionStorage
                 sessionStorage.setItem('id_usuario', data.data.id_usuario);
                 sessionStorage.setItem('tipo_rol', data.data.tipo_rol);
-                sessionStorage.setItem('carrera', data.data.carrera || ''); // Vacío para administradores
+                sessionStorage.setItem('escuela', data.data.escuela || ''); // Vacío para administradores y visitantes
 
                 // Mostrar mensaje de éxito
                 mostrarExito();

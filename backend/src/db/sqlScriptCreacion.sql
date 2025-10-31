@@ -1,3 +1,7 @@
+
+
+
+
 create database ubicaTEC;
 
 use ubicaTEC;
@@ -5,6 +9,11 @@ use ubicaTEC;
 CREATE TABLE Roles (
   id_rol INT AUTO_INCREMENT PRIMARY KEY,
   tipo_rol ENUM('Administrador', 'Estudiante', 'Visitante') NOT NULL
+);
+
+CREATE TABLE EscuelasTEC (
+  id_escuela INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_escuela VARCHAR(200) NOT NULL UNIQUE
 );
 
 CREATE TABLE Usuarios (
@@ -15,9 +24,10 @@ CREATE TABLE Usuarios (
   usuario VARCHAR(50) UNIQUE NOT NULL,
   contrasena VARCHAR(255) NOT NULL, -- encriptada con bcrypt
   id_rol INT NOT NULL,
-  carrera VARCHAR(200) NULL, -- Solo para estudiantes
+  id_escuela INT NULL, -- Solo para estudiantes
   codigo_admin VARCHAR(50) NULL, -- Solo para administradores
-  FOREIGN KEY (id_rol) REFERENCES Roles(id_rol)
+  FOREIGN KEY (id_rol) REFERENCES Roles(id_rol),
+  FOREIGN KEY (id_escuela) REFERENCES EscuelasTEC(id_escuela)
 );
 
 CREATE TABLE Eventos (
@@ -30,14 +40,24 @@ CREATE TABLE Eventos (
   capacidad INT NOT NULL,
   asistencia INT DEFAULT 0, -- Número actual de asistentes
   precio DECIMAL(10,2) DEFAULT 0, -- 0 = Gratis
-  acceso ENUM('tec', 'todos') NOT NULL, -- Solo TEC o TEC+Visitantes
+  acceso ENUM('todos', 'solo_tec') NOT NULL, -- todos (incluye visitantes), solo_tec (admins y estudiantes)
+  id_creador INT NOT NULL, -- Admin que creó el evento
   imagen_url VARCHAR(500), -- link Cloudinary o ruta local
   alt_imagen VARCHAR(300), -- Texto alternativo para accesibilidad
   estado ENUM('disponible', 'agotado', 'cancelado') DEFAULT 'disponible',
-  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (id_creador) REFERENCES Usuarios(id_usuario)
 );
 
-
+-- Tabla intermedia para relación muchos a muchos entre Eventos y Escuelas
+CREATE TABLE Eventos_Escuelas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_evento INT NOT NULL,
+  id_escuela INT NOT NULL,
+  FOREIGN KEY (id_evento) REFERENCES Eventos(id_evento) ON DELETE CASCADE,
+  FOREIGN KEY (id_escuela) REFERENCES EscuelasTEC(id_escuela),
+  UNIQUE KEY unique_evento_escuela (id_evento, id_escuela)
+);
 
 CREATE TABLE Reservas (
   id_reserva INT AUTO_INCREMENT PRIMARY KEY,
@@ -51,51 +71,5 @@ CREATE TABLE Reservas (
   FOREIGN KEY (id_evento) REFERENCES Eventos(id_evento)
 );
 
-drop procedure sp_verificar_login;
 
-select * from usuarios;
 
-USE ubicatec;
-
-DELIMITER //
-
-CREATE PROCEDURE sp_verificar_login(
-    IN inCorreo VARCHAR(150),
-    IN inContrasena VARCHAR(255),
-    OUT outResultCode INT
-)
-BEGIN
-    -- Limpiar espacios
-    SET inCorreo = TRIM(inCorreo);
-    SET inContrasena = TRIM(inContrasena);
-    
-    -- Inicializar variable de salida
-    SET outResultCode = 0;
-    
-    -- Verificar si el usuario existe por correo
-    IF NOT EXISTS(SELECT 1 FROM Usuarios WHERE correo = inCorreo) THEN
-        SET outResultCode = 1; -- Usuario no existe
-    
-    -- Verificar si la contraseña es correcta
-    ELSEIF NOT EXISTS(
-        SELECT 1 
-        FROM Usuarios 
-        WHERE correo = inCorreo AND contrasena = inContrasena
-    ) THEN
-        SET outResultCode = 2; -- Contraseña incorrecta
-    
-    -- Login exitoso
-    ELSE
-        SET outResultCode = 0; -- Login exitoso
-        
-        -- Retornar ID del usuario, tipo de rol y carrera
-        SELECT u.id_usuario, r.tipo_rol, u.carrera
-        FROM Usuarios u
-        INNER JOIN Roles r ON u.id_rol = r.id_rol
-        WHERE u.correo = inCorreo
-        LIMIT 1;
-    END IF;
-    
-END//
-
-DELIMITER ;
