@@ -116,6 +116,21 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   '../images/restauranteInstitucional.webp',
   'Festival gastronómico en restaurante institucional',
   'disponible'
+),
+(
+  'IBM Conference',
+  'Evento de IBM.',
+  '2025-08-20',
+  '10:30:00',
+  'Centro de investigación de IBM',
+  200,
+  78,
+  5000,
+  'Escuela de Ingeniería en Computación',
+  4, -- Creado por Victor (admin)
+  '../images/restauranteInstitucional.webp',
+  'Festival gastronómico en restaurante institucional',
+  'disponible'
 );
 
 -- Asignar escuelas a los eventos

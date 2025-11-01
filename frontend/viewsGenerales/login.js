@@ -50,7 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Guardar en sessionStorage
                 sessionStorage.setItem('id_usuario', data.data.id_usuario);
                 sessionStorage.setItem('tipo_rol', data.data.tipo_rol);
-                sessionStorage.setItem('escuela', data.data.escuela || ''); // Vacío para administradores y visitantes
+                sessionStorage.setItem('id_escuela', data.data.id_escuela || ''); // ID numérico de la escuela
+                sessionStorage.setItem('escuela', data.data.escuela || ''); // Nombre de la escuela para mostrar
 
                 // Mostrar mensaje de éxito
                 mostrarExito();

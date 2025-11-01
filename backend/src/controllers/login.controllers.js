@@ -61,7 +61,8 @@ export const loginUsuario = async (req, res) => {
         data: {
             id_usuario: usuario.id_usuario,
             tipo_rol: usuario.tipo_rol,
-            escuela: usuario.escuela || null, // null para administradores y visitantes
+            id_escuela: usuario.id_escuela || null, // null para administradores y visitantes
+            escuela: usuario.escuela || null, // nombre de la escuela
         },
     });
     } catch (error) {

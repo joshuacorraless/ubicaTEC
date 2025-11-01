@@ -40,7 +40,7 @@ CREATE TABLE Eventos (
   capacidad INT NOT NULL,
   asistencia INT DEFAULT 0, -- Número actual de asistentes
   precio DECIMAL(10,2) DEFAULT 0, -- 0 = Gratis
-  acceso ENUM('todos', 'solo_tec') NOT NULL, -- todos (incluye visitantes), solo_tec (admins y estudiantes)
+  acceso VARCHAR(50) NOT NULL, -- todos (incluye visitantes), solo_tec (admins y estudiantes)
   id_creador INT NOT NULL, -- Admin que creó el evento
   imagen_url VARCHAR(500), -- link Cloudinary o ruta local
   alt_imagen VARCHAR(300), -- Texto alternativo para accesibilidad

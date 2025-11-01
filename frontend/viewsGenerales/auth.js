@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Obtener datos de sessionStorage
     const tipo_rol = sessionStorage.getItem('tipo_rol');
     const id_usuario = sessionStorage.getItem('id_usuario');
+    const id_escuela = sessionStorage.getItem('id_escuela');
     const escuela = sessionStorage.getItem('escuela');
 
     // Si no hay sesión, redirigir a login
