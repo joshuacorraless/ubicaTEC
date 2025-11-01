@@ -2,12 +2,7 @@
 
 //* imports:
 import { Router } from 'express';
-import { 
-    getEventosPublicos, 
-    getTodosLosEventos, 
-    getEventoPorId,
-    getEventosPorEscuela
-} from '../controllers/eventos.controllers.js';
+import { getEventosPublicos, getTodosLosEventos, getEventoPorId, getEventosPorEscuela} from '../controllers/eventos.controllers.js';
 
 const router = Router();
 

@@ -119,17 +119,17 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
 ),
 (
   'IBM Conference',
-  'Evento de IBM.',
-  '2025-08-20',
-  '10:30:00',
-  'Centro de investigación de IBM',
-  200,
-  78,
-  5000,
-  'Escuela de Ingeniería en Computación',
+  'Evento tecnológico organizado por IBM enfocado en computación en la nube y IA.',
+  '2025-11-15',
+  '14:00:00',
+  'Centro de Investigación IBM',
+  150,
+  45,
+  0,
+  'solo_tec', -- Corregido: debe ser 'todos' o 'solo_tec'
   4, -- Creado por Victor (admin)
-  '../images/restauranteInstitucional.webp',
-  'Festival gastronómico en restaurante institucional',
+  '../images/auditorioD3.webp',
+  'Conferencia IBM sobre tecnología',
   'disponible'
 );
 
@@ -144,6 +144,9 @@ INSERT INTO Eventos_Escuelas (id_evento, id_escuela) VALUES
 -- Evento 3: Hackathon - Ing. Computación e Ing. Electrónica
 (3, 4),
 (3, 2),
+
+-- Evento 7: IBM Conference - Solo Ing. Computación
+(7, 4)
 
 -- Eventos 4, 5, 6: Sin registros = Para TODAS las escuelas
 -- (Recital, Seminario, Festival)
