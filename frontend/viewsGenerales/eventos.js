@@ -4,8 +4,8 @@
 const API_CONFIG = {
     base: 'http://localhost:3000/api',
     endpoints: {
-        todosEventos: '/eventos',
-        eventosPorEscuela: '/eventos/escuela'
+        eventosFiltrados: '/eventos/filtrados',
+        eventoPorId: '/eventos'
     }
 };
 
@@ -23,8 +23,8 @@ async function inicializarEventos() {
     // Configurar listeners de filtros
     setupEventListeners();
     
-    // Cargar eventos
-    await cargarEventosCombinados();
+    // Cargar eventos según rol y escuela del usuario
+    await cargarEventos();
     
     // Actualizar año en footer
     const yearElement = document.getElementById('year');
@@ -50,48 +50,59 @@ function setupEventListeners() {
 }
 
 /**
- * Cargar eventos combinados (generales + escuela específica)
+ * Cargar eventos desde la API según el rol y escuela del usuario
  */
-async function cargarEventosCombinados() {
+async function cargarEventos() {
     mostrarCargando();
     
     try {
         // Obtener información del usuario desde sessionStorage
-        const id_escuela = sessionStorage.getItem('id_escuela'); // Cambiar a id_escuela numérico
         const tipo_rol = sessionStorage.getItem('tipo_rol');
+        const id_escuela = sessionStorage.getItem('id_escuela');
         
-        console.log('📊 Datos del usuario:', { id_escuela, tipo_rol });
+        console.log('📊 Datos del usuario desde sessionStorage:', { 
+            tipo_rol, 
+            id_escuela,
+            tipo_id_escuela: typeof id_escuela,
+            todos_los_items: {
+                id_usuario: sessionStorage.getItem('id_usuario'),
+                tipo_rol: sessionStorage.getItem('tipo_rol'),
+                id_escuela: sessionStorage.getItem('id_escuela'),
+                escuela: sessionStorage.getItem('escuela')
+            }
+        });
         
-        // Array para almacenar todas las promesas de fetch
-        const promesas = [];
-        
-        // 1. Siempre cargar eventos generales
-        promesas.push(fetchEventosGenerales());
-        
-        // 2. Si el usuario tiene escuela, cargar eventos de su escuela
-        if (id_escuela && id_escuela !== 'null' && id_escuela !== '') {
-            promesas.push(fetchEventosPorEscuela(id_escuela));
+        if (!tipo_rol) {
+            throw new Error('No se encontró información de sesión. Por favor inicia sesión.');
         }
         
-        // Ejecutar ambas peticiones en paralelo
-        const resultados = await Promise.all(promesas);
+        // Construir URL con parámetros
+        const params = new URLSearchParams({
+            tipo_rol: tipo_rol,
+            id_escuela: id_escuela || ''
+        });
         
-        // Combinar resultados
-        let eventosGenerales = resultados[0] || [];
-        let eventosEscuela = resultados[1] || [];
+        const url = `${API_CONFIG.base}${API_CONFIG.endpoints.eventosFiltrados}?${params}`;
+        console.log('🌐 Solicitando eventos:', url);
         
-        console.log(`✅ Eventos generales: ${eventosGenerales.length}`);
-        console.log(`✅ Eventos de escuela: ${eventosEscuela.length}`);
+        const response = await fetch(url);
         
-        // Combinar y eliminar duplicados por ID
-        const eventosCombinados = combinarEventos(eventosGenerales, eventosEscuela);
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
         
-        console.log(`📦 Total eventos combinados: ${eventosCombinados.length}`);
+        const data = await response.json();
         
-        // Formatear fechas
-        eventos = eventosCombinados.map(evento => ({
+        if (!data.success) {
+            throw new Error(data.message || 'Error al cargar eventos');
+        }
+        
+        console.log(`✅ Eventos obtenidos: ${data.count}`);
+        
+        // Procesar eventos
+        eventos = data.data.map(evento => ({
             ...evento,
-            fecha: formatearFecha(evento.fecha, evento.hora)
+            fecha: formatearFecha(evento.fechaCompleta, evento.hora)
         }));
         
         eventosFiltrados = [...eventos];
@@ -107,102 +118,35 @@ async function cargarEventosCombinados() {
 }
 
 /**
- * Obtener eventos generales desde la API
- */
-async function fetchEventosGenerales() {
-    try {
-        const url = `${API_CONFIG.base}${API_CONFIG.endpoints.todosEventos}`;
-        console.log('🌐 Obteniendo eventos generales:', url);
-        
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        if (data.success && data.data) {
-            return data.data;
-        }
-        
-        return [];
-        
-    } catch (error) {
-        console.error('Error al obtener eventos generales:', error);
-        return [];
-    }
-}
-
-/**
- * Obtener eventos específicos de una escuela desde la API
- */
-async function fetchEventosPorEscuela(id_escuela) {
-    try {
-        const url = `${API_CONFIG.base}${API_CONFIG.endpoints.eventosPorEscuela}/${id_escuela}`;
-        console.log('🏫 Obteniendo eventos de escuela:', url);
-        
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        if (data.success && data.data) {
-            return data.data;
-        }
-        
-        return [];
-        
-    } catch (error) {
-        console.error('Error al obtener eventos de escuela:', error);
-        return [];
-    }
-}
-
-/**
- * Combinar arrays de eventos y eliminar duplicados
- */
-function combinarEventos(eventosGenerales, eventosEscuela) {
-    // Crear un Map para eliminar duplicados por ID
-    const mapaEventos = new Map();
-    
-    // Agregar eventos generales
-    eventosGenerales.forEach(evento => {
-        mapaEventos.set(evento.id, evento);
-    });
-    
-    // Agregar eventos de escuela (sobrescribe si ya existe)
-    eventosEscuela.forEach(evento => {
-        mapaEventos.set(evento.id, evento);
-    });
-    
-    // Convertir de vuelta a array
-    return Array.from(mapaEventos.values());
-}
-
-/**
  * Formatear fecha para mostrar
  */
-function formatearFecha(fecha, hora) {
+function formatearFecha(fechaStr, horaStr) {
     const meses = [
         'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
         'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
     ];
     
-    const fechaObj = new Date(fecha + 'T00:00:00');
-    const dia = fechaObj.getDate();
-    const mes = meses[fechaObj.getMonth()];
-    
-    // Formatear hora
-    const [horas, minutos] = hora.split(':');
-    const horaNum = parseInt(horas);
-    const periodo = horaNum >= 12 ? 'p.m.' : 'a.m.';
-    const hora12 = horaNum > 12 ? horaNum - 12 : (horaNum === 0 ? 12 : horaNum);
-    
-    return `${dia} de ${mes} · ${hora12}:${minutos} ${periodo}`;
+    try {
+        const fechaObj = new Date(fechaStr + 'T00:00:00');
+        
+        if (isNaN(fechaObj.getTime())) {
+            return 'Fecha por confirmar';
+        }
+        
+        const dia = fechaObj.getDate();
+        const mes = meses[fechaObj.getMonth()];
+        
+        // Formatear hora
+        const [horas, minutos] = horaStr.split(':');
+        const horaNum = parseInt(horas);
+        const periodo = horaNum >= 12 ? 'p.m.' : 'a.m.';
+        const hora12 = horaNum > 12 ? horaNum - 12 : (horaNum === 0 ? 12 : horaNum);
+        
+        return `${dia} de ${mes} · ${hora12}:${minutos} ${periodo}`;
+    } catch (error) {
+        console.error('Error al formatear fecha:', error);
+        return 'Fecha por confirmar';
+    }
 }
 
 /**
@@ -289,18 +233,15 @@ function renderizarEventos(eventos) {
                             <small class="text-muted">${disponibilidad}</small>
                         </div>
                         
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="badge badge-fecha">
-                                <i class="bi bi-currency-dollar me-1"></i>
-                                ${evento.costo === 0 ? 'Gratuito' : `₡${evento.costo}`}
-                            </span>
-                            <small class="text-muted">
-                                <i class="bi bi-people me-1"></i>
-                                ${evento.disponibles}/${evento.capacidad} disponibles
-                            </small>
-                        </div>
-                        
-                        ${estadoReserva.html}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="badge badge-fecha">
+                    ${evento.costo === 0 ? 'Gratuito' : `Costo: ₡${evento.costo.toLocaleString()}`}
+                  </span>
+                  <small class="text-muted">
+                    <i class="bi bi-people me-1"></i>
+                    ${evento.disponibles}/${evento.capacidad} disponibles
+                  </small>
+                </div>                        ${estadoReserva.html}
                     </div>
                 </div>
             </article>
@@ -411,6 +352,9 @@ function filtrarEventos() {
             evento.descripcion.toLowerCase().includes(textoBusqueda);
         
         const cumpleLugar = !lugarSeleccionado || evento.lugar === lugarSeleccionado;
+        
+        // El filtro de acceso es opcional - solo aplicar si se selecciona
+        // El backend ya filtró por rol y escuela, este es un filtro adicional
         const cumpleAcceso = !accesoSeleccionado || evento.acceso === accesoSeleccionado;
         
         return cumpleBusqueda && cumpleLugar && cumpleAcceso;

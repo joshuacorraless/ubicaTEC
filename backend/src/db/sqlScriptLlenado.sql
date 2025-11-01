@@ -23,16 +23,16 @@ INSERT INTO Usuarios (nombre, apellido, correo, usuario, contrasena, id_rol, id_
 ('Carlos Andrés', 'Abarca Mora', 'c.abarca.1@estudiantec.cr', 'charlieabark', 'Ubica,1234', 2, 4, NULL), -- Ing. Computación
 ('Joshua', 'Corrales Retana', 'j.retana.1@estudiantec.cr', 'joshuacorrales_', 'Ubica,1234', 2, 4, NULL), -- Ing. Computación
 ('Dilan', 'Hernandez', 'd.hernandez.1@estudiantec.cr', '_dyyylannn', 'Ubica,1234', 2, 1, NULL), -- Administración
-('Victor', 'Garro Abarca', 'v.garro.1@tec.ac.cr', 'victorabark', 'Ubica,1234', 1, NULL, 'ADMIN-2024-001'), -- Admin
+('Victor', 'Garro Abarca', 'v.garro.1@tec.ac.cr', 'victorabark', 'Ubica,1234', 1, NULL, '777'), -- Admin
 ('Mariel', 'Abarca Marín', 'marielmarin@gmail.com', 'marielmarin', 'Ubica,1234', 3, NULL, NULL); -- Visitante
 
 INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asistencia, precio, acceso, id_creador, imagen_url, alt_imagen, estado) VALUES
 (
   'Conferencia de Tecnología e Innovación',
   'Una conferencia sobre las últimas tendencias en inteligencia artificial, ciberseguridad y desarrollo de software, organizada por la Escuela de Ingeniería en Computación.',
-  '2025-09-12',
+  '2025-11-12',
   '10:00:00',
-  'Auditorio D3',
+  'Auditorio Edificio D3',
   200,
   50,
   0,
@@ -45,7 +45,7 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
 (
   'Taller de Desarrollo Web Moderno',
   'Aprende React, Node.js y las últimas tecnologías web en un taller práctico interactivo.',
-  '2025-09-15',
+  '2025-11-15',
   '14:00:00',
   'Learning Commons',
   150,
@@ -53,29 +53,29 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   0,
   'todos',
   4, -- Creado por Victor (admin)
-  '../images/learningCommons.jpg',
+  '../images/learningCommons.jpg', 
   'Taller de desarrollo web en Learning Commons',
   'agotado'
 ),
 (
   'Hackathon UbicaTEC 2025',
   '48 horas de código, creatividad e innovación tecnológica. Desafía tus habilidades y crea soluciones innovadoras.',
-  '2025-10-01',
+  '2025-12-01',
   '09:00:00',
-  'Laboratorio de Computación',
+  'Learning Commons',
   100,
   11,
   0,
   'solo_tec',
   4, -- Creado por Victor (admin)
   '../images/laboratorioComputacion.jpg',
-  'Hackathon en laboratorio de computación',
+  'Hackathon en Learning Commons',
   'disponible'
 ),
 (
   'Recital Musical TEC',
   'Presentación de música clásica y contemporánea por estudiantes de música del TEC.',
-  '2025-09-20',
+  '2025-11-20',
   '18:00:00',
   'Restaurante Institucional',
   120,
@@ -90,9 +90,9 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
 (
   'Seminario de Investigación Académica',
   'Presentación de proyectos interdisciplinarios con invitados internacionales.',
-  '2025-09-25',
+  '2025-11-25',
   '09:00:00',
-  'Auditorio D3',
+  'Auditorio Edificio D3',
   80,
   45,
   0,
@@ -105,7 +105,7 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
 (
   'Festival Gastronómico TEC',
   'Evento cultural con muestra de platos tradicionales de todas las provincias de Costa Rica.',
-  '2025-08-20',
+  '2025-12-20',
   '10:30:00',
   'Restaurante Institucional',
   200,
@@ -120,9 +120,9 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
 (
   'IBM Conference',
   'Evento tecnológico organizado por IBM enfocado en computación en la nube y IA.',
-  '2025-11-15',
+  '2026-01-15',
   '14:00:00',
-  'Centro de Investigación IBM',
+  'Biblioteca José Figueres Ferrer',
   150,
   45,
   0,
@@ -133,23 +133,17 @@ INSERT INTO Eventos (nombre, descripcion, fecha, hora, lugar, capacidad, asisten
   'disponible'
 );
 
--- Asignar escuelas a los eventos
+-- Asignar escuelas SOLO a eventos con acceso 'solo_tec'
 INSERT INTO Eventos_Escuelas (id_evento, id_escuela) VALUES
--- Evento 1: Conferencia de Tecnología - Solo Ing. Computación
-(1, 4),
-
--- Evento 2: Taller Web - Solo Ing. Computación
-(2, 4),
-
--- Evento 3: Hackathon - Ing. Computación e Ing. Electrónica
+-- Evento 3: Hackathon (solo_tec) - Ing. Computación e Ing. Electrónica
 (3, 4),
 (3, 2),
 
--- Evento 7: IBM Conference - Solo Ing. Computación
-(7, 4)
+-- Evento 7: IBM Conference (solo_tec) - Solo Ing. Computación
+(7, 4);
 
--- Eventos 4, 5, 6: Sin registros = Para TODAS las escuelas
--- (Recital, Seminario, Festival)
+-- Nota: Eventos con acceso='todos' (1, 2, 4, 5, 6) NO tienen escuelas asignadas
+-- porque son para todo el público o todos los estudiantes
 ;
 
 -- Insertar algunas reservas de ejemplo

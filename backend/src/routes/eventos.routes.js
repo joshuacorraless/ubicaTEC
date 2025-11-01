@@ -2,9 +2,12 @@
 
 //* imports:
 import { Router } from 'express';
-import { getEventosPublicos, getTodosLosEventos, getEventoPorId, getEventosPorEscuela} from '../controllers/eventos.controllers.js';
+import { getEventosFiltrados, getEventosPublicos, getTodosLosEventos, getEventoPorId, getEventosPorEscuela} from '../controllers/eventos.controllers.js';
 
 const router = Router();
+
+// Endpoint principal: Obtener eventos filtrados según rol y escuela
+router.get('/api/eventos/filtrados', getEventosFiltrados);
 
 // Endpoint para obtener eventos públicos (acceso = 'todos')
 router.get('/api/eventos/publicos', getEventosPublicos);

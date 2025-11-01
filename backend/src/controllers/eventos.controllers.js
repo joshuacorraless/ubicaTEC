@@ -3,6 +3,60 @@
 import { getConnection } from '../db/connection.js';
 
 /**
+ * Obtener eventos filtrados según el rol y escuela del usuario
+ * Este es el endpoint principal que debe usar el frontend
+ */
+export const getEventosFiltrados = async (req, res) => {
+    let connection;
+    try {
+        const { tipo_rol, id_escuela } = req.query;
+
+        console.log('📥 Parámetros recibidos:', { tipo_rol, id_escuela, tipo: typeof id_escuela });
+
+        if (!tipo_rol) {
+            return res.status(400).json({
+                success: false,
+                message: 'Tipo de rol es requerido'
+            });
+        }
+
+        connection = await getConnection();
+        
+        // Convertir id_escuela a INT o NULL
+        const escuelaId = id_escuela && id_escuela !== '' ? parseInt(id_escuela) : null;
+        
+        console.log('🔄 Parámetros procesados para SP:', { tipo_rol, escuelaId });
+        
+        // Llamar al stored procedure con los parámetros correctos
+        const [eventos] = await connection.query(
+            'CALL sp_obtener_eventos_filtrados(?, ?)',
+            [tipo_rol, escuelaId]
+        );
+        
+        console.log('✅ Eventos obtenidos del SP:', eventos[0].length);
+        
+        // El SP devuelve un array con los resultados en la primera posición
+        const eventosData = eventos[0];
+        
+        res.status(200).json({
+            success: true,
+            data: eventosData,
+            count: eventosData.length
+        });
+        
+    } catch (error) {
+        console.error('Error al obtener eventos filtrados:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener los eventos',
+            error: error.message
+        });
+    } finally {
+        if (connection) connection.release();
+    }
+};
+
+/**
  * Obtener todos los eventos con acceso público (acceso = 'todos')
  */
 export const getEventosPublicos = async (req, res) => {

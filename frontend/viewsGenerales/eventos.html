@@ -435,14 +435,7 @@
 
       <!-- CONTENIDO -->
       <main id="contenido-principal" class="col-12 col-md-9 col-xl-10 px-4 py-4" tabindex="-1">
-        <!-- Migas -->
-        <nav aria-label="Ruta de navegación" class="mb-3">
-          <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item active" aria-current="page">Panel de eventos</li>
-          </ol>
-        </nav>
-
-        <!-- Encabezado -->
+        <!-- Encabezado principal -->
         <header class="mb-4">
           <h1 id="titulo-eventos" class="display-5 fw-bold mb-2 text-gradient">Panel de Eventos</h1>
           <p id="subtitulo-eventos" class="lead text-muted mb-0">Vista general de todos los eventos del sistema ubicaTEC</p>
@@ -472,10 +465,11 @@
             </div>
             <div class="col-md-3">
               <label for="filtro-lugar" class="form-label">Lugar</label>
-              <select id="filtro-lugar" class="form-select">
+              <select id="filtro-lugar" class="form-select" aria-label="Filtrar eventos por lugar">
                 <option value="">Todos los lugares</option>
-                <option value="Auditorio D3">Auditorio D3</option>
+                <option value="Auditorio Edificio D3">Auditorio Edificio D3</option>
                 <option value="Learning Commons">Learning Commons</option>
+                <option value="Biblioteca José Figueres Ferrer">Biblioteca José Figueres Ferrer</option>
                 <option value="Restaurante Institucional">Restaurante Institucional</option>
               </select>
             </div>
@@ -484,7 +478,7 @@
               <select id="filtro-acceso" class="form-select">
                 <option value="">Todos</option>
                 <option value="todos">Abierto a visitantes</option>
-                <option value="tec">Solo comunidad TEC</option>
+                <option value="solo_tec">Solo comunidad TEC</option>
               </select>
             </div>
           </div>

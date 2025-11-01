@@ -1,6 +1,10 @@
 
 
 
+
+
+
+
 -- SP del login de usuario:
 
 
@@ -51,43 +55,110 @@ END//
 DELIMITER ;
 
 
+-- ===============================================
+-- SP para obtener eventos según rol y escuela
+-- ===============================================
 
+DELIMITER //
 
-DELIMITER $$
+DROP PROCEDURE IF EXISTS sp_obtener_eventos_filtrados//
 
--- Procedimiento para obtener eventos específicos de una escuela
-DROP PROCEDURE IF EXISTS sp_obtener_eventos_por_escuela$$
-
-CREATE PROCEDURE sp_obtener_eventos_por_escuela(
+CREATE PROCEDURE sp_obtener_eventos_filtrados(
+    IN p_tipo_rol VARCHAR(50),
     IN p_id_escuela INT
 )
 BEGIN
-    -- Obtener eventos donde el acceso coincide con el nombre de la escuela del usuario
-    SELECT DISTINCT
-        E.id_evento as id,
-        E.nombre as titulo,
-        E.descripcion,
-        E.fecha,
-        E.hora,
-        E.lugar,
-        E.capacidad,
-        E.asistencia,
-        E.precio as costo,
-        E.acceso,
-        E.imagen_url as img,
-        E.alt_imagen as alt,
-        E.estado,
-        (E.capacidad - E.asistencia) as disponibles,
-        DATE_FORMAT(E.fecha, '%Y-%m-%d') as fechaCompleta
-    FROM
-        Eventos AS E
-    INNER JOIN
-        EscuelasTEC AS ET ON E.acceso = ET.nombre_escuela
-    WHERE
-        ET.id_escuela = p_id_escuela
-        AND E.estado = 'disponible'
-    ORDER BY
-        E.fecha ASC, E.hora ASC;
-END$$    
+    IF p_tipo_rol = 'Visitante' THEN
+        -- VISITANTES: Solo eventos con acceso 'todos'
+        SELECT DISTINCT
+            e.id_evento as id,
+            e.nombre as titulo,
+            e.descripcion,
+            e.fecha,
+            e.hora,
+            e.lugar,
+            e.capacidad,
+            e.asistencia,
+            e.precio as costo,
+            e.acceso,
+            e.imagen_url as img,
+            e.alt_imagen as alt,
+            e.estado,
+            (e.capacidad - e.asistencia) as disponibles,
+            DATE_FORMAT(e.fecha, '%Y-%m-%d') as fechaCompleta,
+            DATE_FORMAT(e.fecha, '%d de %M') as fechaFormateada
+        FROM Eventos e
+        WHERE e.estado = 'disponible'
+          AND e.acceso = 'todos'
+        ORDER BY e.fecha ASC, e.hora ASC;
+        
+    ELSEIF p_tipo_rol = 'Administrador' THEN
+        -- ADMINISTRADORES: Todos los eventos (acceso 'todos' y 'solo_tec')
+        SELECT DISTINCT
+            e.id_evento as id,
+            e.nombre as titulo,
+            e.descripcion,
+            e.fecha,
+            e.hora,
+            e.lugar,
+            e.capacidad,
+            e.asistencia,
+            e.precio as costo,
+            e.acceso,
+            e.imagen_url as img,
+            e.alt_imagen as alt,
+            e.estado,
+            (e.capacidad - e.asistencia) as disponibles,
+            DATE_FORMAT(e.fecha, '%Y-%m-%d') as fechaCompleta,
+            DATE_FORMAT(e.fecha, '%d de %M') as fechaFormateada
+        FROM Eventos e
+        WHERE e.estado = 'disponible'
+        ORDER BY e.fecha ASC, e.hora ASC;
+        
+    ELSEIF p_tipo_rol = 'Estudiante' THEN
+        -- ESTUDIANTES: 
+        -- 1. Todos los eventos con acceso='todos' 
+        -- 2. Eventos con acceso='solo_tec' que incluyan su escuela
+        SELECT DISTINCT
+            e.id_evento as id,
+            e.nombre as titulo,
+            e.descripcion,
+            e.fecha,
+            e.hora,
+            e.lugar,
+            e.capacidad,
+            e.asistencia,
+            e.precio as costo,
+            e.acceso,
+            e.imagen_url as img,
+            e.alt_imagen as alt,
+            e.estado,
+            (e.capacidad - e.asistencia) as disponibles,
+            DATE_FORMAT(e.fecha, '%Y-%m-%d') as fechaCompleta,
+            DATE_FORMAT(e.fecha, '%d de %M') as fechaFormateada
+        FROM Eventos e
+        WHERE e.estado = 'disponible'
+          AND (
+              -- Si es acceso 'todos', traerlo directamente
+              e.acceso = 'todos'
+              OR
+              -- Si es 'solo_tec', verificar que incluya la escuela del estudiante
+              (
+                  e.acceso = 'solo_tec' 
+                  AND EXISTS (
+                      SELECT 1 
+                      FROM Eventos_Escuelas ee 
+                      WHERE ee.id_evento = e.id_evento 
+                        AND ee.id_escuela = p_id_escuela
+                  )
+              )
+          )
+        ORDER BY e.fecha ASC, e.hora ASC;
+        
+    ELSE
+        -- Por defecto, no devolver nada
+        SELECT 'Rol no válido' as error;
+    END IF;
+END//
 
 DELIMITER ;
