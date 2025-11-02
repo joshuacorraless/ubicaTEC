@@ -26,6 +26,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (chatbot) {
         chatbot.style.display = 'none';
     }
+    
+    // Configurar navegación por teclado
+    setupKeyboardNavigation();
+    
+    // Configurar escape key para cerrar
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const chatbot = document.getElementById('chatbot');
+            if (chatbot && chatbot.style.display === 'flex') {
+                closeChatbot();
+            }
+        }
+    });
 });
 
 /**
@@ -34,13 +47,24 @@ document.addEventListener('DOMContentLoaded', function() {
 function openChatbot() {
     const chatbot = document.getElementById('chatbot');
     if (chatbot) {
+        // Guardar elemento que tenía el foco
+        window.chatbotPreviousFocus = document.activeElement;
+        
         chatbot.style.display = 'flex';
         chatbot.classList.add('chatbot-open');
+        chatbot.setAttribute('aria-modal', 'true');
+        
+        // Anunciar apertura para lectores de pantalla
+        announceToScreenReader('Chatbot abierto. Puede escribir su mensaje o usar las acciones rápidas.');
         
         // Focus en el input
         const input = document.getElementById('messageInput');
         if (input) {
-            setTimeout(() => input.focus(), 300);
+            setTimeout(() => {
+                input.focus();
+                // Trap focus dentro del chatbot
+                trapFocus(chatbot);
+            }, 300);
         }
     }
 }
@@ -52,8 +76,18 @@ function closeChatbot() {
     const chatbot = document.getElementById('chatbot');
     if (chatbot) {
         chatbot.classList.remove('chatbot-open');
+        chatbot.setAttribute('aria-modal', 'false');
+        
+        // Anunciar cierre
+        announceToScreenReader('Chatbot cerrado');
+        
         setTimeout(() => {
             chatbot.style.display = 'none';
+            
+            // Restaurar foco al elemento anterior
+            if (window.chatbotPreviousFocus && window.chatbotPreviousFocus.focus) {
+                window.chatbotPreviousFocus.focus();
+            }
         }, 300);
     }
 }
@@ -88,6 +122,9 @@ async function sendMessage() {
     
     if (!message || isTyping) return;
     
+    // Anunciar que se está enviando el mensaje
+    announceToScreenReader('Enviando mensaje: ' + message);
+    
     // Limpiar input
     input.value = '';
     
@@ -105,10 +142,20 @@ async function sendMessage() {
         const response = await sendToBotsonic(message);
         hideTypingIndicator();
         addBotMessage(response);
+        
+        // Anunciar respuesta recibida
+        announceToScreenReader('Respuesta recibida del asistente');
+        
+        // Devolver foco al input
+        setTimeout(() => {
+            input.focus();
+        }, 500);
     } catch (error) {
         console.error('Error al obtener respuesta:', error);
         hideTypingIndicator();
-        addBotMessage('Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo o contacta a soporte en ubicatecoficial@gmail.com');
+        const errorMsg = 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo o contacta a soporte en ubicatecoficial@gmail.com';
+        addBotMessage(errorMsg);
+        announceToScreenReader('Error: ' + errorMsg);
     }
 }
 
@@ -122,13 +169,14 @@ async function sendToBotsonic(userMessage) {
             window.botsonicChatId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
         
-        // Formatear historial ACTUAL (sin el nuevo mensaje) según el formato de Botsonic
+        // Formatear historial ANTERIOR (sin incluir el nuevo mensaje del usuario)
+        // porque input_text ya contiene el mensaje actual
         const formattedHistory = conversationHistory.map(msg => ({
             message: msg.content,
             sent: msg.role === 'user'
         }));
         
-        console.log('📜 Historial actual:', conversationHistory.length, 'mensajes');
+        console.log('📜 Historial anterior:', conversationHistory.length, 'mensajes');
         console.log('📤 Chat history formateado:', formattedHistory);
         
         const requestBody = {
@@ -167,16 +215,6 @@ async function sendToBotsonic(userMessage) {
         
         if (data.answer) {
             botResponse = data.answer;
-            
-            // Usar el chat_history que devuelve la API para mantener sincronización
-            if (data.chat_history && Array.isArray(data.chat_history)) {
-                // Limpiar historial local y usar el de la API
-                conversationHistory = data.chat_history.map(msg => ({
-                    role: msg.sent ? 'user' : 'assistant',
-                    content: msg.message
-                }));
-                console.log('📜 Historial actualizado desde API:', conversationHistory.length, 'mensajes');
-            }
         } else if (data.data && data.data.answer) {
             botResponse = data.data.answer;
         } else {
@@ -186,13 +224,9 @@ async function sendToBotsonic(userMessage) {
         
         console.log('✅ Respuesta del bot:', botResponse);
         
-        // Si no se actualizó el historial desde la API, agregarlo manualmente
-        if (!data.chat_history) {
-            conversationHistory.push({
-                role: 'assistant',
-                content: botResponse
-            });
-        }
+        // NO agregar al historial - cada pregunta es independiente
+        // Esto evita errores de acumulación en el historial
+        console.log('📜 Modo sin historial - cada pregunta es independiente');
         
         return botResponse;
         
@@ -210,11 +244,13 @@ function addUserMessage(message) {
     
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message user';
+    messageDiv.setAttribute('role', 'article');
+    messageDiv.setAttribute('aria-label', 'Tu mensaje');
     messageDiv.innerHTML = `
         <div class="message-content">
             ${escapeHtml(message)}
         </div>
-        <div class="message-avatar">
+        <div class="message-avatar" aria-hidden="true">
             <i class="bi bi-person-circle"></i>
         </div>
     `;
@@ -235,8 +271,10 @@ function addBotMessage(message) {
     
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message bot';
+    messageDiv.setAttribute('role', 'article');
+    messageDiv.setAttribute('aria-label', 'Mensaje del asistente');
     messageDiv.innerHTML = `
-        <div class="message-avatar">
+        <div class="message-avatar" aria-hidden="true">
             <i class="bi bi-robot"></i>
         </div>
         <div class="message-content">
@@ -302,6 +340,7 @@ function showTypingIndicator() {
     const typingIndicator = document.getElementById('typingIndicator');
     if (typingIndicator) {
         typingIndicator.style.display = 'flex';
+        announceToScreenReader('El asistente está escribiendo');
         scrollToBottom();
     }
 }
@@ -344,6 +383,10 @@ function scrollToBottom() {
  */
 function resetConversation() {
     conversationHistory = [];
+    
+    // Generar nuevo chat_id para empezar conversación fresca
+    window.botsonicChatId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
     const chatMessages = document.getElementById('chatMessages');
     if (chatMessages) {
         // Mantener solo el mensaje de bienvenida
@@ -361,7 +404,75 @@ function resetConversation() {
         quickActions.style.display = 'flex';
     }
     
-    console.log('🔄 Conversación reiniciada');
+    announceToScreenReader('Conversación reiniciada');
+    console.log('🔄 Conversación reiniciada con nuevo chat_id:', window.botsonicChatId);
+}
+
+/**
+ * Anunciar mensaje a lectores de pantalla
+ */
+function announceToScreenReader(message) {
+    const announcer = document.getElementById('chatbot-sr-announcements');
+    if (announcer) {
+        announcer.textContent = '';
+        setTimeout(() => {
+            announcer.textContent = message;
+        }, 100);
+        
+        // Limpiar después de 3 segundos
+        setTimeout(() => {
+            announcer.textContent = '';
+        }, 3000);
+    }
+}
+
+/**
+ * Configurar navegación por teclado
+ */
+function setupKeyboardNavigation() {
+    // Esta función se ejecuta cuando el DOM está listo
+    console.log('✓ Navegación por teclado configurada');
+}
+
+/**
+ * Atrapar el foco dentro del chatbot (para navegación modal)
+ */
+function trapFocus(element) {
+    const focusableElements = element.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    
+    if (focusableElements.length === 0) return;
+    
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+    
+    element.addEventListener('keydown', function(e) {
+        if (e.key !== 'Tab') return;
+        
+        if (e.shiftKey) {
+            // Shift + Tab
+            if (document.activeElement === firstFocusable) {
+                lastFocusable.focus();
+                e.preventDefault();
+            }
+        } else {
+            // Tab
+            if (document.activeElement === lastFocusable) {
+                firstFocusable.focus();
+                e.preventDefault();
+            }
+        }
+    });
+}
+
+/**
+ * Obtener texto plano de un mensaje HTML (para anuncios)
+ */
+function getPlainTextFromHTML(html) {
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    return temp.textContent || temp.innerText || '';
 }
 
 // Exponer funciones globalmente
@@ -371,3 +482,4 @@ window.sendMessage = sendMessage;
 window.sendQuickMessage = sendQuickMessage;
 window.handleKeyPress = handleKeyPress;
 window.resetConversation = resetConversation;
+window.announceToScreenReader = announceToScreenReader;
