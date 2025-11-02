@@ -336,6 +336,57 @@
       border-radius: 12px 12px 0 0;
       margin-top: 40px !important;
     }
+
+    /* ======= ANIMACIONES ADICIONALES ======= */
+    .fade-in-row {
+      animation: fadeInUp 0.4s ease-out forwards;
+    }
+    
+    .evento-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--tec-gradient-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--tec-accent);
+      font-size: 1.2rem;
+    }
+    
+    .asistencia-info {
+      min-width: 80px;
+    }
+    
+    .progress {
+      background-color: rgba(0,0,0,0.1);
+    }
+    
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+    }
+
+    /* ======= BADGES PERSONALIZADOS ======= */
+    .badge-disponible {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .badge-agotado {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-weight: 500;
+    }
   </style>
 </head>
 <body>
@@ -350,7 +401,8 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="d-none d-lg-flex gap-2">
-        <button class="btn btn-outline-light btn-sm" onclick="openChatbot()" type="button"><i class="bi bi-life-preserver me-1"></i>Ayuda</button>
+        <a class="btn btn-outline-light btn-sm" href="../viewsChatbot/chatbot.html"><i class="bi bi-life-preserver me-1"></i>Ayuda</a>
+        <button class="btn btn-outline-danger btn-sm" onclick="cerrarSesion()"><i class="bi bi-box-arrow-right me-1"></i>Cerrar sesión</button>
       </div>
     </div>
   </header>
@@ -373,7 +425,7 @@
               </a>
             </li>
             <li class="nav-item mt-2">
-              <a class="nav-link d-flex align-items-center" href="../viewsEstudiante/viewPerfilEstudiante.html">
+              <a class="nav-link d-flex align-items-center" href="../viewsGenerales/viewPerfilUsuario.html">
                 <i class="bi bi-person-gear me-2"></i> Configuración de perfil
               </a>
             </li>
@@ -390,9 +442,9 @@
         <div class="offcanvas-body">
           <nav aria-label="Navegación móvil">
             <ul class="nav nav-pills flex-column gap-1">
-              <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-speedometer2 me-2"></i> Panel de eventos</a></li>
+              <li class="nav-item"><a class="nav-link" href="../viewsGenerales/eventos.html"><i class="bi bi-speedometer2 me-2"></i> Panel de eventos</a></li>
               <li class="nav-item"><a class="nav-link active" href="#" aria-current="page"><i class="bi bi-calendar-event me-2"></i> Gestión de eventos</a></li>
-              <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
+              <li class="nav-item"><a class="nav-link" href="../viewsGenerales/viewPerfilUsuario.html"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
             </ul>
           </nav>
         </div>
@@ -466,7 +518,7 @@
                 <thead>
                   <tr>
                     <th scope="col" class="text-center">
-                      <i class="bi bi-hash me-1"></i>ID
+                      ID
                     </th>
                     <th scope="col">
                       <i class="bi bi-calendar-event me-1"></i>Evento
@@ -520,395 +572,11 @@
     </div>
   </div>
 
-  <script>
-    // ======= DATOS DE EVENTOS MEJORADOS ======= 
-    const eventos = [
-      {
-        id: 1, 
-        nombre: "Conferencia de Tecnología e Innovación", 
-        fecha: "2025-09-22", 
-        fechaTexto: "22 Sept 2025",
-        asistencia: 185, 
-        capacidad: 200,
-        estado: "disponible",
-        lugar: "Auditorio D3",
-        descripcion: "Una conferencia sobre las últimas tendencias en IA y ciberseguridad"
-      },
-      {
-        id: 2, 
-        nombre: "Taller de Desarrollo Web Moderno", 
-        fecha: "2025-09-25", 
-        fechaTexto: "25 Sept 2025",
-        asistencia: 150, 
-        capacidad: 150,
-        estado: "agotado",
-        lugar: "Learning Commons",
-        descripcion: "Aprende React, Node.js y las últimas tecnologías web"
-      },
-      {
-        id: 3, 
-        nombre: "Hackathon UbicaTEC 2025", 
-        fecha: "2025-10-01", 
-        fechaTexto: "01 Oct 2025",
-        asistencia: 89, 
-        capacidad: 100,
-        estado: "disponible",
-        lugar: "Laboratorio de Computación",
-        descripcion: "48 horas de código, creatividad e innovación tecnológica"
-      }
-    ];
+  <!-- Sistema de Autorización -->
+  <script src="../viewsGenerales/auth.js"></script>
 
-    let eventosFiltrados = [...eventos];
-    let currentSort = 'fecha';
-
-    // ======= INICIALIZACIÓN ======= 
-    document.addEventListener('DOMContentLoaded', function() {
-      // Año dinámico
-      document.getElementById('year').textContent = new Date().getFullYear();
-      
-      // Renderizar eventos iniciales
-      renderEventos();
-      
-      // Configurar eventos de filtrado y búsqueda
-      setupEventListeners();
-      
-      // Animaciones de entrada
-      animateOnLoad();
-    });
-
-    // ======= RENDERIZADO DE EVENTOS ======= 
-    function renderEventos() {
-      const tbody = document.getElementById("tabla-eventos");
-      const totalEventos = document.getElementById("total-eventos");
-      const eventosActivos = document.getElementById("eventos-activos");
-      const showingEvents = document.getElementById("showing-events");
-      
-      tbody.innerHTML = "";
-      
-      eventosFiltrados.forEach((evento, index) => {
-        const fila = document.createElement("tr");
-        fila.style.animationDelay = `${index * 0.1}s`;
-        fila.classList.add('fade-in-row');
-        
-        const porcentajeOcupacion = Math.round((evento.asistencia / evento.capacidad) * 100);
-        const estadoBadge = evento.estado === 'disponible' ? 
-          `<span class="badge badge-disponible">
-            <i class="bi bi-check-circle me-1"></i>Disponible
-           </span>` :
-          `<span class="badge badge-agotado">
-            <i class="bi bi-x-circle me-1"></i>Agotado
-           </span>`;
-
-        fila.innerHTML = `
-          <td class="text-center">
-            <strong>${evento.id}</strong>
-          </td>
-          <td>
-            <div class="d-flex align-items-center">
-              <div class="me-3">
-                <div class="evento-icon">
-                  <i class="bi bi-calendar-event"></i>
-                </div>
-              </div>
-              <div>
-                <h6 class="mb-1 fw-bold">${evento.nombre}</h6>
-                <small class="text-muted">
-                  <i class="bi bi-geo-alt me-1"></i>${evento.lugar}
-                </small>
-              </div>
-            </div>
-          </td>
-          <td>
-            <div class="d-flex align-items-center">
-              <i class="bi bi-calendar3 me-2 text-primary"></i>
-              <span class="fw-semibold">${evento.fechaTexto}</span>
-            </div>
-          </td>
-          <td class="text-center">
-            <div class="asistencia-info">
-              <div class="fw-bold text-primary">${evento.asistencia}/${evento.capacidad}</div>
-              <div class="progress mt-1" style="height: 4px;">
-                <div class="progress-bar" role="progressbar" 
-                     style="width: ${porcentajeOcupacion}%; background: var(--tec-gradient);" 
-                     aria-valuenow="${porcentajeOcupacion}" aria-valuemin="0" aria-valuemax="100">
-                </div>
-              </div>
-              <small class="text-muted">${porcentajeOcupacion}%</small>
-            </div>
-          </td>
-          <td class="text-center">
-            ${estadoBadge}
-          </td>
-          <td class="text-center">
-            <div class="btn-group" role="group" aria-label="Acciones del evento ${evento.nombre}">
-              <button class="btn btn-sm btn-outline-primary" 
-                      onclick="verEvento(${evento.id})" 
-                      title="Ver detalles">
-                <i class="bi bi-eye"></i>
-              </button>
-              <a href="editarEvento.html?id=${evento.id}" 
-                 class="btn btn-sm btn-primary" 
-                 title="Editar evento"
-                 aria-label="Editar ${evento.nombre}">
-                <i class="bi bi-pencil"></i>
-              </a>
-              <button class="btn btn-sm btn-danger" 
-                      onclick="eliminarEvento(${evento.id})" 
-                      title="Eliminar evento"
-                      aria-label="Eliminar ${evento.nombre}">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </td>
-        `;
-
-        tbody.appendChild(fila);
-      });
-      
-      // Actualizar contadores
-      totalEventos.textContent = eventos.length;
-      eventosActivos.textContent = eventos.filter(e => e.estado === 'disponible').length;
-      showingEvents.textContent = eventosFiltrados.length;
-    }
-
-    // ======= EVENT LISTENERS ======= 
-    function setupEventListeners() {
-      // Búsqueda en tiempo real
-      const searchInput = document.getElementById('searchInput');
-      searchInput.addEventListener('input', debounce(handleSearch, 300));
-      
-      // Filtro por estado
-      const filterStatus = document.getElementById('filterStatus');
-      filterStatus.addEventListener('change', handleFilter);
-      
-      // Ordenamiento
-      const sortBy = document.getElementById('sortBy');
-      sortBy.addEventListener('change', handleSort);
-    }
-
-    // ======= FUNCIONES DE FILTRADO Y BÚSQUEDA ======= 
-    function handleSearch(e) {
-      const searchTerm = e.target.value.toLowerCase();
-      eventosFiltrados = eventos.filter(evento => 
-        evento.nombre.toLowerCase().includes(searchTerm) ||
-        evento.lugar.toLowerCase().includes(searchTerm) ||
-        evento.descripcion.toLowerCase().includes(searchTerm)
-      );
-      applyCurrentFilters();
-    }
-
-    function handleFilter(e) {
-      const status = e.target.value;
-      if (status) {
-        eventosFiltrados = eventosFiltrados.filter(evento => evento.estado === status);
-      }
-      renderEventos();
-    }
-
-    function handleSort(e) {
-      currentSort = e.target.value;
-      sortEventos(currentSort);
-    }
-
-    function sortEventos(criteria) {
-      eventosFiltrados.sort((a, b) => {
-        switch(criteria) {
-          case 'nombre':
-            return a.nombre.localeCompare(b.nombre);
-          case 'fecha':
-            return new Date(a.fecha) - new Date(b.fecha);
-          case 'asistencia':
-            return b.asistencia - a.asistencia;
-          default:
-            return 0;
-        }
-      });
-      renderEventos();
-    }
-
-    function applyCurrentFilters() {
-      const filterStatus = document.getElementById('filterStatus').value;
-      if (filterStatus) {
-        eventosFiltrados = eventosFiltrados.filter(evento => evento.estado === filterStatus);
-      }
-      sortEventos(currentSort);
-    }
-
-    // ======= FUNCIONES DE ACCIÓN ======= 
-    function verEvento(id) {
-      const evento = eventos.find(e => e.id === id);
-      if (evento) {
-        // Crear modal dinámico para mostrar detalles
-        showEventModal(evento);
-      }
-    }
-
-    function eliminarEvento(id) {
-      const evento = eventos.find(e => e.id === id);
-      if (evento && confirm(`¿Estás seguro de eliminar el evento "${evento.nombre}"?`)) {
-        // Animación de salida
-        const row = document.querySelector(`tr:has(button[onclick="eliminarEvento(${id})"])`);
-        if (row) {
-          row.style.animation = 'fadeOut 0.3s ease-out forwards';
-          setTimeout(() => {
-            const index = eventos.findIndex(e => e.id === id);
-            if (index > -1) {
-              eventos.splice(index, 1);
-              eventosFiltrados = [...eventos];
-              renderEventos();
-              showNotification('Evento eliminado correctamente', 'success');
-            }
-          }, 300);
-        }
-      }
-    }
-
-    // ======= MODAL DINÁMICO ======= 
-    function showEventModal(evento) {
-      const modalHTML = `
-        <div class="modal fade" id="eventoModal" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-lg">
-            <div class="modal-content" style="border-radius: var(--border-radius); border: none;">
-              <div class="modal-header" style="background: var(--tec-gradient); color: white;">
-                <h5 class="modal-title">
-                  <i class="bi bi-calendar-event me-2"></i>${evento.nombre}
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-              </div>
-              <div class="modal-body">
-                <div class="row">
-                  <div class="col-md-6">
-                    <h6><i class="bi bi-info-circle me-2"></i>Información General</h6>
-                    <p><strong>Fecha:</strong> ${evento.fechaTexto}</p>
-                    <p><strong>Lugar:</strong> ${evento.lugar}</p>
-                    <p><strong>Estado:</strong> 
-                      <span class="badge ${evento.estado === 'disponible' ? 'badge-disponible' : 'badge-agotado'}">
-                        ${evento.estado === 'disponible' ? 'Disponible' : 'Agotado'}
-                      </span>
-                    </p>
-                  </div>
-                  <div class="col-md-6">
-                    <h6><i class="bi bi-people me-2"></i>Capacidad</h6>
-                    <p><strong>Asistentes:</strong> ${evento.asistencia}/${evento.capacidad}</p>
-                    <div class="progress mb-3">
-                      <div class="progress-bar" style="width: ${(evento.asistencia/evento.capacidad)*100}%; background: var(--tec-gradient);"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="mt-3">
-                  <h6><i class="bi bi-card-text me-2"></i>Descripción</h6>
-                  <p>${evento.descripcion}</p>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <a href="editarEvento.html?id=${evento.id}" class="btn btn-primary">
-                  <i class="bi bi-pencil me-1"></i>Editar Evento
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      // Remover modal existente si lo hay
-      const existingModal = document.getElementById('eventoModal');
-      if (existingModal) existingModal.remove();
-      
-      // Agregar nuevo modal
-      document.body.insertAdjacentHTML('beforeend', modalHTML);
-      const modal = new bootstrap.Modal(document.getElementById('eventoModal'));
-      modal.show();
-    }
-
-    // ======= NOTIFICACIONES ======= 
-    function showNotification(message, type = 'success') {
-      const notification = document.createElement('div');
-      notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
-      notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-        min-width: 300px;
-        animation: slideInRight 0.3s ease-out;
-      `;
-      notification.innerHTML = `
-        <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      `;
-      
-      document.body.appendChild(notification);
-      
-      // Auto-remove después de 4 segundos
-      setTimeout(() => {
-        if (notification && notification.parentNode) {
-          notification.style.animation = 'fadeOut 0.3s ease-out forwards';
-          setTimeout(() => notification.remove(), 300);
-        }
-      }, 4000);
-    }
-
-    // ======= UTILIDADES ======= 
-    function debounce(func, wait) {
-      let timeout;
-      return function executedFunction(...args) {
-        const later = () => {
-          clearTimeout(timeout);
-          func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-      };
-    }
-
-    // ======= ANIMACIONES ======= 
-    function animateOnLoad() {
-      const cards = document.querySelectorAll('.card-elevada');
-      cards.forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.1}s`;
-      });
-    }
-
-    // ======= CSS ADICIONAL PARA ANIMACIONES ======= 
-    const additionalStyles = `
-      <style>
-        .fade-in-row {
-          animation: fadeInUp 0.4s ease-out forwards;
-        }
-        
-        .evento-icon {
-          width: 40px;
-          height: 40px;
-          background: var(--tec-gradient-light);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: var(--tec-accent);
-          font-size: 1.2rem;
-        }
-        
-        .asistencia-info {
-          min-width: 80px;
-        }
-        
-        .progress {
-          background-color: rgba(0,0,0,0.1);
-        }
-        
-        @keyframes fadeOut {
-          to {
-            opacity: 0;
-            transform: translateX(100px);
-          }
-        }
-      </style>
-    `;
-    
-    document.head.insertAdjacentHTML('beforeend', additionalStyles);
-  </script>
+  <!-- Lógica de Eventos del Administrador -->
+  <script src="listarEventos.js"></script>
 
   <!-- Universal Chatbot Integration -->
   <link rel="stylesheet" href="../viewsChatbot/chatbot.css">

@@ -41,8 +41,15 @@ BEGIN
     ELSE
         SET outResultCode = 0; -- Login exitoso
         
-        -- Retornar ID del usuario, tipo de rol, id_escuela y nombre de escuela
-        SELECT u.id_usuario, r.tipo_rol, u.id_escuela, e.nombre_escuela AS escuela
+        -- Retornar datos completos del usuario
+        SELECT 
+            u.id_usuario,
+            u.nombre,
+            u.apellido,
+            u.correo,
+            r.tipo_rol,
+            u.id_escuela,
+            e.nombre_escuela AS escuela
         FROM Usuarios u
         INNER JOIN Roles r ON u.id_rol = r.id_rol
         LEFT JOIN EscuelasTEC e ON u.id_escuela = e.id_escuela
@@ -469,3 +476,468 @@ END//
 
 DELIMITER ;
 
+
+-- =====================================================
+-- SP para obtener detalle completo de un evento
+-- =====================================================
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_obtener_evento_detalle//
+
+CREATE PROCEDURE sp_obtener_evento_detalle(
+    IN p_id_evento INT,
+    OUT p_result_code INT
+)
+BEGIN
+    -- Inicializar resultado
+    SET p_result_code = 0;
+    
+    -- Verificar si el evento existe
+    IF NOT EXISTS(SELECT 1 FROM Eventos WHERE id_evento = p_id_evento) THEN
+        SET p_result_code = 1; -- Evento no encontrado
+    ELSE
+        -- Retornar datos del evento
+        SELECT 
+            e.id_evento as id,
+            e.nombre as titulo,
+            e.descripcion,
+            e.fecha,
+            e.hora,
+            e.lugar,
+            e.capacidad,
+            e.asistencia,
+            e.precio as costo,
+            e.acceso,
+            e.imagen_url as img,
+            e.alt_imagen as alt,
+            e.estado,
+            (e.capacidad - e.asistencia) as disponibles,
+            DATE_FORMAT(e.fecha, '%Y-%m-%d') as fechaCompleta,
+            DATE_FORMAT(e.fecha, '%d') as dia,
+            DATE_FORMAT(e.fecha, '%M') as mesNombre,
+            CONCAT(u.nombre, ' ', u.apellido) as creador_nombre
+        FROM Eventos e
+        LEFT JOIN Usuarios u ON e.id_creador = u.id_usuario
+        WHERE e.id_evento = p_id_evento;
+    END IF;
+END//
+
+DELIMITER ;
+
+
+-- =====================================================
+-- SP para crear una reserva
+-- =====================================================
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_crear_reserva//
+
+CREATE PROCEDURE sp_crear_reserva(
+    IN p_id_evento INT,
+    IN p_id_usuario INT,
+    OUT p_result_code INT,
+    OUT p_message VARCHAR(255),
+    OUT p_id_reserva INT
+)
+BEGIN
+    DECLARE v_capacidad INT;
+    DECLARE v_asistencia INT;
+    DECLARE v_estado VARCHAR(20);
+    
+    -- Inicializar variables
+    SET p_result_code = 0;
+    SET p_message = 'Reserva creada exitosamente';
+    SET p_id_reserva = NULL;
+    
+    -- Verificar que el evento existe
+    IF NOT EXISTS(SELECT 1 FROM Eventos WHERE id_evento = p_id_evento) THEN
+        SET p_result_code = 1;
+        SET p_message = 'Evento no encontrado';
+    
+    -- Verificar que el usuario existe
+    ELSEIF NOT EXISTS(SELECT 1 FROM Usuarios WHERE id_usuario = p_id_usuario) THEN
+        SET p_result_code = 2;
+        SET p_message = 'Usuario no encontrado';
+    
+    -- Verificar si ya tiene una reserva
+    ELSEIF EXISTS(
+        SELECT 1 FROM Reservas 
+        WHERE id_evento = p_id_evento AND id_usuario = p_id_usuario
+    ) THEN
+        SET p_result_code = 3;
+        SET p_message = 'Ya tienes una reserva para este evento';
+    
+    ELSE
+        -- Obtener información del evento
+        SELECT capacidad, asistencia, estado 
+        INTO v_capacidad, v_asistencia, v_estado
+        FROM Eventos 
+        WHERE id_evento = p_id_evento;
+        
+        -- Verificar estado del evento
+        IF v_estado != 'disponible' THEN
+            SET p_result_code = 4;
+            SET p_message = 'El evento no está disponible para reservas';
+        
+        -- Verificar disponibilidad
+        ELSEIF v_asistencia >= v_capacidad THEN
+            SET p_result_code = 5;
+            SET p_message = 'No hay cupos disponibles para este evento';
+        
+        ELSE
+            -- Crear la reserva
+            INSERT INTO Reservas (id_evento, id_usuario, cantidad, metodo_pago, estado)
+            VALUES (p_id_evento, p_id_usuario, 1, 'efectivo', 'Confirmada');
+            
+            SET p_id_reserva = LAST_INSERT_ID();
+            
+            -- Incrementar asistencia
+            UPDATE Eventos 
+            SET asistencia = asistencia + 1
+            WHERE id_evento = p_id_evento;
+            
+            -- Si se alcanzó la capacidad, marcar como agotado
+            IF v_asistencia + 1 >= v_capacidad THEN
+                UPDATE Eventos 
+                SET estado = 'agotado'
+                WHERE id_evento = p_id_evento;
+            END IF;
+        END IF;
+    END IF;
+    
+END//
+
+DELIMITER ;
+
+
+-- =====================================================
+-- SP para verificar si existe una reserva
+-- =====================================================
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_verificar_reserva//
+
+CREATE PROCEDURE sp_verificar_reserva(
+    IN p_id_evento INT,
+    IN p_id_usuario INT,
+    OUT p_tiene_reserva BOOLEAN
+)
+BEGIN
+    -- Verificar si existe la reserva
+    IF EXISTS(
+        SELECT 1 FROM Reservas 
+        WHERE id_evento = p_id_evento AND id_usuario = p_id_usuario
+    ) THEN
+        SET p_tiene_reserva = TRUE;
+        
+        -- Retornar datos de la reserva
+        SELECT 
+            id_reserva,
+            estado,
+            creado_en
+        FROM Reservas
+        WHERE id_evento = p_id_evento AND id_usuario = p_id_usuario
+        LIMIT 1;
+    ELSE
+        SET p_tiene_reserva = FALSE;
+    END IF;
+END//
+
+DELIMITER ;
+
+
+-- =====================================================
+-- SP para obtener eventos creados por un administrador
+-- =====================================================
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_listar_eventos_administrador//
+
+CREATE PROCEDURE sp_listar_eventos_administrador(
+    IN p_id_creador INT
+)
+BEGIN
+    -- Validar que el usuario existe
+    IF NOT EXISTS(SELECT 1 FROM Usuarios WHERE id_usuario = p_id_creador) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El usuario administrador no existe';
+    ELSE
+        -- Retornar todos los eventos creados por este administrador
+        SELECT 
+            e.id_evento,
+            e.nombre,
+            e.descripcion,
+            e.fecha,
+            e.hora,
+            e.lugar,
+            e.capacidad,
+            e.asistencia,
+            e.precio,
+            e.acceso,
+            e.imagen_url,
+            e.alt_imagen,
+            e.estado,
+            e.creado_en,
+            (e.capacidad - e.asistencia) AS disponibles
+        FROM Eventos e
+        WHERE e.id_creador = p_id_creador
+        ORDER BY e.fecha DESC, e.hora DESC;
+    END IF;
+END//
+
+DELIMITER ;
+
+
+-- =====================================================
+-- SP para crear un nuevo evento
+-- =====================================================
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_crear_evento//
+
+CREATE PROCEDURE sp_crear_evento(
+    IN p_nombre VARCHAR(200),
+    IN p_descripcion TEXT,
+    IN p_fecha DATE,
+    IN p_hora TIME,
+    IN p_lugar VARCHAR(200),
+    IN p_capacidad INT,
+    IN p_precio DECIMAL(10,2),
+    IN p_acceso ENUM('todos', 'solo_tec'),
+    IN p_id_creador INT,
+    IN p_imagen_url VARCHAR(500),
+    IN p_alt_imagen VARCHAR(300),
+    IN p_escuelas JSON, -- Array de IDs de escuelas: [1,2,3] o NULL si es 'todos'
+    OUT p_result_code INT,
+    OUT p_message VARCHAR(255),
+    OUT p_id_evento INT
+)
+BEGIN
+    DECLARE v_id_escuela INT;
+    DECLARE v_escuelas_count INT;
+    DECLARE v_index INT DEFAULT 0;
+    
+    -- Inicializar variables
+    SET p_result_code = 0;
+    SET p_message = 'Evento creado exitosamente';
+    SET p_id_evento = NULL;
+    
+    -- Validar que el creador existe y es administrador
+    IF NOT EXISTS(
+        SELECT 1 FROM Usuarios u 
+        INNER JOIN Roles r ON u.id_rol = r.id_rol
+        WHERE u.id_usuario = p_id_creador AND r.tipo_rol = 'Administrador'
+    ) THEN
+        SET p_result_code = 1;
+        SET p_message = 'El usuario no existe o no es administrador';
+    
+    -- Validar datos básicos
+    ELSEIF LENGTH(TRIM(p_nombre)) < 5 THEN
+        SET p_result_code = 2;
+        SET p_message = 'El nombre del evento debe tener al menos 5 caracteres';
+        
+    ELSEIF LENGTH(TRIM(p_descripcion)) < 20 THEN
+        SET p_result_code = 3;
+        SET p_message = 'La descripción debe tener al menos 20 caracteres';
+        
+    ELSEIF p_fecha < CURDATE() THEN
+        SET p_result_code = 4;
+        SET p_message = 'La fecha del evento no puede ser anterior a hoy';
+        
+    ELSEIF p_capacidad < 1 OR p_capacidad > 1000 THEN
+        SET p_result_code = 5;
+        SET p_message = 'La capacidad debe estar entre 1 y 1000';
+        
+    ELSEIF p_precio < 0 THEN
+        SET p_result_code = 6;
+        SET p_message = 'El precio no puede ser negativo';
+    
+    -- Validar que si el acceso es 'solo_tec' se incluyan escuelas
+    ELSEIF p_acceso = 'solo_tec' AND (p_escuelas IS NULL OR JSON_LENGTH(p_escuelas) = 0) THEN
+        SET p_result_code = 7;
+        SET p_message = 'Debe seleccionar al menos una escuela para eventos exclusivos del TEC';
+        
+    ELSE
+        -- Crear el evento
+        INSERT INTO Eventos (
+            nombre,
+            descripcion,
+            fecha,
+            hora,
+            lugar,
+            capacidad,
+            asistencia,
+            precio,
+            acceso,
+            id_creador,
+            imagen_url,
+            alt_imagen,
+            estado
+        ) VALUES (
+            TRIM(p_nombre),
+            TRIM(p_descripcion),
+            p_fecha,
+            p_hora,
+            TRIM(p_lugar),
+            p_capacidad,
+            0, -- asistencia inicial en 0
+            p_precio,
+            p_acceso,
+            p_id_creador,
+            p_imagen_url,
+            TRIM(p_alt_imagen),
+            'disponible'
+        );
+        
+        SET p_id_evento = LAST_INSERT_ID();
+        
+        -- Si el acceso es 'solo_tec' y hay escuelas, insertarlas en Eventos_Escuelas
+        IF p_acceso = 'solo_tec' AND p_escuelas IS NOT NULL AND JSON_LENGTH(p_escuelas) > 0 THEN
+            SET v_escuelas_count = JSON_LENGTH(p_escuelas);
+            SET v_index = 0;
+            
+            WHILE v_index < v_escuelas_count DO
+                SET v_id_escuela = JSON_EXTRACT(p_escuelas, CONCAT('$[', v_index, ']'));
+                
+                -- Insertar relación evento-escuela
+                INSERT INTO Eventos_Escuelas (id_evento, id_escuela)
+                VALUES (p_id_evento, v_id_escuela);
+                
+                SET v_index = v_index + 1;
+            END WHILE;
+        END IF;
+    END IF;
+    
+END//
+
+DELIMITER ;
+
+
+-- =============================================
+-- SP para actualizar un evento existente
+-- =============================================
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_actualizar_evento//
+
+CREATE PROCEDURE sp_actualizar_evento(
+    IN p_id_evento INT,
+    IN p_nombre VARCHAR(200),
+    IN p_descripcion TEXT,
+    IN p_fecha DATE,
+    IN p_hora TIME,
+    IN p_lugar VARCHAR(200),
+    IN p_capacidad INT,
+    IN p_precio DECIMAL(10,2),
+    IN p_imagen_url VARCHAR(500),
+    IN p_alt_imagen VARCHAR(300),
+    OUT p_result_code INT,
+    OUT p_message VARCHAR(255)
+)
+BEGIN
+    DECLARE v_asistencia_actual INT;
+    
+    -- Inicializar variables
+    SET p_result_code = 0;
+    SET p_message = 'Evento actualizado exitosamente';
+    
+    -- Validar que el evento existe
+    IF NOT EXISTS(SELECT 1 FROM Eventos WHERE id_evento = p_id_evento) THEN
+        SET p_result_code = 1;
+        SET p_message = 'El evento no existe';
+    
+    -- Validar datos básicos
+    ELSEIF LENGTH(TRIM(p_nombre)) < 5 THEN
+        SET p_result_code = 2;
+        SET p_message = 'El nombre del evento debe tener al menos 5 caracteres';
+        
+    ELSEIF LENGTH(TRIM(p_descripcion)) < 20 THEN
+        SET p_result_code = 3;
+        SET p_message = 'La descripción debe tener al menos 20 caracteres';
+        
+    ELSEIF p_fecha < CURDATE() THEN
+        SET p_result_code = 4;
+        SET p_message = 'La fecha del evento no puede ser anterior a hoy';
+        
+    ELSEIF p_capacidad < 1 OR p_capacidad > 1000 THEN
+        SET p_result_code = 5;
+        SET p_message = 'La capacidad debe estar entre 1 y 1000';
+        
+    ELSEIF p_precio < 0 THEN
+        SET p_result_code = 6;
+        SET p_message = 'El precio no puede ser negativo';
+    
+    ELSE
+        -- Obtener asistencia actual para validar capacidad
+        SELECT asistencia INTO v_asistencia_actual
+        FROM Eventos
+        WHERE id_evento = p_id_evento;
+        
+        -- Validar que la nueva capacidad no sea menor a la asistencia actual
+        IF p_capacidad < v_asistencia_actual THEN
+            SET p_result_code = 7;
+            SET p_message = CONCAT('La capacidad no puede ser menor a la asistencia actual (', v_asistencia_actual, ')');
+        ELSE
+            -- Actualizar el evento
+            UPDATE Eventos
+            SET 
+                nombre = TRIM(p_nombre),
+                descripcion = TRIM(p_descripcion),
+                fecha = p_fecha,
+                hora = p_hora,
+                lugar = TRIM(p_lugar),
+                capacidad = p_capacidad,
+                precio = p_precio,
+                imagen_url = p_imagen_url,
+                alt_imagen = TRIM(p_alt_imagen),
+                estado = CASE 
+                    WHEN p_capacidad <= v_asistencia_actual THEN 'agotado'
+                    ELSE 'disponible'
+                END
+            WHERE id_evento = p_id_evento;
+        END IF;
+    END IF;
+    
+END//
+
+DELIMITER ;
+
+
+-- =============================================
+-- SP para eliminar un evento (soft delete)
+-- =============================================
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_eliminar_evento//
+
+CREATE PROCEDURE sp_eliminar_evento(
+    IN p_id_evento INT,
+    OUT p_result_code INT,
+    OUT p_message VARCHAR(255)
+)
+BEGIN
+    -- Inicializar variables
+    SET p_result_code = 0;
+    SET p_message = 'Evento eliminado exitosamente';
+    
+    -- Validar que el evento existe
+    IF NOT EXISTS(SELECT 1 FROM Eventos WHERE id_evento = p_id_evento) THEN
+        SET p_result_code = 1;
+        SET p_message = 'El evento no existe';
+    ELSE
+        -- Soft delete: cambiar estado a 'cancelado'
+        UPDATE Eventos
+        SET estado = 'cancelado'
+        WHERE id_evento = p_id_evento;
+    END IF;
+    
+END//
+
+DELIMITER ;

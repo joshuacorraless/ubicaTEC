@@ -60,9 +60,12 @@ export const loginUsuario = async (req, res) => {
         message: "Login exitoso",
         data: {
             id_usuario: usuario.id_usuario,
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+            correo: usuario.correo,
             tipo_rol: usuario.tipo_rol,
-            id_escuela: usuario.id_escuela || null, // null para administradores y visitantes
-            escuela: usuario.escuela || null, // nombre de la escuela
+            id_escuela: usuario.id_escuela || null,
+            escuela: usuario.escuela || null,
         },
     });
     } catch (error) {

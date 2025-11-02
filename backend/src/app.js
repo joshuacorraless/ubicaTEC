@@ -10,6 +10,7 @@ import eventosRoutes from './routes/eventos.routes.js';
 import usuariosRoutes from './routes/registroUsuario.routes.js';
 import perfilRoutes from './routes/perfil.routes.js';
 import eventoRoutes from './routes/evento.routes.js';
+import administradoresRoutes from './routes/administradores.routes.js';
 
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(eventosRoutes); // que la app use las rutas de eventos
 app.use(eventoRoutes); // que la app use las rutas de evento individual
 app.use(usuariosRoutes); // que la app use las rutas de usuarios (registro)
 app.use(perfilRoutes); // que la app use las rutas de perfil
+app.use(administradoresRoutes); // que la app use las rutas de administradores
 
 
 

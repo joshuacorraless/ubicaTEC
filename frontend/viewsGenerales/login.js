@@ -49,9 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.success) {
                 // Guardar en sessionStorage
                 sessionStorage.setItem('id_usuario', data.data.id_usuario);
+                sessionStorage.setItem('nombre', data.data.nombre);
+                sessionStorage.setItem('apellido', data.data.apellido);
+                sessionStorage.setItem('correo', data.data.correo);
                 sessionStorage.setItem('tipo_rol', data.data.tipo_rol);
-                sessionStorage.setItem('id_escuela', data.data.id_escuela || ''); // ID numérico de la escuela
-                sessionStorage.setItem('escuela', data.data.escuela || ''); // Nombre de la escuela para mostrar
+                sessionStorage.setItem('id_escuela', data.data.id_escuela || '');
+                sessionStorage.setItem('escuela', data.data.escuela || '');
 
                 // Mostrar mensaje de éxito
                 mostrarExito();

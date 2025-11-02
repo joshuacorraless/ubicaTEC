@@ -1,63 +1,209 @@
-const nombre = document.getElementById('nombre');
-const descripcion = document.getElementById('descripcion');
-const fechaInput = document.getElementById('fecha');
-const lugar = document.getElementById('lugar');
-const capacidad = document.getElementById('capacidad');
-const costo = document.getElementById('costo');
-const warning = document.getElementById('warnings-evento');
-const form = document.getElementById('form-registrar');
+document.addEventListener('DOMContentLoaded', function() {
+  // Referencias a elementos
+  const fechaInput = document.getElementById('fecha');
+  const nombreInput = document.getElementById('nombre');
+  const descripcionInput = document.getElementById('descripcion');
+  const capacidadInput = document.getElementById('capacidad');
+  const costoInput = document.getElementById('costo');
+  const accesoSelect = document.getElementById('acceso');
+  const escuelasContainer = document.getElementById('escuelas-container');
+  const escuelasSelect = document.getElementById('escuelas');
+  const escuelasError = document.getElementById('escuelas-error');
+  const form = document.getElementById('form-registrar');
+  const warningsDiv = document.getElementById('warnings-evento');
 
-form.addEventListener('submit', e => {
-    e.preventDefault();
-    let advert = '';
-    warning.innerHTML = '';
-    let flag = false;
 
-    // Validación: Nombre del evento puede tener un máximo de 100 caracteres alfanuméricos
-    if (/^[a-zA-Z0-9]{1,100}$/.test(nombre)) {
-        advert += 'Nombre debe contener un máximo de 100 caracteres los cuales solo pueden ser alfanuméricos <br>';
-        flag = true;
+  // Configurar fecha mínima (hoy)
+  fechaInput.min = new Date().toISOString().split('T')[0];
+
+  // Validación de nombre: solo letras, números, espacios y caracteres básicos
+  nombreInput.addEventListener('input', function() {
+    this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\-:()]/g, '');
+    if (this.value.length > 100) {
+      this.value = this.value.substring(0, 100);
+    }
+  });
+
+  // Validación de descripción: longitud
+  descripcionInput.addEventListener('input', function() {
+    if (this.value.length > 500) {
+      this.value = this.value.substring(0, 500);
+    }
+  });
+
+  // Validación de capacidad: solo números positivos
+  capacidadInput.addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9]/g, '');
+    const val = parseInt(this.value);
+    if (val > 1000) {
+      this.value = '1000';
+    } else if (val < 1 && this.value !== '') {
+      this.value = '1';
+    }
+  });
+
+  capacidadInput.addEventListener('blur', function() {
+    if (this.value === '' || parseInt(this.value) < 1) {
+      this.value = '';
+    }
+  });
+
+  // Validación de costo: solo números y punto decimal
+  costoInput.addEventListener('input', function() {
+    // Permitir solo números, un punto decimal y máximo 2 decimales
+    this.value = this.value.replace(/[^0-9.]/g, '');
+    
+    // Evitar múltiples puntos
+    const parts = this.value.split('.');
+    if (parts.length > 2) {
+      this.value = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    // Limitar decimales a 2
+    if (parts[1] && parts[1].length > 2) {
+      this.value = parts[0] + '.' + parts[1].substring(0, 2);
     }
 
-    // Validación: Descripción con un mínimo de 20 caracteres y un máximo de 500
-    if (descripcion.value.length < 20 || descripcion.value.length > 500) {
-        advert += 'Descripción debe tener un mínimo de 20 caracteres y un máximo de 500 <br>';
-        flag = true;
+    // Limitar valor máximo
+    const val = parseFloat(this.value);
+    if (val > 999999) {
+      this.value = '999999';
     }
+  });
 
-    // Validación: Fecha solo permite de la actualidad hacia adelante
-    const fechaEvento = new Date(fechaInput.value);
-    // Normalizar fechas para comparar solo año, mes y día
-    const fechaEventoSinHora = new Date(fechaEvento.getFullYear(), fechaEvento.getMonth(), fechaEvento.getDate());
-    const fechaActualSinHora = new Date();
-    fechaActualSinHora.setHours(0,0,0,0);
-    if (isNaN(fechaEventoSinHora.getTime()) || fechaEventoSinHora < fechaActualSinHora) {
-        advert += 'La fecha ingresada es una fecha no válida <br>';
-        flag = true;
-    }
-
-    // Validación: Lugar tiene un máximo de 100 carateres y un mínimo de 10 
-    if (/^[a-zA-Z0-9]{10,100}$/.test(lugar)) {
-        advert += 'Lugar debe tener un máximo de 100 caracteres y un mínimo de 10 <br>'
-        flag = true
-    }
-
-    // Validación: El costo de la entrada solo debe ser númerico y no puede ser negativo
-    try {
-        if (Number(costo) < 0) {
-            advert += 'El costo no pueden ser números negativos <br>'
-            flag = true
-        }
-    } catch (err) {
-        advert += 'El costo solo pueden números <br>'
-        flag = true
-    }
-
-    if (flag) {
-        warning.innerHTML = advert;
+  costoInput.addEventListener('blur', function() {
+    if (this.value === '' || this.value === '.') {
+      this.value = '0';
     } else {
-        // Si todo es válido, puedes continuar con el submit aquí
-        form.submit();
+      const val = parseFloat(this.value);
+      if (val < 0) {
+        this.value = '0';
+      }
+    }
+  });
+
+  // Toggle de escuelas según tipo de acceso
+  accesoSelect.addEventListener('change', function() {
+    escuelasContainer.style.display = this.value === 'solo_tec' ? 'block' : 'none';
+    if (this.value !== 'solo_tec') {
+      escuelasSelect.selectedIndex = -1;
+      escuelasError.style.display = 'none';
+    }
+  });
+
+  // Validación y envío del formulario
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Validar nombre
+    const nombre = nombreInput.value.trim();
+    if (nombre.length < 3) {
+      showWarnings('El nombre debe tener al menos 3 caracteres');
+      nombreInput.focus();
+      return;
     }
 
-})
+    // Validar descripción
+    const descripcion = descripcionInput.value.trim();
+    if (descripcion.length < 20) {
+      showWarnings('La descripción debe tener al menos 20 caracteres');
+      descripcionInput.focus();
+      return;
+    }
+    if (descripcion.length > 500) {
+      showWarnings('La descripción no puede exceder 500 caracteres');
+      descripcionInput.focus();
+      return;
+    }
+
+    // Validar capacidad
+    const capacidad = parseInt(capacidadInput.value);
+    if (isNaN(capacidad) || capacidad < 1 || capacidad > 1000) {
+      showWarnings('La capacidad debe ser un número entre 1 y 1000');
+      capacidadInput.focus();
+      return;
+    }
+
+    // Validar costo
+    const costo = parseFloat(costoInput.value || '0');
+    if (isNaN(costo) || costo < 0) {
+      showWarnings('El costo debe ser un número válido (0 o mayor)');
+      costoInput.focus();
+      return;
+    }
+
+    // Validar escuelas si es solo_tec
+    if (accesoSelect.value === 'solo_tec' && escuelasSelect.selectedOptions.length === 0) {
+      escuelasError.style.display = 'block';
+      showWarnings('Debe seleccionar al menos una escuela');
+      escuelasSelect.focus();
+      return;
+    }
+    escuelasError.style.display = 'none';
+
+    // Verificar usuario en sessionStorage
+    const id_usuario = sessionStorage.getItem('id_usuario');
+    const tipo_rol = sessionStorage.getItem('tipo_rol');
+    
+    if (!id_usuario || tipo_rol !== 'Administrador') {
+      showWarnings('Debe iniciar sesión como administrador');
+      setTimeout(() => window.location.href = '../viewsGenerales/login.html', 2000);
+      return;
+    }
+
+    // Preparar datos
+    const data = {
+      nombre: nombre,
+      descripcion: descripcion,
+      fecha: document.getElementById('fecha').value,
+      hora: document.getElementById('hora').value,
+      lugar: document.getElementById('lugar').value,
+      capacidad: capacidad,
+      precio: costo,
+      acceso: accesoSelect.value,
+      id_creador: parseInt(id_usuario),
+      imagen_url: 'https://via.placeholder.com/800x400/0052CC/ffffff?text=Evento',
+      alt_imagen: nombre,
+      escuelas: accesoSelect.value === 'solo_tec' ? Array.from(escuelasSelect.selectedOptions).map(o => parseInt(o.value)) : null
+    };
+
+    // Enviar formulario
+    const btn = form.querySelector('button[type="submit"]');
+    const txt = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-spinner spinner-border spinner-border-sm"></i> Registrando...';
+
+    try {
+      const res = await fetch('http://localhost:3000/api/administradores/eventos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.success) {
+        showSuccess('Evento creado exitosamente');
+        setTimeout(() => window.location.href = 'listarEventos.html', 1500);
+      } else {
+        showWarnings(result.message);
+      }
+    } catch (err) {
+      showWarnings('Error de conexión con el servidor');
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = txt;
+    }
+  });
+
+  function showWarnings(msg) {
+    warningsDiv.innerHTML = '<div class="alert alert-danger alert-dismissible fade show mt-3"><i class="bi bi-exclamation-triangle-fill me-2"></i>' + msg + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+    warningsDiv.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showSuccess(msg) {
+    warningsDiv.innerHTML = '<div class="alert alert-success alert-dismissible fade show mt-3"><i class="bi bi-check-circle-fill me-2"></i>' + msg + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+    warningsDiv.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+});

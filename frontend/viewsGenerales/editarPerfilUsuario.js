@@ -234,3 +234,12 @@ document.addEventListener('DOMContentLoaded', function() {
   form.addEventListener('submit', handleSubmit);
   document.getElementById('year').textContent = new Date().getFullYear();
 });
+
+// Función de cierre de sesión
+function cerrarSesion() {
+  sessionStorage.clear();
+  window.location.href = 'login.html';
+}
+
+// Exponer la función globalmente
+window.cerrarSesion = cerrarSesion;

@@ -504,3 +504,17 @@ function mostrarErrorCarga(mensaje) {
 
 // Exponer funciones globalmente para uso en HTML
 window.limpiarFiltros = limpiarFiltros;
+
+/**
+ * Cerrar sesión del usuario
+ */
+function cerrarSesion() {
+    // Limpiar sessionStorage
+    sessionStorage.clear();
+    
+    // Redirigir al login
+    window.location.href = 'login.html';
+}
+
+// Exponer función de logout
+window.cerrarSesion = cerrarSesion;

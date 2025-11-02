@@ -131,3 +131,17 @@ document.addEventListener('DOMContentLoaded', function() {
   cargarPerfil();
   document.getElementById('year').textContent = new Date().getFullYear();
 });
+
+/**
+ * Cerrar sesión del usuario
+ */
+function cerrarSesion() {
+  // Limpiar sessionStorage
+  sessionStorage.clear();
+  
+  // Redirigir al login
+  window.location.href = 'login.html';
+}
+
+// Exponer función de logout
+window.cerrarSesion = cerrarSesion;

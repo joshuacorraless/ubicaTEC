@@ -71,16 +71,46 @@ function cargarUsuario() {
     const nombreElement = document.getElementById('usuario-nombre');
     const emailElement = document.getElementById('usuario-email');
     const tipoElement = document.getElementById('usuario-tipo');
-    const carneElement = document.getElementById('usuario-carne');
     
     if (nombreElement) nombreElement.textContent = usuarioActual.nombre;
     if (emailElement) emailElement.textContent = usuarioActual.email;
     if (tipoElement) {
-        const tipoTexto = usuarioActual.tipo_rol === 'administrador' ? 'Administrador TEC' : 'Estudiante TEC';
+        // Normalizar el tipo de rol para comparación (case-insensitive y trim)
+        const tipoRolNormalizado = (usuarioActual.tipo_rol || '').trim().toLowerCase();
+        
+        console.log('🔍 Tipo rol detectado:', tipoRolNormalizado);
+        
+        let tipoTexto = 'Usuario TEC';
+        let badgeClass = 'bg-primary';
+        let sidebarLabel = 'Usuario';
+        
+        if (tipoRolNormalizado === 'administrador') {
+            tipoTexto = 'Administrador';
+            badgeClass = 'bg-danger';
+            sidebarLabel = 'Administrador';
+            // Mostrar opción de gestión de eventos para admin
+            const navGestion = document.getElementById('nav-gestion-eventos');
+            const navGestionMobile = document.getElementById('nav-gestion-eventos-mobile');
+            if (navGestion) navGestion.style.display = 'block';
+            if (navGestionMobile) navGestionMobile.style.display = 'block';
+        } else if (tipoRolNormalizado === 'estudiante') {
+            tipoTexto = 'Estudiante TEC';
+            badgeClass = 'bg-primary';
+            sidebarLabel = 'Estudiante';
+        } else if (tipoRolNormalizado === 'visitante') {
+            tipoTexto = 'Visitante';
+            badgeClass = 'bg-secondary';
+            sidebarLabel = 'Visitante';
+        }
+        
         tipoElement.textContent = tipoTexto;
-    }
-    if (carneElement) {
-        carneElement.textContent = usuarioActual.id || 'N/A';
+        tipoElement.className = `badge ${badgeClass}`;
+        
+        // Actualizar label del sidebar
+        const sidebarLabelElement = document.getElementById('sidebar-rol-label');
+        if (sidebarLabelElement) {
+            sidebarLabelElement.textContent = sidebarLabel;
+        }
     }
 }
 
@@ -512,3 +542,17 @@ window.eventoApp = {
     renderizarEvento,
     handleReservation
 };
+
+/**
+ * Cerrar sesión del usuario
+ */
+function cerrarSesion() {
+    // Limpiar sessionStorage
+    sessionStorage.clear();
+    
+    // Redirigir al login
+    window.location.href = 'login.html';
+}
+
+// Exponer función de logout
+window.cerrarSesion = cerrarSesion;

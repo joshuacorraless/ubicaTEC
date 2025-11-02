@@ -388,11 +388,10 @@
                 <label for="lugar" class="form-label">Lugar <span class="text-danger">*</span></label>
                 <select id="lugar" class="form-select" required aria-required="true">
                   <option value="">Seleccione un lugar...</option>
-                  <option value="Auditorio D3">Auditorio D3</option>
+                  <option value="Auditorio Edificio D3">Auditorio Edificio D3</option>
+                  <option value="Learning Commons">Learning Commons</option>
                   <option value="Restaurante Institucional">Restaurante Institucional</option>
-                  <option value="Biblioteca Learning Commons">Biblioteca Learning Commons</option>
-                  <option value="Laboratorio de Computación">Laboratorio de Computación</option>
-                  <option value="Aula Magna">Aula Magna</option>
+                  <option value="Biblioteca José Figueres Ferrer">Biblioteca José Figueres Ferrer</option>
                 </select>
                 <div class="invalid-feedback">Seleccione un lugar para el evento.</div>
               </div>
@@ -420,10 +419,29 @@
                 <label for="acceso" class="form-label">Tipo de acceso <span class="text-danger">*</span></label>
                 <select id="acceso" class="form-select" required aria-required="true">
                   <option value="">Seleccione el tipo de acceso...</option>
-                  <option value="tec">solo_tec</option>
+                  <option value="solo_tec">solo_tec</option>
                   <option value="todos">todos</option>
                 </select>
                 <div class="invalid-feedback">Seleccione el tipo de acceso.</div>
+              </div>
+
+              <!-- Escuelas (solo visible si acceso es 'solo_tec') -->
+              <div class="mb-4" id="escuelas-container" style="display: none;">
+                <label for="escuelas" class="form-label">Escuelas incluidas <span class="text-danger">*</span></label>
+                <select id="escuelas" class="form-select" multiple size="5">
+                  <option value="1">Escuela de Administración de Empresas</option>
+                  <option value="2">Escuela de Ingeniería Electrónica</option>
+                  <option value="3">Escuela de Física</option>
+                  <option value="4">Escuela de Ingeniería en Computación</option>
+                  <option value="5">Escuela de Ingeniería en Producción Industrial</option>
+                </select>
+                <div class="form-text">
+                  <i class="bi bi-info-circle me-1"></i>
+                  Mantén presionado Ctrl (o Cmd en Mac) para seleccionar varias escuelas
+                </div>
+                <div class="invalid-feedback" id="escuelas-error" style="display: none;">
+                  Debe seleccionar al menos una escuela para eventos exclusivos del TEC.
+                </div>
               </div>
 
               <!-- Imagen -->
@@ -460,260 +478,16 @@
       </main>
     </div>
   </div>
+  </div>
+  </div>
 
   <script>
     // Año dinámico
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    // Configurar fecha mínima (hoy)
-    const fechaInput = document.getElementById('fecha');
-    const hoy = new Date();
-    const fechaMinima = hoy.toISOString().split('T')[0];
-    fechaInput.min = fechaMinima;
-
-    // Referencias del DOM
-    const form = document.getElementById('form-registrar');
-    const warningsDiv = document.getElementById('warnings-evento');
-    const statusDiv = document.getElementById('live-status');
-
-    // Event listeners
-    form.addEventListener('submit', handleSubmit);
-    form.addEventListener('reset', handleReset);
-
-    // Validar en tiempo real
-    document.getElementById('nombre').addEventListener('blur', validateNombre);
-    document.getElementById('descripcion').addEventListener('blur', validateDescripcion);
-    document.getElementById('capacidad').addEventListener('blur', validateCapacidad);
-    document.getElementById('costo').addEventListener('blur', validateCosto);
-    document.getElementById('imagen').addEventListener('change', validateImagen);
-
-    async function handleSubmit(e) {
-      e.preventDefault();
-      
-      // Limpiar warnings previos
-      hideWarnings();
-      
-      // Validar formulario
-      if (!validateForm()) {
-        showWarnings('Por favor corrige los errores marcados en rojo.');
-        return;
-      }
-
-      // Mostrar loading
-      const submitBtn = form.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin me-2"></i>Registrando...';
-
-      try {
-        const formData = new FormData();
-        formData.append("nombre", document.getElementById("nombre").value.trim());
-        formData.append("descripcion", document.getElementById("descripcion").value.trim());
-        formData.append("fecha", document.getElementById("fecha").value);
-        formData.append("hora", document.getElementById("hora").value);
-        formData.append("lugar", document.getElementById("lugar").value);
-        formData.append("capacidad", document.getElementById("capacidad").value);
-        formData.append("costo", document.getElementById("costo").value || "0");
-        formData.append("acceso", document.getElementById("acceso").value);
-        formData.append("imagen", document.getElementById("imagen").files[0]);
-
-        // Simular envío al backend (reemplazar con tu API real)
-        const response = await fetch("http://localhost:3000/eventos", {
-          method: "POST",
-          body: formData
-        });
-
-        if (response.ok) {
-          showSuccess('¡Evento registrado exitosamente! 🎉');
-          form.reset();
-          setTimeout(() => {
-            window.location.href = 'listarEventos.html';
-          }, 2000);
-        } else {
-          throw new Error('Error en el servidor');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        showWarnings('Error al registrar el evento. Por favor intente nuevamente.');
-      } finally {
-        // Restaurar botón
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-      }
-    }
-
-    function handleReset(e) {
-      hideWarnings();
-      form.classList.remove('was-validated');
-    }
-
-    function validateForm() {
-      let isValid = true;
-      
-      // Validar HTML5 nativo
-      if (!form.checkValidity()) {
-        form.classList.add('was-validated');
-        isValid = false;
-      }
-
-      // Validaciones personalizadas
-      if (!validateNombre()) isValid = false;
-      if (!validateDescripcion()) isValid = false;
-      if (!validateCapacidad()) isValid = false;
-      if (!validateCosto()) isValid = false;
-      if (!validateImagen()) isValid = false;
-
-      return isValid;
-    }
-
-    function validateNombre() {
-      const nombre = document.getElementById('nombre');
-      const value = nombre.value.trim();
-      
-      if (value.length < 3 || value.length > 100) {
-        setFieldError(nombre, 'El nombre debe tener entre 3 y 100 caracteres');
-        return false;
-      }
-      
-      if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]+$/.test(value)) {
-        setFieldError(nombre, 'El nombre solo puede contener letras, números y espacios');
-        return false;
-      }
-      
-      setFieldValid(nombre);
-      return true;
-    }
-
-    function validateDescripcion() {
-      const descripcion = document.getElementById('descripcion');
-      const value = descripcion.value.trim();
-      
-      if (value.length < 20 || value.length > 500) {
-        setFieldError(descripcion, 'La descripción debe tener entre 20 y 500 caracteres');
-        return false;
-      }
-      
-      setFieldValid(descripcion);
-      return true;
-    }
-
-    function validateCapacidad() {
-      const capacidad = document.getElementById('capacidad');
-      const value = parseInt(capacidad.value);
-      
-      if (isNaN(value) || value < 1 || value > 1000) {
-        setFieldError(capacidad, 'La capacidad debe ser un número entre 1 y 1000');
-        return false;
-      }
-      
-      setFieldValid(capacidad);
-      return true;
-    }
-
-    function validateCosto() {
-      const costo = document.getElementById('costo');
-      const value = costo.value.trim();
-      
-      if (value && !/^\d+(\.\d{1,2})?$/.test(value)) {
-        setFieldError(costo, 'El costo debe ser un número válido (ej: 1000 o 1000.50)');
-        return false;
-      }
-      
-      setFieldValid(costo);
-      return true;
-    }
-
-    function validateImagen() {
-      const imagen = document.getElementById('imagen');
-      const file = imagen.files[0];
-      
-      if (!file) return true; // No es obligatorio en esta validación
-      
-      const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      
-      if (!validTypes.includes(file.type)) {
-        setFieldError(imagen, 'El archivo debe ser una imagen (JPG, PNG o WebP)');
-        return false;
-      }
-      
-      if (file.size > maxSize) {
-        setFieldError(imagen, 'La imagen no debe superar los 5MB');
-        return false;
-      }
-      
-      setFieldValid(imagen);
-      return true;
-    }
-
-    function setFieldError(field, message) {
-      field.classList.add('is-invalid');
-      field.classList.remove('is-valid');
-      const feedback = field.parentNode.querySelector('.invalid-feedback');
-      if (feedback) feedback.textContent = message;
-    }
-
-    function setFieldValid(field) {
-      field.classList.add('is-valid');
-      field.classList.remove('is-invalid');
-    }
-
-    function showWarnings(message) {
-      warningsDiv.innerHTML = `<i class="bi bi-exclamation-triangle me-2"></i>${message}`;
-      warningsDiv.style.display = 'block';
-      warningsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      
-      // Anunciar a lectores de pantalla
-      statusDiv.textContent = message;
-      statusDiv.classList.remove('visually-hidden');
-    }
-
-    function showSuccess(message) {
-      const successDiv = document.createElement('div');
-      successDiv.className = 'alert alert-success';
-      successDiv.innerHTML = `<i class="bi bi-check-circle me-2"></i>${message}`;
-      successDiv.style.cssText = `
-        position: fixed;
-        top: 80px;
-        right: 20px;
-        z-index: 9999;
-        min-width: 350px;
-        animation: slideInRight 0.3s ease-out;
-      `;
-      
-      document.body.appendChild(successDiv);
-      
-      setTimeout(() => {
-        successDiv.style.animation = 'fadeOut 0.3s ease-out forwards';
-        setTimeout(() => successDiv.remove(), 300);
-      }, 3000);
-    }
-
-    function hideWarnings() {
-      warningsDiv.style.display = 'none';
-      statusDiv.classList.add('visually-hidden');
-    }
-
-    // Añadir estilos de animación
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      .spin { animation: spin 1s linear infinite; }
-      
-      @keyframes slideInRight {
-        from { opacity: 0; transform: translateX(100px); }
-        to { opacity: 1; transform: translateX(0); }
-      }
-      
-      @keyframes fadeOut {
-        to { opacity: 0; transform: translateX(100px); }
-      }
-    `;
-    document.head.appendChild(style);
   </script>
+
+  <!-- Script principal de registro de eventos -->
+  <script src="registrarEvento.js"></script>
 
   <!-- Universal Chatbot Integration -->
   <link rel="stylesheet" href="../viewsChatbot/chatbot.css">
