@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const correo = correoInput.value.trim();
             const contrasena = passwordInput.value;
 
-            const response = await fetch('https://ubicatec-production-bfb7.up.railway.app//api/login', {
+            const response = await fetch('https://ubicatec-production-bfb7.up.railway.app/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

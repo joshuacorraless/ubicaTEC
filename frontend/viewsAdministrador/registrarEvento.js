@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.innerHTML = '<i class="bi bi-spinner spinner-border spinner-border-sm"></i> Subiendo imagen y registrando...';
 
     try {
-      const res = await fetch('https://ubicatec-production-bfb7.up.railway.app//api/administradores/eventos', {
+      const res = await fetch('https://ubicatec-production-bfb7.up.railway.app/api/administradores/eventos', {
         method: 'POST',
         body: formData
         // NO incluir Content-Type header, el navegador lo configura automáticamente con multipart/form-data

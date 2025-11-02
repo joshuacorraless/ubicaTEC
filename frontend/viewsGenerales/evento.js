@@ -2,7 +2,7 @@
 
 // Configuración de API
 const API_CONFIG = {
-    base: 'https://ubicatec-production-bfb7.up.railway.app//api',
+    base: 'https://ubicatec-production-bfb7.up.railway.app/api',
     endpoints: {
         eventoDetalle: '/evento',
         crearReserva: '/evento/reserva',

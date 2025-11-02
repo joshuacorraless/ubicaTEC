@@ -1,5 +1,5 @@
 // ======= CONFIGURACIÓN Y VARIABLES GLOBALES =======
-const API_URL = 'https://ubicatec-production-bfb7.up.railway.app//api/administradores/eventos';
+const API_URL = 'https://ubicatec-production-bfb7.up.railway.app/api/administradores/eventos';
 
 let todosLosEventos = [];
 let eventosFiltrados = [];
@@ -375,7 +375,7 @@ function showDeleteConfirmModal(evento, id) {
 
 function ejecutarEliminacion(id) {
   // Llamar al backend para eliminar
-  fetch(`https://ubicatec-production-bfb7.up.railway.app//api/administradores/eventos/${id}`, {
+  fetch(`https://ubicatec-production-bfb7.up.railway.app/api/administradores/eventos/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
