@@ -75,14 +75,7 @@ function generarMenuPorRol(tipoRol, paginaActual) {
     paginas: ['viewPerfilUsuario.html', 'editarPerfilUsuario.html']
   });
   
-  // Opción común: Cerrar sesión
-  menuItems.push({
-    href: '#',
-    icon: 'bi-box-arrow-right',
-    text: 'Cerrar Sesión',
-    onclick: 'cerrarSesion()',
-    paginas: []
-  });
+  // Nota: El botón de "Cerrar Sesión" está en el navbar superior, no en el sidebar
   
   // Generar HTML
   return menuItems.map(item => {
