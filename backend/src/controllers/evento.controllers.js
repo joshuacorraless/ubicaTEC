@@ -4,7 +4,7 @@
 
 //* imports:
 import { getConnection } from '../db/connection.js';
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
 import 'dotenv/config';
 
 
@@ -149,16 +149,10 @@ export const crearReserva = async (req, res) => {
         // enviar correo de confirmación de forma asíncrona (no bloquear la respuesta)
         setImmediate(async () => {
             try {
-                console.log('📧 Intentando enviar correo de confirmación...');
+                console.log('📧 Intentando enviar correo de confirmación con SendGrid...');
                 
-                // configuración de nodemailer (igual que LogiEvents)
-                const transporter = nodemailer.createTransport({
-                    service: 'gmail',
-                    auth: {
-                        user: process.env.EMAIL_USER,
-                        pass: process.env.EMAIL_PASS
-                    }
-                });
+                // configurar SendGrid API Key
+                sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
                 const toEmail = usuario ? usuario.correo : null;
                 const nombreUsuario = usuario ? `${usuario.nombre} ${usuario.apellido}` : 'Usuario';
@@ -196,10 +190,9 @@ export const crearReserva = async (req, res) => {
                 }
 
                 if (toEmail && eventoInfo) {
-                    // mailOptions igual que LogiEvents
-                    const mailOptions = {
-                        from: process.env.EMAIL_USER,
+                    const msg = {
                         to: toEmail,
+                        from: process.env.EMAIL_USER || 'ubicatecoficial@gmail.com',
                         subject: `Confirmación de reserva: ${eventoInfo.nombre}`,
                         text: `
 ¡Hola, ${nombreUsuario}!
@@ -214,11 +207,21 @@ Detalles de la reserva:
 ¡Te esperamos!
 
 — equipo ubicaTEC
+                        `,
+                        html: `
+                            <p>Hola <strong>${nombreUsuario}</strong>,</p>
+                            <p>Tu reserva para el evento <strong>${eventoInfo.nombre}</strong> ha sido confirmada.</p>
+                            <ul>
+                                <li><strong>Fecha:</strong> ${fechaFormateada}</li>
+                                <li><strong>Hora:</strong> ${horaFormateada} (hora de Costa Rica)</li>
+                                <li><strong>Lugar:</strong> ${eventoInfo.lugar}</li>
+                            </ul>
+                            <p>¡Te esperamos!</p>
+                            <p>— equipo ubicaTEC</p>
                         `
                     };
 
-                    // enviar correo con await (igual que LogiEvents)
-                    await transporter.sendMail(mailOptions);
+                    await sgMail.send(msg);
                     console.log('✅ Correo enviado exitosamente a:', toEmail);
                 } else {
                     console.log('⚠️ No se envió correo: toEmail o eventoInfo faltante');
