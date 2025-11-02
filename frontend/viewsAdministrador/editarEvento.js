@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Cargar evento
   async function cargarEvento() {
     try {
-      const res = await fetch('http://localhost:3000/api/eventos/' + idEvento);
+      const res = await fetch('https://ubicatec-production-bfb7.up.railway.app//api/eventos/' + idEvento);
       const result = await res.json();
       if (result.success && result.data) {
         const evento = result.data;
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.innerHTML = '<i class=\"bi bi-spinner spinner-border spinner-border-sm\"></i> Guardando...';
 
     try {
-      const res = await fetch('http://localhost:3000/api/administradores/eventos/' + idEvento, {
+      const res = await fetch('https://ubicatec-production-bfb7.up.railway.app//api/administradores/eventos/' + idEvento, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

@@ -35,7 +35,7 @@ async function cargarPerfil() {
   if (!sesion) return;
   
   try {
-    const response = await fetch(`http://localhost:3000/api/perfil/${sesion.id_usuario}`);
+    const response = await fetch(`https://ubicatec-production-bfb7.up.railway.app//api/perfil/${sesion.id_usuario}`);
     const data = await response.json();
     
     if (data.success) {

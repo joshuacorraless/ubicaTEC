@@ -29,7 +29,7 @@ async function cargarDatosActuales() {
   if (!idUsuario) return;
   
   try {
-    const response = await fetch(`http://localhost:3000/api/perfil/${idUsuario}`);
+    const response = await fetch(`https://ubicatec-production-bfb7.up.railway.app//api/perfil/${idUsuario}`);
     const data = await response.json();
     
     if (data.success) {
@@ -160,7 +160,7 @@ async function handleSubmit(e) {
       nueva_contrasena: passwordInput.value || null
     };
     
-    const response = await fetch(`http://localhost:3000/api/perfil/${idUsuario}`, {
+    const response = await fetch(`https://ubicatec-production-bfb7.up.railway.app//api/perfil/${idUsuario}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

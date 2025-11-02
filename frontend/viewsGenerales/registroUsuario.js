@@ -103,7 +103,7 @@ function setupFormHandler() {
     
     try {
       // Llamar al API de registro
-      const response = await fetch('http://localhost:3000/api/usuarios/registro', {
+      const response = await fetch('https://ubicatec-production-bfb7.up.railway.app//api/usuarios/registro', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

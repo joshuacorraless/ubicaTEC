@@ -2,7 +2,7 @@
 
 // Configuración de API
 const API_CONFIG = {
-    base: 'http://localhost:3000/api',
+    base: 'https://ubicatec-production-bfb7.up.railway.app//api',
     endpoints: {
         eventosFiltrados: '/eventos/filtrados',
         eventoPorId: '/eventos'
