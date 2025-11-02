@@ -135,8 +135,13 @@ export const crearReserva = async (req, res) => {
 
         // enviar correo de confirmación (no bloquear el flujo si falla)
         let emailEnviado = false;
+        let errorEmail = null;
         
         try {
+            console.log('📧 Intentando enviar correo de confirmación...');
+            console.log('EMAIL_USER configurado:', process.env.EMAIL_USER ? 'SÍ' : 'NO');
+            console.log('EMAIL_PASS configurado:', process.env.EMAIL_PASS ? 'SÍ' : 'NO');
+            
             const transporter = nodemailer.createTransport({
                 host: 'smtp.gmail.com',
                 port: 465,
@@ -149,8 +154,10 @@ export const crearReserva = async (req, res) => {
 
             const toEmail = usuario ? usuario.correo : null;
             const nombreUsuario = usuario ? `${usuario.nombre} ${usuario.apellido}` : 'Usuario';
+            
+            console.log('Destinatario:', toEmail);
 
-            // Formatear fecha y hora
+            // formatear fecha y hora
             let fechaFormateada = '';
             let horaFormateada = '';
             
@@ -200,9 +207,17 @@ export const crearReserva = async (req, res) => {
 
                 await transporter.sendMail(mailOptions);
                 emailEnviado = true;
+                console.log('✅ Correo enviado exitosamente a:', toEmail);
+            } else {
+                console.log('⚠️ No se envió correo: toEmail o eventoInfo faltante');
+                console.log('toEmail:', toEmail, 'eventoInfo:', eventoInfo ? 'existe' : 'null');
             }
         } catch (mailErr) {
-            console.error('Error enviando correo de confirmación:', mailErr);
+            console.error('❌ Error enviando correo de confirmación:');
+            console.error('Tipo de error:', mailErr.name);
+            console.error('Mensaje:', mailErr.message);
+            console.error('Código:', mailErr.code);
+            console.error('Stack:', mailErr.stack);
         }
 
         // responder con éxito
@@ -211,6 +226,7 @@ export const crearReserva = async (req, res) => {
             message: emailEnviado 
                 ? 'Reserva creada y correo de confirmación enviado correctamente' 
                 : 'Reserva creada exitosamente',
+            emailError: errorEmail, // incluir error de email para debugging
             data: {
                 id_reserva: result.id_reserva,
                 id_evento,
