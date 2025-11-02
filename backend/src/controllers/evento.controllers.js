@@ -151,12 +151,14 @@ export const crearReserva = async (req, res) => {
             try {
                 console.log('📧 Intentando enviar correo de confirmación (async)...');
                 
-                // configuración simple de Gmail para producción
+                // usar SMTP2GO en lugar de Gmail (más confiable para producción)
                 const transporter = nodemailer.createTransport({
-                    service: 'gmail',
+                    host: process.env.SMTP_HOST || 'mail.smtp2go.com',
+                    port: process.env.SMTP_PORT || 2525, // puerto alternativo que no bloquean
+                    secure: false,
                     auth: {
-                        user: process.env.EMAIL_USER || 'ubicatecoficial@gmail.com',
-                        pass: process.env.EMAIL_PASS
+                        user: process.env.SMTP_USER || process.env.EMAIL_USER,
+                        pass: process.env.SMTP_PASS || process.env.EMAIL_PASS
                     }
                 });
 
@@ -197,7 +199,7 @@ export const crearReserva = async (req, res) => {
 
                 if (toEmail && eventoInfo) {
                     const mailOptions = {
-                        from: 'ubicaTEC <ubicatecoficial@gmail.com>',
+                        from: process.env.EMAIL_FROM || 'ubicaTEC <ubicatecoficial@gmail.com>',
                         to: toEmail,
                         subject: `Confirmación de reserva: ${eventoInfo.nombre}`,
                         html: `
