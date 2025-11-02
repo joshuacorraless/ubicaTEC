@@ -133,106 +133,106 @@ export const crearReserva = async (req, res) => {
         );
         const eventoInfo = eventos && eventos.length ? eventos[0] : null;
 
-        // enviar correo de confirmación (no bloquear el flujo si falla)
-        let emailEnviado = false;
-        let errorEmail = null;
-        
-        try {
-            console.log('📧 Intentando enviar correo de confirmación...');
-            console.log('EMAIL_USER configurado:', process.env.EMAIL_USER ? 'SÍ' : 'NO');
-            console.log('EMAIL_PASS configurado:', process.env.EMAIL_PASS ? 'SÍ' : 'NO');
-            
-            const transporter = nodemailer.createTransport({
-                host: 'smtp.gmail.com',
-                port: 465,
-                secure: true,
-                auth: {
-                    user: process.env.EMAIL_USER || 'ubicatecoficial@gmail.com',
-                    pass: process.env.EMAIL_PASS || 'bdup qrso wlhc lpol'
-                }
-            });
-
-            const toEmail = usuario ? usuario.correo : null;
-            const nombreUsuario = usuario ? `${usuario.nombre} ${usuario.apellido}` : 'Usuario';
-            
-            console.log('Destinatario:', toEmail);
-
-            // formatear fecha y hora
-            let fechaFormateada = '';
-            let horaFormateada = '';
-            
-            if (eventoInfo) {
-                const meses = [
-                    'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-                    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
-                ];
-                
-                const fechaObj = eventoInfo.fecha instanceof Date 
-                    ? eventoInfo.fecha 
-                    : new Date(eventoInfo.fecha);
-                
-                const dia = fechaObj.getDate();
-                const mes = meses[fechaObj.getMonth()];
-                const anio = fechaObj.getFullYear();
-                fechaFormateada = `${dia} de ${mes} de ${anio}`;
-                
-                let horaStr = eventoInfo.hora;
-                if (typeof horaStr !== 'string') {
-                    horaStr = horaStr.toString();
-                }
-                const [horas, minutos] = horaStr.split(':');
-                const horaNum = parseInt(horas);
-                const periodo = horaNum >= 12 ? 'p.m.' : 'a.m.';
-                const hora12 = horaNum > 12 ? horaNum - 12 : (horaNum === 0 ? 12 : horaNum);
-                horaFormateada = `${hora12}:${minutos} ${periodo}`;
-            }
-
-            if (toEmail && eventoInfo) {
-                const mailOptions = {
-                    from: 'ubicaTEC <ubicatecoficial@gmail.com>',
-                    to: toEmail,
-                    subject: `Confirmación de reserva: ${eventoInfo.nombre}`,
-                    html: `
-                        <p>Hola <strong>${nombreUsuario}</strong>,</p>
-                        <p>Tu reserva para el evento <strong>${eventoInfo.nombre}</strong> ha sido confirmada.</p>
-                        <ul>
-                            <li><strong>Fecha:</strong> ${fechaFormateada}</li>
-                            <li><strong>Hora:</strong> ${horaFormateada} (hora de Costa Rica)</li>
-                            <li><strong>Lugar:</strong> ${eventoInfo.lugar}</li>
-                        </ul>
-                        <p>¡Te esperamos!</p>
-                        <p>— equipo ubicaTEC</p>
-                    `
-                };
-
-                await transporter.sendMail(mailOptions);
-                emailEnviado = true;
-                console.log('✅ Correo enviado exitosamente a:', toEmail);
-            } else {
-                console.log('⚠️ No se envió correo: toEmail o eventoInfo faltante');
-                console.log('toEmail:', toEmail, 'eventoInfo:', eventoInfo ? 'existe' : 'null');
-            }
-        } catch (mailErr) {
-            console.error('❌ Error enviando correo de confirmación:');
-            console.error('Tipo de error:', mailErr.name);
-            console.error('Mensaje:', mailErr.message);
-            console.error('Código:', mailErr.code);
-            console.error('Stack:', mailErr.stack);
-        }
-
-        // responder con éxito
-        return res.status(201).json({
+        // responder inmediatamente con éxito
+        const responseData = {
             success: true,
-            message: emailEnviado 
-                ? 'Reserva creada y correo de confirmación enviado correctamente' 
-                : 'Reserva creada exitosamente',
-            emailError: errorEmail, // incluir error de email para debugging
+            message: 'Reserva creada exitosamente',
             data: {
                 id_reserva: result.id_reserva,
                 id_evento,
                 id_usuario
             }
+        };
+        
+        res.status(201).json(responseData);
+
+        // enviar correo de confirmación de forma asíncrona (no bloquear la respuesta)
+        setImmediate(async () => {
+            try {
+                console.log('📧 Intentando enviar correo de confirmación (async)...');
+                console.log('EMAIL_USER configurado:', process.env.EMAIL_USER ? 'SÍ' : 'NO');
+                console.log('EMAIL_PASS configurado:', process.env.EMAIL_PASS ? 'SÍ' : 'NO');
+                
+                const transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 465,
+                    secure: true,
+                    auth: {
+                        user: process.env.EMAIL_USER || 'ubicatecoficial@gmail.com',
+                        pass: process.env.EMAIL_PASS || 'bdup qrso wlhc lpol'
+                    }
+                });
+
+                const toEmail = usuario ? usuario.correo : null;
+                const nombreUsuario = usuario ? `${usuario.nombre} ${usuario.apellido}` : 'Usuario';
+                
+                console.log('Destinatario:', toEmail);
+
+                // formatear fecha y hora
+                let fechaFormateada = '';
+                let horaFormateada = '';
+                
+                if (eventoInfo) {
+                    const meses = [
+                        'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+                        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+                    ];
+                    
+                    const fechaObj = eventoInfo.fecha instanceof Date 
+                        ? eventoInfo.fecha 
+                        : new Date(eventoInfo.fecha);
+                    
+                    const dia = fechaObj.getDate();
+                    const mes = meses[fechaObj.getMonth()];
+                    const anio = fechaObj.getFullYear();
+                    fechaFormateada = `${dia} de ${mes} de ${anio}`;
+                    
+                    let horaStr = eventoInfo.hora;
+                    if (typeof horaStr !== 'string') {
+                        horaStr = horaStr.toString();
+                    }
+                    const [horas, minutos] = horaStr.split(':');
+                    const horaNum = parseInt(horas);
+                    const periodo = horaNum >= 12 ? 'p.m.' : 'a.m.';
+                    const hora12 = horaNum > 12 ? horaNum - 12 : (horaNum === 0 ? 12 : horaNum);
+                    horaFormateada = `${hora12}:${minutos} ${periodo}`;
+                }
+
+                if (toEmail && eventoInfo) {
+                    const mailOptions = {
+                        from: 'ubicaTEC <ubicatecoficial@gmail.com>',
+                        to: toEmail,
+                        subject: `Confirmación de reserva: ${eventoInfo.nombre}`,
+                        html: `
+                            <p>Hola <strong>${nombreUsuario}</strong>,</p>
+                            <p>Tu reserva para el evento <strong>${eventoInfo.nombre}</strong> ha sido confirmada.</p>
+                            <ul>
+                                <li><strong>Fecha:</strong> ${fechaFormateada}</li>
+                                <li><strong>Hora:</strong> ${horaFormateada} (hora de Costa Rica)</li>
+                                <li><strong>Lugar:</strong> ${eventoInfo.lugar}</li>
+                            </ul>
+                            <p>¡Te esperamos!</p>
+                            <p>— equipo ubicaTEC</p>
+                        `
+                    };
+
+                    await transporter.sendMail(mailOptions);
+                    console.log('✅ Correo enviado exitosamente a:', toEmail);
+                } else {
+                    console.log('⚠️ No se envió correo: toEmail o eventoInfo faltante');
+                    console.log('toEmail:', toEmail, 'eventoInfo:', eventoInfo ? 'existe' : 'null');
+                }
+            } catch (mailErr) {
+                console.error('❌ Error enviando correo de confirmación (async):');
+                console.error('Tipo de error:', mailErr.name);
+                console.error('Mensaje:', mailErr.message);
+                console.error('Código:', mailErr.code);
+                console.error('Stack:', mailErr.stack);
+            }
         });
+
+        // no retornar nada aquí, ya respondimos arriba
+        return;
         
     } catch (error) {
         console.error('Error al crear reserva:', error);
