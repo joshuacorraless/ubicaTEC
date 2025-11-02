@@ -1,222 +1,373 @@
-// Chatbot JavaScript - ubicaTEC
-// Este archivo contiene toda la lógica del chatbot
-console.log('=== Iniciando carga de chatbot.js ===');
+/**
+ * Chatbot ubicaTEC - Integración con Botsonic
+ * Usa REST API de Botsonic para respuestas inteligentes
+ */
 
-// Sample responses for demo purposes
-const botResponses = [
-  "Te ayudo con esa consulta. ¿Podrías darme más detalles?",
-  "Perfecto, te guío paso a paso para resolver tu consulta.",
-  "Esa es una excelente pregunta. Aquí tienes la información:",
-  "¡Claro! Te explico cómo hacerlo de manera sencilla.",
-  "Entiendo tu consulta. La respuesta es la siguiente:",
-  "¡Por supuesto! Te comparto la información que necesitas:",
-  "Esa función está disponible en tu panel de usuario.",
-  "Te recomiendo revisar la sección de configuración para eso.",
-  "¡Excelente pregunta! Esa información la encuentras en el menú principal."
-];
-
-// Default responses - can be overridden by parent page
-let specificResponses = {
-  "crear evento": "Para crear un evento, ve al menú 'Gestión de eventos' y haz clic en 'Crear nuevo evento'. Completa todos los campos obligatorios como nombre, fecha, hora, lugar y capacidad.",
-  "auditorio d3": "El Auditorio D3 se encuentra en el edificio D, tercer piso. Es uno de nuestros espacios más grandes con capacidad para 300 personas.",
-  "perfil": "Para editar tu perfil, haz clic en el ícono de usuario en la parte superior derecha y selecciona 'Configuración de perfil'.",
-  "eventos": "Puedes ver todos los eventos disponibles en la sección 'Eventos' del menú principal. También puedes filtrar por fecha y categoría.",
-  "editar evento": "Para editar un evento, selecciona el evento desde 'Gestión de eventos', haz clic en 'Editar' y modifica los campos necesarios. No olvides guardar los cambios.",
-  "capacidad": "La capacidad máxima debe ser un número positivo que represente cuántas personas pueden asistir al evento.",
-  "fecha": "Selecciona una fecha futura para tu evento. El sistema no permite crear eventos en fechas pasadas."
+// Configuración de Botsonic
+const BOTSONIC_CONFIG = {
+    apiUrl: 'https://api-bot.writesonic.com/v1/botsonic/generate',
+    token: 'c646fb25-a9dd-4053-b556-9ec444bc52b5',
+    botName: 'ubicatec'
 };
 
-// Function to update specific responses (called by parent page)
-window.updateSpecificResponses = function(newResponses) {
-  console.log('Actualizando respuestas específicas:', newResponses);
-  specificResponses = { ...specificResponses, ...newResponses };
-};
+// Variables globales
+let conversationHistory = [];
+let isTyping = false;
 
-// Function to update quick actions (called by parent page)
-window.updateQuickActions = function(actions) {
-  console.log('Actualizando acciones rápidas:', actions);
-  const quickActionsContainer = document.querySelector('.quick-actions');
-  if (quickActionsContainer && actions) {
-    quickActionsContainer.innerHTML = actions.map(action => 
-      `<div class="quick-action" onclick="window.sendQuickMessage('${action.message}')">
-        <i class="bi ${action.icon} me-1"></i>${action.text}
-      </div>`
-    ).join('');
-  }
-};
-
-// Main chatbot functions - make them global
-window.openChatbot = function() {
-  console.log('=== Abriendo chatbot ===');
-  const chatbot = document.getElementById('chatbot');
-  if (chatbot) {
-    console.log('Chatbot encontrado, mostrando...');
-    chatbot.classList.add('show');
-    const messageInput = document.getElementById('messageInput');
-    if (messageInput) {
-      messageInput.focus();
-      console.log('Input enfocado');
-    } else {
-      console.error('No se encontró el input del mensaje');
-    }
-  } else {
-    console.error('No se encontró el elemento chatbot');
-    alert('Error: No se pudo encontrar el chatbot en la página.');
-  }
-};
-
-window.closeChatbot = function() {
-  console.log('=== Cerrando chatbot ===');
-  const chatbot = document.getElementById('chatbot');
-  if (chatbot) {
-    chatbot.classList.remove('show');
-  }
-};
-
-window.sendMessage = function() {
-  console.log('=== Enviando mensaje ===');
-  const input = document.getElementById('messageInput');
-  if (!input) {
-    console.error('No se encontró el input');
-    return;
-  }
-  
-  const message = input.value.trim();
-  console.log('Mensaje:', message);
-  
-  if (message) {
-    addUserMessage(message);
-    input.value = '';
-    
-    // Simulate bot thinking
-    showTypingIndicator();
-    
-    setTimeout(() => {
-      hideTypingIndicator();
-      addBotMessage(getBotResponse(message));
-    }, 1500);
-  }
-};
-
-window.sendQuickMessage = function(message) {
-  console.log('=== Enviando mensaje rápido ===', message);
-  addUserMessage(message);
-  showTypingIndicator();
-  
-  setTimeout(() => {
-    hideTypingIndicator();
-    addBotMessage(getBotResponse(message));
-  }, 1200);
-};
-
-function addUserMessage(message) {
-  console.log('Agregando mensaje de usuario:', message);
-  const chatMessages = document.getElementById('chatMessages');
-  if (!chatMessages) {
-    console.error('No se encontró chatMessages');
-    return;
-  }
-  
-  const messageDiv = document.createElement('div');
-  messageDiv.className = 'message user';
-  messageDiv.innerHTML = `
-    <div class="message-avatar">
-      <i class="bi bi-person"></i>
-    </div>
-    <div class="message-content">${message}</div>
-  `;
-  const typingIndicator = document.getElementById('typingIndicator');
-  if (typingIndicator) {
-    chatMessages.insertBefore(messageDiv, typingIndicator);
-  } else {
-    chatMessages.appendChild(messageDiv);
-  }
-  scrollToBottom();
-}
-
-function addBotMessage(message) {
-  console.log('Agregando mensaje del bot:', message);
-  const chatMessages = document.getElementById('chatMessages');
-  if (!chatMessages) {
-    console.error('No se encontró chatMessages');
-    return;
-  }
-  
-  const messageDiv = document.createElement('div');
-  messageDiv.className = 'message bot';
-  messageDiv.innerHTML = `
-    <div class="message-avatar">
-      <i class="bi bi-robot"></i>
-    </div>
-    <div class="message-content">${message}</div>
-  `;
-  const typingIndicator = document.getElementById('typingIndicator');
-  if (typingIndicator) {
-    chatMessages.insertBefore(messageDiv, typingIndicator);
-  } else {
-    chatMessages.appendChild(messageDiv);
-  }
-  scrollToBottom();
-}
-
-function getBotResponse(userMessage) {
-  const message = userMessage.toLowerCase();
-  console.log('Generando respuesta para:', message);
-  
-  // Check for specific keywords
-  for (const [key, response] of Object.entries(specificResponses)) {
-    if (message.includes(key)) {
-      console.log('Respuesta específica encontrada:', key);
-      return response;
-    }
-  }
-  
-  // Return random response
-  const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
-  console.log('Respuesta aleatoria:', randomResponse);
-  return randomResponse;
-}
-
-function showTypingIndicator() {
-  const indicator = document.getElementById('typingIndicator');
-  if (!indicator) return;
-  
-  indicator.style.display = 'flex';
-  const typingDiv = indicator.querySelector('.typing-indicator');
-  if (typingDiv) typingDiv.style.display = 'block';
-  scrollToBottom();
-}
-
-function hideTypingIndicator() {
-  const indicator = document.getElementById('typingIndicator');
-  if (!indicator) return;
-  
-  indicator.style.display = 'none';
-  const typingDiv = indicator.querySelector('.typing-indicator');
-  if (typingDiv) typingDiv.style.display = 'none';
-}
-
-function scrollToBottom() {
-  const chatMessages = document.getElementById('chatMessages');
-  if (chatMessages) {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-}
-
-window.handleKeyPress = function(event) {
-  if (event.key === 'Enter') {
-    window.sendMessage();
-  }
-};
-
-// Initialize chatbot when DOM is ready
+/**
+ * Inicializar chatbot cuando se carga la página
+ */
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('=== DOM cargado, inicializando chatbot ===');
-  // Wait a bit to ensure elements are loaded
-  setTimeout(() => {
+    console.log('Chatbot ubicaTEC inicializado');
     hideTypingIndicator();
-    console.log('Chatbot inicializado correctamente');
-  }, 100);
+    
+    // Ocultar chatbot por defecto
+    const chatbot = document.getElementById('chatbot');
+    if (chatbot) {
+        chatbot.style.display = 'none';
+    }
 });
 
-console.log('=== Chatbot JavaScript cargado exitosamente ===');
+/**
+ * Abrir el chatbot
+ */
+function openChatbot() {
+    const chatbot = document.getElementById('chatbot');
+    if (chatbot) {
+        chatbot.style.display = 'flex';
+        chatbot.classList.add('chatbot-open');
+        
+        // Focus en el input
+        const input = document.getElementById('messageInput');
+        if (input) {
+            setTimeout(() => input.focus(), 300);
+        }
+    }
+}
+
+/**
+ * Cerrar el chatbot
+ */
+function closeChatbot() {
+    const chatbot = document.getElementById('chatbot');
+    if (chatbot) {
+        chatbot.classList.remove('chatbot-open');
+        setTimeout(() => {
+            chatbot.style.display = 'none';
+        }, 300);
+    }
+}
+
+/**
+ * Manejar Enter en el input
+ */
+function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        sendMessage();
+    }
+}
+
+/**
+ * Enviar mensaje rápido (quick actions)
+ */
+function sendQuickMessage(message) {
+    const input = document.getElementById('messageInput');
+    if (input) {
+        input.value = message;
+        sendMessage();
+    }
+}
+
+/**
+ * Enviar mensaje del usuario
+ */
+async function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+    
+    if (!message || isTyping) return;
+    
+    // Limpiar input
+    input.value = '';
+    
+    // Mostrar mensaje del usuario
+    addUserMessage(message);
+    
+    // Ocultar quick actions después del primer mensaje
+    hideQuickActions();
+    
+    // Mostrar indicador de escritura
+    showTypingIndicator();
+    
+    // Enviar a Botsonic y esperar respuesta
+    try {
+        const response = await sendToBotsonic(message);
+        hideTypingIndicator();
+        addBotMessage(response);
+    } catch (error) {
+        console.error('Error al obtener respuesta:', error);
+        hideTypingIndicator();
+        addBotMessage('Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo o contacta a soporte en ubicatecoficial@gmail.com');
+    }
+}
+
+/**
+ * Enviar mensaje a Botsonic API
+ */
+async function sendToBotsonic(userMessage) {
+    try {
+        // Generar un chat_id único si no existe
+        if (!window.botsonicChatId) {
+            window.botsonicChatId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        // Formatear historial ACTUAL (sin el nuevo mensaje) según el formato de Botsonic
+        const formattedHistory = conversationHistory.map(msg => ({
+            message: msg.content,
+            sent: msg.role === 'user'
+        }));
+        
+        console.log('📜 Historial actual:', conversationHistory.length, 'mensajes');
+        console.log('📤 Chat history formateado:', formattedHistory);
+        
+        const requestBody = {
+            input_text: userMessage,
+            chat_id: window.botsonicChatId,
+            chat_history: formattedHistory
+        };
+        
+        console.log('📤 Enviando a Botsonic:', JSON.stringify(requestBody, null, 2));
+        
+        const response = await fetch(BOTSONIC_CONFIG.apiUrl, {
+            method: 'POST',
+            headers: {
+                'Accept-Encoding': 'gzip, deflate',
+                'Connection': 'keep-alive',
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+                'token': BOTSONIC_CONFIG.token
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        console.log('📥 Respuesta HTTP status:', response.status);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ Error de API:', errorText);
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+        }
+        
+        const data = await response.json();
+        console.log('📦 Datos recibidos:', data);
+        
+        // Extraer respuesta del bot según el formato de Botsonic
+        let botResponse = '';
+        
+        if (data.answer) {
+            botResponse = data.answer;
+            
+            // Usar el chat_history que devuelve la API para mantener sincronización
+            if (data.chat_history && Array.isArray(data.chat_history)) {
+                // Limpiar historial local y usar el de la API
+                conversationHistory = data.chat_history.map(msg => ({
+                    role: msg.sent ? 'user' : 'assistant',
+                    content: msg.message
+                }));
+                console.log('📜 Historial actualizado desde API:', conversationHistory.length, 'mensajes');
+            }
+        } else if (data.data && data.data.answer) {
+            botResponse = data.data.answer;
+        } else {
+            console.error('❌ Estructura de respuesta desconocida:', data);
+            botResponse = 'Lo siento, no pude generar una respuesta. ¿Podrías reformular tu pregunta?';
+        }
+        
+        console.log('✅ Respuesta del bot:', botResponse);
+        
+        // Si no se actualizó el historial desde la API, agregarlo manualmente
+        if (!data.chat_history) {
+            conversationHistory.push({
+                role: 'assistant',
+                content: botResponse
+            });
+        }
+        
+        return botResponse;
+        
+    } catch (error) {
+        console.error('Error en la petición a Botsonic:', error);
+        throw error;
+    }
+}
+
+/**
+ * Agregar mensaje del usuario al chat
+ */
+function addUserMessage(message) {
+    const chatMessages = document.getElementById('chatMessages');
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message user';
+    messageDiv.innerHTML = `
+        <div class="message-content">
+            ${escapeHtml(message)}
+        </div>
+        <div class="message-avatar">
+            <i class="bi bi-person-circle"></i>
+        </div>
+    `;
+    
+    // Insertar antes del typing indicator
+    const typingIndicator = document.getElementById('typingIndicator');
+    chatMessages.insertBefore(messageDiv, typingIndicator);
+    
+    // Scroll al final
+    scrollToBottom();
+}
+
+/**
+ * Agregar mensaje del bot al chat
+ */
+function addBotMessage(message) {
+    const chatMessages = document.getElementById('chatMessages');
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message bot';
+    messageDiv.innerHTML = `
+        <div class="message-avatar">
+            <i class="bi bi-robot"></i>
+        </div>
+        <div class="message-content">
+            ${formatBotMessage(message)}
+        </div>
+    `;
+    
+    // Insertar antes del typing indicator
+    const typingIndicator = document.getElementById('typingIndicator');
+    chatMessages.insertBefore(messageDiv, typingIndicator);
+    
+    // Scroll al final
+    scrollToBottom();
+}
+
+/**
+ * Formatear mensaje del bot (convertir markdown básico a HTML)
+ */
+function formatBotMessage(message) {
+    let formatted = escapeHtml(message);
+    
+    // Convertir **bold** a <strong>
+    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convertir *italic* a <em>
+    formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // Convertir links [text](url) a <a>
+    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    
+    // Convertir saltos de línea a <br>
+    formatted = formatted.replace(/\n/g, '<br>');
+    
+    // Convertir listas con - o *
+    formatted = formatted.replace(/^[-*]\s+(.+)$/gm, '<li>$1</li>');
+    if (formatted.includes('<li>')) {
+        formatted = formatted.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    }
+    
+    // Convertir números de lista 1. 2. etc
+    formatted = formatted.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
+    if (formatted.includes('<li>') && !formatted.includes('<ul>')) {
+        formatted = formatted.replace(/(<li>.*<\/li>)/s, '<ol>$1</ol>');
+    }
+    
+    return formatted;
+}
+
+/**
+ * Escapar HTML para prevenir XSS
+ */
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+/**
+ * Mostrar indicador de escritura
+ */
+function showTypingIndicator() {
+    isTyping = true;
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+        typingIndicator.style.display = 'flex';
+        scrollToBottom();
+    }
+}
+
+/**
+ * Ocultar indicador de escritura
+ */
+function hideTypingIndicator() {
+    isTyping = false;
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+        typingIndicator.style.display = 'none';
+    }
+}
+
+/**
+ * Ocultar acciones rápidas
+ */
+function hideQuickActions() {
+    const quickActions = document.querySelector('.quick-actions');
+    if (quickActions) {
+        quickActions.style.display = 'none';
+    }
+}
+
+/**
+ * Scroll al final del chat
+ */
+function scrollToBottom() {
+    const chatBody = document.getElementById('chatMessages');
+    if (chatBody) {
+        setTimeout(() => {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }, 100);
+    }
+}
+
+/**
+ * Reiniciar conversación (útil para testing)
+ */
+function resetConversation() {
+    conversationHistory = [];
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages) {
+        // Mantener solo el mensaje de bienvenida
+        const messages = chatMessages.querySelectorAll('.message:not(#typingIndicator)');
+        messages.forEach((msg, index) => {
+            if (index > 0) { // Mantener el primer mensaje (bienvenida)
+                msg.remove();
+            }
+        });
+    }
+    
+    // Mostrar quick actions de nuevo
+    const quickActions = document.querySelector('.quick-actions');
+    if (quickActions) {
+        quickActions.style.display = 'flex';
+    }
+    
+    console.log('🔄 Conversación reiniciada');
+}
+
+// Exponer funciones globalmente
+window.openChatbot = openChatbot;
+window.closeChatbot = closeChatbot;
+window.sendMessage = sendMessage;
+window.sendQuickMessage = sendQuickMessage;
+window.handleKeyPress = handleKeyPress;
+window.resetConversation = resetConversation;

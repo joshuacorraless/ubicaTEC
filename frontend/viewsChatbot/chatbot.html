@@ -11,25 +11,68 @@
 <body>
   <!-- Botón para mostrar chatbot (solo para demo) -->
   <div class="container mt-5">
-    <h1>Demo del Chatbot</h1>
-    <button class="btn btn-primary" onclick="openChatbot()">
-      <i class="bi bi-chat-dots me-2"></i>Abrir Chatbot
-    </button>
+    <h1>Demo del Chatbot ubicaTEC</h1>
+    <p class="lead">Prueba el asistente virtual con inteligencia artificial de Botsonic</p>
+    
+    <div class="d-flex gap-3 mb-4">
+      <button class="btn btn-primary btn-lg" onclick="openChatbot()">
+        <i class="bi bi-chat-dots me-2"></i>Abrir Chatbot
+      </button>
+      <button class="btn btn-outline-secondary" onclick="resetConversation()">
+        <i class="bi bi-arrow-clockwise me-2"></i>Reiniciar Conversación
+      </button>
+    </div>
+    
+    <div class="alert alert-info">
+      <h5><i class="bi bi-info-circle me-2"></i>Preguntas sugeridas para probar:</h5>
+      <ul>
+        <li>¿Cómo me registro como estudiante?</li>
+        <li>¿Qué tipos de eventos hay?</li>
+        <li>No puedo reservar un evento, ¿por qué?</li>
+        <li>¿Puedo reservar varias veces el mismo evento?</li>
+        <li>¿Cómo creo un evento siendo administrador?</li>
+        <li>¿Dónde está el Auditorio D3?</li>
+        <li>Explícame la diferencia entre evento público y exclusivo</li>
+      </ul>
+    </div>
+    
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-gear me-2"></i>Configuración Actual</h5>
+      </div>
+      <div class="card-body">
+        <p><strong>Nombre del bot:</strong> ubicatec</p>
+        <p><strong>API:</strong> Botsonic REST API</p>
+        <p><strong>Estado:</strong> <span class="badge bg-success">Conectado</span></p>
+      </div>
+    </div>
   </div>
 
   <!-- Include chatbot widget -->
   <div id="chatbot-container"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="chatbot.js"></script>
+  
   <script>
-    // Load chatbot widget
+    // Load chatbot widget FIRST, then load chatbot.js
     fetch('chatbot-widget.html')
       .then(response => response.text())
       .then(html => {
         document.getElementById('chatbot-container').innerHTML = html;
+        console.log('✅ Widget cargado correctamente');
+        
+        // Now load the chatbot logic
+        const script = document.createElement('script');
+        script.src = 'chatbot.js';
+        script.onload = function() {
+          console.log('✅ Chatbot.js cargado - listo para usar');
+        };
+        document.body.appendChild(script);
       })
-      .catch(error => console.error('Error loading chatbot:', error));
+      .catch(error => {
+        console.error('❌ Error loading chatbot:', error);
+        alert('Error al cargar el chatbot. Asegúrate de abrir el archivo desde un servidor local.');
+      });
   </script>
 </body>
 </html>

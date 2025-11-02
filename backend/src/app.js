@@ -13,8 +13,10 @@ import eventoRoutes from './routes/evento.routes.js';
 import administradoresRoutes from './routes/administradores.routes.js';
 
 
+
 const app = express();
 
+app.use(express.static('frontend')); // Para cargar archivos estáticos desde la carpeta 'frontend'
 app.use(cors()); // CORS para todas las rutas
 app.use(express.json()); // para parsear json en el body
 app.use(loginRoutes); // que la app use las rutas de login

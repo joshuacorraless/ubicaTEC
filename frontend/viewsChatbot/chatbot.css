@@ -38,7 +38,7 @@
 }
 
 .chatbot-header {
-  background: var(--ubc-gradient);
+  background: var(--tec-gradient);
   color: white;
   padding: 16px 20px;
   display: flex;
@@ -76,7 +76,24 @@
   flex: 1;
   padding: 16px;
   overflow-y: auto;
-  background: #f8f9fa;
+  background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+}
+
+.chatbot-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatbot-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chatbot-body::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.chatbot-body::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
 }
 
 .message {
@@ -105,13 +122,15 @@
 }
 
 .message.bot .message-avatar {
-  background: var(--ubc-gradient);
+  background: var(--tec-gradient);
   color: white;
+  font-weight: 600;
 }
 
 .message.user .message-avatar {
-  background: #6c757d;
+  background: linear-gradient(135deg, #5a6268 0%, #6c757d 100%);
   color: white;
+  font-weight: 600;
 }
 
 .message-content {
@@ -119,20 +138,64 @@
   padding: 12px 16px;
   border-radius: 16px;
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .message.bot .message-content {
   background: white;
-  color: #333;
+  color: #2c3e50;
   border-bottom-left-radius: 4px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid #e9ecef;
 }
 
 .message.user .message-content {
-  background: var(--ubc-action);
+  background: var(--tec-gradient);
   color: white;
   border-bottom-right-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 60, 125, 0.2);
+}
+
+/* Estilos para contenido del bot */
+.message.bot .message-content p {
+  margin: 0 0 8px 0;
+}
+
+.message.bot .message-content p:last-child {
+  margin-bottom: 0;
+}
+
+.message.bot .message-content ul,
+.message.bot .message-content ol {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.message.bot .message-content li {
+  margin: 4px 0;
+}
+
+.message.bot .message-content strong {
+  color: var(--tec-primary);
+  font-weight: 600;
+}
+
+.message.bot .message-content a {
+  color: var(--tec-accent);
+  text-decoration: underline;
+}
+
+.message.bot .message-content a:hover {
+  color: var(--tec-secondary);
+}
+
+.message.bot .message-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #e83e8c;
 }
 
 .chatbot-input {
@@ -150,11 +213,18 @@
   border: 2px solid #e9ecef;
   padding: 12px 50px 12px 16px;
   font-size: 14px;
+  color: #2c3e50;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.chatbot-input .form-control::placeholder {
+  color: #adb5bd;
 }
 
 .chatbot-input .form-control:focus {
-  border-color: var(--ubc-action);
-  box-shadow: 0 0 0 0.2rem rgba(65, 0, 205, 0.25);
+  border-color: var(--tec-primary);
+  box-shadow: 0 0 0 0.2rem rgba(0, 60, 125, 0.15);
+  outline: none;
 }
 
 .btn-send {
@@ -162,7 +232,7 @@
   right: 4px;
   top: 50%;
   transform: translateY(-50%);
-  background: var(--ubc-gradient);
+  background: var(--tec-gradient);
   border: none;
   width: 36px;
   height: 36px;
@@ -172,11 +242,16 @@
   justify-content: center;
   color: white;
   transition: all 0.2s;
+  cursor: pointer;
 }
 
 .btn-send:hover {
   transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 4px 12px rgba(65, 0, 205, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 60, 125, 0.4);
+}
+
+.btn-send:active {
+  transform: translateY(-50%) scale(0.95);
 }
 
 .typing-indicator {
@@ -197,7 +272,7 @@
 .typing-dot {
   width: 8px;
   height: 8px;
-  background: #6c757d;
+  background: var(--tec-primary);
   border-radius: 50%;
   animation: typingPulse 1.4s infinite;
 }
@@ -234,13 +309,17 @@
   font-size: 12px;
   cursor: pointer;
   transition: all 0.2s;
-  color: #6c757d;
+  color: #495057;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .quick-action:hover {
-  border-color: var(--ubc-action);
-  background: var(--ubc-action);
+  border-color: var(--tec-primary);
+  background: var(--tec-gradient);
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 60, 125, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -252,3 +331,5 @@
     left: 20px;
   }
 }
+
+app.use(express.static('frontend'));
