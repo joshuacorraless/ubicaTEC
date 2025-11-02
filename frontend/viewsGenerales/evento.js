@@ -210,14 +210,14 @@ function renderizarEvento() {
         resumenLugarElement.textContent = lugarCorto;
     }
     if (resumenCostoElement) {
-        // Formatear el costo
+        // Formatear el costo correctamente según el precio
         const costo = parseFloat(eventoActual.costo);
-        if (costo === 0) {
+        if (costo === 0 || costo === 0.00) {
             resumenCostoElement.textContent = 'Gratuito';
-            resumenCostoElement.className = 'text-success';
+            resumenCostoElement.className = 'text-success fw-bold';
         } else {
             resumenCostoElement.textContent = `₡${costo.toLocaleString('es-CR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            resumenCostoElement.className = 'text-primary';
+            resumenCostoElement.className = 'text-primary fw-bold';
         }
     }
     
