@@ -205,7 +205,7 @@ function renderizarEventos(eventos) {
         const estadoReserva = obtenerEstadoReserva(evento);
 
         col.innerHTML = `
-            <article class="card evento-card h-100" role="article" aria-labelledby="evento-${evento.id}">
+            <article class="card evento-card h-100" role="article" aria-labelledby="evento-${evento.id}" data-evento-id="${evento.id}">
                 <img src="${evento.img}" class="card-img-top" alt="${evento.alt}" loading="lazy">
                 <div class="card-body d-flex flex-column">
                     <header>
@@ -250,8 +250,48 @@ function renderizarEventos(eventos) {
         contenedor.appendChild(col);
     });
 
+    // Agregar event listeners a las cards para redirigir a detalles
+    agregarEventListenersCards();
+    
     // Agregar event listeners a los botones
     agregarEventListenersReserva();
+}
+
+/**
+ * Agregar event listeners a las cards para redirección a detalles
+ */
+function agregarEventListenersCards() {
+    const cards = document.querySelectorAll('.evento-card');
+    
+    cards.forEach(card => {
+        // Hacer la card clickeable con cursor pointer
+        card.style.cursor = 'pointer';
+        
+        card.addEventListener('click', function(e) {
+            // No redirigir si se hizo clic en un botón
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+                return;
+            }
+            
+            const eventoId = this.getAttribute('data-evento-id');
+            if (eventoId) {
+                // Redirigir a la página de detalles del evento
+                window.location.href = `evento.html?id=${eventoId}`;
+            }
+        });
+        
+        // Mejorar accesibilidad: permitir activar con Enter o Espacio
+        card.setAttribute('tabindex', '0');
+        card.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const eventoId = this.getAttribute('data-evento-id');
+                if (eventoId) {
+                    window.location.href = `evento.html?id=${eventoId}`;
+                }
+            }
+        });
+    });
 }
 
 /**
