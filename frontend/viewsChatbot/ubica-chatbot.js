@@ -58,7 +58,9 @@ window.UbicaChatbot = {
     console.log('Cargando Chatbot CSS...');
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = this.getRelativePath() + 'viewsChatbot/chatbot.css';
+    // usar la misma ruta base que ubica-chatbot.js
+    const basePath = this.getBasePath();
+    link.href = basePath + 'chatbot.css';
     document.head.appendChild(link);
   },
   
@@ -74,13 +76,32 @@ window.UbicaChatbot = {
     
     console.log('Cargando Chatbot JS...');
     const script = document.createElement('script');
-    script.src = this.getRelativePath() + 'viewsChatbot/chatbot.js';
+    // usar la misma ruta base que ubica-chatbot.js
+    const basePath = this.getBasePath();
+    script.src = basePath + 'chatbot.js';
     script.onload = callback;
     script.onerror = function() {
-      console.error('Error cargando chatbot.js');
+      console.error('Error cargando chatbot.js desde:', basePath + 'chatbot.js');
       alert('Error cargando el chatbot. Por favor, recarga la página.');
     };
     document.body.appendChild(script);
+  },
+  
+  /**
+   * Get base path donde está ubicado ubica-chatbot.js
+   */
+  getBasePath: function() {
+    // obtener la ruta del script actual (ubica-chatbot.js)
+    const scripts = document.querySelectorAll('script[src*="ubica-chatbot.js"]');
+    if (scripts.length > 0) {
+      const scriptSrc = scripts[0].src;
+      // extraer la ruta base (todo hasta ubica-chatbot.js)
+      const basePath = scriptSrc.substring(0, scriptSrc.lastIndexOf('/') + 1);
+      console.log('Base path detectado:', basePath);
+      return basePath;
+    }
+    // fallback
+    return this.getRelativePath() + 'viewsChatbot/';
   },
   
   /**
