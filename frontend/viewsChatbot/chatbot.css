@@ -332,4 +332,110 @@
   }
 }
 
-app.use(express.static('frontend'));
+/* ======= ACCESSIBILITY IMPROVEMENTS ======= */
+
+/* Clase para contenido visible solo para lectores de pantalla */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus visible para navegación por teclado */
+.chatbot-container *:focus-visible {
+  outline: 3px solid var(--tec-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Mejorar contraste de botones de acción rápida */
+.quick-action {
+  color: #212529;
+  font-weight: 600;
+}
+
+.quick-action:focus {
+  outline: 3px solid var(--tec-accent);
+  outline-offset: 2px;
+}
+
+/* Botón de cerrar con mejor contraste */
+.chatbot-close:focus {
+  outline: 2px solid white;
+  outline-offset: 2px;
+  background: rgba(255,255,255,0.3);
+}
+
+/* Input con mejor indicador de focus */
+.chatbot-input .form-control:focus {
+  border-color: var(--tec-primary);
+  box-shadow: 0 0 0 3px rgba(0, 60, 125, 0.25);
+  outline: none;
+}
+
+/* Botón de enviar con mejor estado de focus */
+.btn-send:focus {
+  outline: 3px solid var(--tec-accent);
+  outline-offset: 3px;
+  box-shadow: 0 4px 12px rgba(0, 60, 125, 0.4);
+}
+
+/* Mejorar contraste de mensajes */
+.message.bot .message-content {
+  color: #1a1a1a;
+  background: #ffffff;
+}
+
+/* Skip to input link para usuarios de lectores de pantalla */
+.skip-to-input {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--tec-primary);
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 100;
+}
+
+.skip-to-input:focus {
+  top: 8px;
+  left: 8px;
+}
+
+/* Animaciones respetan preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  .chatbot-container,
+  .quick-action,
+  .btn-send,
+  .typing-dot {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .chatbot-container {
+    border: 2px solid currentColor;
+  }
+  
+  .message.bot .message-content {
+    border: 2px solid #000;
+  }
+  
+  .message.user .message-content {
+    border: 2px solid #fff;
+  }
+  
+  .quick-action {
+    border: 2px solid currentColor;
+  }
+}

@@ -107,27 +107,32 @@ window.UbicaChatbot = {
       return;
     }
     
-    // Create chatbot HTML
+    // Create chatbot HTML with full accessibility support
     const chatbotHTML = `
       <!-- Chatbot Container -->
       <div id="chatbot-container">
-        <div id="chatbot" class="chatbot-container">
+        <div id="chatbot" class="chatbot-container" role="dialog" aria-labelledby="chatbot-title" aria-describedby="chatbot-description" aria-modal="false">
+          <!-- Screen reader only description -->
+          <div id="chatbot-description" class="visually-hidden">
+            Chatbot de asistencia virtual de ubicaTEC. Use las teclas Tab y Enter para navegar e interactuar.
+          </div>
+          
           <!-- Header -->
           <div class="chatbot-header">
             <div class="d-flex align-items-center gap-2">
-              <i class="bi bi-robot fs-5"></i>
-              <h6>Asistente ubicaTEC</h6>
+              <i class="bi bi-robot fs-5" aria-hidden="true"></i>
+              <h6 id="chatbot-title">Asistente ubicaTEC</h6>
             </div>
-            <button class="chatbot-close" onclick="closeChatbot()" aria-label="Cerrar chatbot">
-              <i class="bi bi-x"></i>
+            <button class="chatbot-close" onclick="closeChatbot()" aria-label="Cerrar ventana de chatbot" title="Cerrar chatbot">
+              <i class="bi bi-x" aria-hidden="true"></i>
             </button>
           </div>
 
           <!-- Chat Body -->
-          <div class="chatbot-body" id="chatMessages">
+          <div class="chatbot-body" id="chatMessages" role="log" aria-live="polite" aria-atomic="false" aria-relevant="additions">
             <!-- Welcome Message -->
-            <div class="message bot">
-              <div class="message-avatar">
+            <div class="message bot" role="article" aria-label="Mensaje del asistente">
+              <div class="message-avatar" aria-hidden="true">
                 <i class="bi bi-robot"></i>
               </div>
               <div class="message-content">
@@ -136,17 +141,17 @@ window.UbicaChatbot = {
             </div>
 
             <!-- Quick Actions -->
-            <div class="quick-actions">
+            <div class="quick-actions" role="group" aria-label="Acciones rápidas sugeridas">
               ${config.quickActions.map(action => 
-                `<div class="quick-action" onclick="window.sendQuickMessage('${action.message}')">
-                  <i class="bi ${action.icon} me-1"></i>${action.text}
-                </div>`
+                `<button class="quick-action" onclick="window.sendQuickMessage('${action.message}')" type="button" aria-label="Pregunta rápida: ${action.text}">
+                  <i class="bi ${action.icon} me-1" aria-hidden="true"></i>${action.text}
+                </button>`
               ).join('')}
             </div>
 
             <!-- Typing Indicator -->
-            <div class="message bot" id="typingIndicator">
-              <div class="message-avatar">
+            <div class="message bot" id="typingIndicator" role="status" aria-live="polite" aria-label="El asistente está escribiendo">
+              <div class="message-avatar" aria-hidden="true">
                 <i class="bi bi-robot"></i>
               </div>
               <div class="typing-indicator">
@@ -155,18 +160,35 @@ window.UbicaChatbot = {
                   <div class="typing-dot"></div>
                   <div class="typing-dot"></div>
                 </div>
+                <span class="visually-hidden">El asistente está escribiendo una respuesta</span>
               </div>
             </div>
           </div>
 
+          <!-- Live region for screen reader announcements -->
+          <div id="chatbot-sr-announcements" class="visually-hidden" role="status" aria-live="assertive" aria-atomic="true"></div>
+
           <!-- Input Area -->
           <div class="chatbot-input">
-            <div class="input-group">
-              <input type="text" id="messageInput" class="form-control" placeholder="Escribe tu mensaje aquí..." onkeypress="handleKeyPress(event)">
-              <button class="btn-send" onclick="sendMessage()" aria-label="Enviar mensaje">
-                <i class="bi bi-send-fill"></i>
-              </button>
-            </div>
+            <form onsubmit="event.preventDefault(); sendMessage();" aria-label="Formulario para enviar mensaje">
+              <div class="input-group">
+                <label for="messageInput" class="visually-hidden">Escribe tu mensaje para el asistente</label>
+                <input 
+                  type="text" 
+                  id="messageInput" 
+                  class="form-control" 
+                  placeholder="Escribe tu mensaje aquí..." 
+                  onkeypress="handleKeyPress(event)"
+                  aria-label="Campo de texto para escribir mensaje"
+                  aria-describedby="messageInputHelp"
+                  autocomplete="off"
+                  maxlength="500">
+                <span id="messageInputHelp" class="visually-hidden">Presiona Enter para enviar tu mensaje</span>
+                <button class="btn-send" type="submit" onclick="sendMessage()" aria-label="Enviar mensaje al asistente" title="Enviar mensaje">
+                  <i class="bi bi-send-fill" aria-hidden="true"></i>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
