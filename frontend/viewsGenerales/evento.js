@@ -200,6 +200,7 @@ function renderizarEvento() {
     const resumenEventoElement = document.getElementById('resumen-evento');
     const resumenFechaElement = document.getElementById('resumen-fecha');
     const resumenLugarElement = document.getElementById('resumen-lugar');
+    const resumenCostoElement = document.getElementById('resumen-costo');
     
     if (resumenEventoElement) resumenEventoElement.textContent = eventoActual.titulo;
     if (resumenFechaElement) resumenFechaElement.textContent = eventoActual.fechaFormateada;
@@ -207,6 +208,17 @@ function renderizarEvento() {
         // Extraer solo el lugar sin "Campus TEC"
         const lugarCorto = eventoActual.lugar.split(',')[0];
         resumenLugarElement.textContent = lugarCorto;
+    }
+    if (resumenCostoElement) {
+        // Formatear el costo
+        const costo = parseFloat(eventoActual.costo);
+        if (costo === 0) {
+            resumenCostoElement.textContent = 'Gratuito';
+            resumenCostoElement.className = 'text-success';
+        } else {
+            resumenCostoElement.textContent = `₡${costo.toLocaleString('es-CR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            resumenCostoElement.className = 'text-primary';
+        }
     }
     
     // Verificar estado del evento

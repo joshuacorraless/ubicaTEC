@@ -150,20 +150,13 @@ export const crearReserva = async (req, res) => {
         setImmediate(async () => {
             try {
                 console.log('📧 Intentando enviar correo de confirmación (async)...');
-                console.log('EMAIL_USER configurado:', process.env.EMAIL_USER ? 'SÍ' : 'NO');
-                console.log('EMAIL_PASS configurado:', process.env.EMAIL_PASS ? 'SÍ' : 'NO');
                 
+                // configuración simple de Gmail para producción
                 const transporter = nodemailer.createTransport({
-                    host: 'smtp.gmail.com',
-                    port: 587,
-                    secure: false,
-                    requireTLS: true,
+                    service: 'gmail',
                     auth: {
                         user: process.env.EMAIL_USER || 'ubicatecoficial@gmail.com',
-                        pass: process.env.EMAIL_PASS || 'bdup qrso wlhc lpol'
-                    },
-                    tls: {
-                        rejectUnauthorized: false
+                        pass: process.env.EMAIL_PASS
                     }
                 });
 
@@ -224,14 +217,9 @@ export const crearReserva = async (req, res) => {
                     console.log('✅ Correo enviado exitosamente a:', toEmail);
                 } else {
                     console.log('⚠️ No se envió correo: toEmail o eventoInfo faltante');
-                    console.log('toEmail:', toEmail, 'eventoInfo:', eventoInfo ? 'existe' : 'null');
                 }
             } catch (mailErr) {
-                console.error('❌ Error enviando correo de confirmación (async):');
-                console.error('Tipo de error:', mailErr.name);
-                console.error('Mensaje:', mailErr.message);
-                console.error('Código:', mailErr.code);
-                console.error('Stack:', mailErr.stack);
+                console.error('❌ Error enviando correo:', mailErr.message);
             }
         });
 
