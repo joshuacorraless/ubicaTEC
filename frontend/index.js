@@ -5,6 +5,7 @@ const app = express();
 
 // servir todo el frontend (imgs, css, js…)
 app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'viewsGenerales')));
 
 // cuando entren a la raíz, mostrar el login
 app.get('/', (req, res) => {
