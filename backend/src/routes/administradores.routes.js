@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { obtenerEventosAdministrador, obtenerEscuelas, crearEvento, actualizarEvento, eliminarEvento } from '../controllers/administradores.controllers.js';
+import { upload } from '../middleware/upload.js';
 
 const router = Router();
 
@@ -19,9 +20,9 @@ router.get('/api/administradores/escuelas', obtenerEscuelas);
 /**
  * POST /api/administradores/eventos
  * Crear un nuevo evento
- * Body: { nombre, descripcion, fecha, hora, lugar, capacidad, precio, acceso, id_creador, imagen_url, alt_imagen, escuelas }
+ * Body (FormData): { nombre, descripcion, fecha, hora, lugar, capacidad, precio, acceso, id_creador, alt_imagen, escuelas, imagen (file) }
  */
-router.post('/api/administradores/eventos', crearEvento);
+router.post('/api/administradores/eventos', upload.single('imagen'), crearEvento);
 
 /**
  * PUT /api/administradores/eventos/:id

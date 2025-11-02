@@ -1,8 +1,8 @@
 
 //* este archivo es el que arranca todo, el servidor y pone el puerto a escuchar
 
-
 //* imports: 
+import 'dotenv/config';
 import app from './app.js';
 
 

@@ -151,37 +151,65 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    // Preparar datos
-    const data = {
-      nombre: nombre,
-      descripcion: descripcion,
-      fecha: document.getElementById('fecha').value,
-      hora: document.getElementById('hora').value,
-      lugar: document.getElementById('lugar').value,
-      capacidad: capacidad,
-      precio: costo,
-      acceso: accesoSelect.value,
-      id_creador: parseInt(id_usuario),
-      imagen_url: 'https://via.placeholder.com/800x400/0052CC/ffffff?text=Evento',
-      alt_imagen: nombre,
-      escuelas: accesoSelect.value === 'solo_tec' ? Array.from(escuelasSelect.selectedOptions).map(o => parseInt(o.value)) : null
-    };
+    // Validar que haya imagen
+    const imagenInput = document.getElementById('imagen');
+    if (!imagenInput.files || imagenInput.files.length === 0) {
+      showWarnings('Debe seleccionar una imagen para el evento');
+      imagenInput.focus();
+      return;
+    }
+
+    // Validar tamaño de imagen (5MB máximo)
+    const imagenFile = imagenInput.files[0];
+    if (imagenFile.size > 5 * 1024 * 1024) {
+      showWarnings('La imagen no debe superar los 5MB');
+      imagenInput.focus();
+      return;
+    }
+
+    // Validar tipo de imagen
+    const tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!tiposPermitidos.includes(imagenFile.type)) {
+      showWarnings('Solo se permiten imágenes JPG, PNG o WebP');
+      imagenInput.focus();
+      return;
+    }
+
+    // Preparar datos con FormData para enviar archivo
+    const formData = new FormData();
+    formData.append('nombre', nombre);
+    formData.append('descripcion', descripcion);
+    formData.append('fecha', document.getElementById('fecha').value);
+    formData.append('hora', document.getElementById('hora').value);
+    formData.append('lugar', document.getElementById('lugar').value);
+    formData.append('capacidad', capacidad);
+    formData.append('precio', costo);
+    formData.append('acceso', accesoSelect.value);
+    formData.append('id_creador', parseInt(id_usuario));
+    formData.append('alt_imagen', nombre);
+    formData.append('imagen', imagenFile);
+
+    // Agregar escuelas si es solo_tec
+    if (accesoSelect.value === 'solo_tec') {
+      const escuelasArray = Array.from(escuelasSelect.selectedOptions).map(o => parseInt(o.value));
+      formData.append('escuelas', JSON.stringify(escuelasArray));
+    }
 
     // Enviar formulario
     const btn = form.querySelector('button[type="submit"]');
     const txt = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<i class="bi bi-spinner spinner-border spinner-border-sm"></i> Registrando...';
+    btn.innerHTML = '<i class="bi bi-spinner spinner-border spinner-border-sm"></i> Subiendo imagen y registrando...';
 
     try {
       const res = await fetch('http://localhost:3000/api/administradores/eventos', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: formData
+        // NO incluir Content-Type header, el navegador lo configura automáticamente con multipart/form-data
       });
       const result = await res.json();
       if (result.success) {
-        showSuccess('Evento creado exitosamente');
+        showSuccess('Evento creado exitosamente con imagen subida a Cloudinary');
         setTimeout(() => window.location.href = 'listarEventos.html', 1500);
       } else {
         showWarnings(result.message);

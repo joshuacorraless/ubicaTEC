@@ -1,4 +1,6 @@
 import { getConnection } from '../db/connection.js';
+import cloudinary from '../config/cloudinary.js';
+import streamifier from 'streamifier';
 
 /**
  * Obtener eventos creados por un administrador específico
@@ -91,36 +93,96 @@ export const obtenerEscuelas = async (req, res) => {
  * POST /api/administradores/eventos
  */
 export const crearEvento = async (req, res) => {
-  const {
-    nombre,
-    descripcion,
-    fecha,
-    hora,
-    lugar,
-    capacidad,
-    precio,
-    acceso,
-    id_creador,
-    imagen_url,
-    alt_imagen,
-    escuelas // Array de IDs: [1,2,3] o null/undefined
-  } = req.body;
-
-  // Validaciones básicas
-  if (!nombre || !descripcion || !fecha || !hora || !lugar || !capacidad || precio === undefined || !acceso || !id_creador || !imagen_url) {
-    return res.status(400).json({
-      success: false,
-      message: 'Todos los campos son requeridos'
-    });
-  }
-
   let connection;
+  let uploadedImageUrl = null;
+  let cloudinaryPublicId = null;
+
   try {
+    const {
+      nombre,
+      descripcion,
+      fecha,
+      hora,
+      lugar,
+      capacidad,
+      precio,
+      acceso,
+      id_creador,
+      alt_imagen,
+      escuelas // JSON string: "[1,2,3]" o null
+    } = req.body;
+
+    // Validaciones básicas
+    if (!nombre || !descripcion || !fecha || !hora || !lugar || !capacidad || precio === undefined || !acceso || !id_creador) {
+      return res.status(400).json({
+        success: false,
+        message: 'Todos los campos son requeridos'
+      });
+    }
+
+    // Imagen por defecto
+    let imagen_url = 'https://via.placeholder.com/800x400/0052CC/ffffff?text=Evento';
+
+    // Si hay archivo de imagen, subirlo a Cloudinary
+    if (req.file) {
+      try {
+        console.log('Subiendo imagen a Cloudinary...');
+        
+        // Subir imagen usando stream
+        const uploadResult = await new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            {
+              folder: 'ubicatec/eventos',
+              public_id: `evento_${Date.now()}`,
+              transformation: [
+                { width: 800, height: 400, crop: 'fill', gravity: 'auto' },
+                { quality: 'auto:good' },
+                { fetch_format: 'auto' }
+              ]
+            },
+            (error, result) => {
+              if (error) {
+                console.error('Error en upload_stream:', error);
+                reject(error);
+              } else {
+                console.log('Imagen subida exitosamente:', result.secure_url);
+                resolve(result);
+              }
+            }
+          );
+          
+          streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+        });
+
+        imagen_url = uploadResult.secure_url;
+        uploadedImageUrl = uploadResult.secure_url;
+        cloudinaryPublicId = uploadResult.public_id;
+
+      } catch (uploadError) {
+        console.error('Error al subir imagen a Cloudinary:', uploadError);
+        // Continuar con imagen placeholder si falla la subida
+        return res.status(500).json({
+          success: false,
+          message: 'Error al subir la imagen. Por favor, intente nuevamente.'
+        });
+      }
+    }
+
     connection = await getConnection();
     
+    // Parsear escuelas si vienen como string JSON
+    let escuelasArray = null;
+    if (escuelas) {
+      try {
+        escuelasArray = typeof escuelas === 'string' ? JSON.parse(escuelas) : escuelas;
+      } catch (e) {
+        console.error('Error al parsear escuelas:', e);
+      }
+    }
+
     // Convertir array de escuelas a JSON (o NULL si es 'todos')
-    const escuelasJSON = acceso === 'solo_tec' && escuelas && escuelas.length > 0 
-      ? JSON.stringify(escuelas) 
+    const escuelasJSON = acceso === 'solo_tec' && escuelasArray && escuelasArray.length > 0 
+      ? JSON.stringify(escuelasArray) 
       : null;
 
     // Llamar al stored procedure
@@ -137,7 +199,7 @@ export const crearEvento = async (req, res) => {
         acceso,
         id_creador,
         imagen_url,
-        alt_imagen || 'Imagen del evento',
+        alt_imagen || nombre,
         escuelasJSON
       ]
     );
@@ -154,10 +216,21 @@ export const crearEvento = async (req, res) => {
         success: true,
         message: message,
         data: {
-          id_evento: id_evento
+          id_evento: id_evento,
+          imagen_url: imagen_url
         }
       });
     } else {
+      // Si hubo error en la BD y se subió imagen, eliminarla de Cloudinary
+      if (cloudinaryPublicId) {
+        try {
+          await cloudinary.uploader.destroy(cloudinaryPublicId);
+          console.log('Imagen eliminada de Cloudinary debido a error en BD');
+        } catch (deleteError) {
+          console.error('Error al eliminar imagen de Cloudinary:', deleteError);
+        }
+      }
+
       return res.status(400).json({
         success: false,
         message: message,
@@ -167,6 +240,17 @@ export const crearEvento = async (req, res) => {
 
   } catch (error) {
     console.error('Error al crear evento:', error);
+
+    // Si hubo error y se subió imagen, eliminarla de Cloudinary
+    if (cloudinaryPublicId) {
+      try {
+        await cloudinary.uploader.destroy(cloudinaryPublicId);
+        console.log('Imagen eliminada de Cloudinary debido a error');
+      } catch (deleteError) {
+        console.error('Error al eliminar imagen de Cloudinary:', deleteError);
+      }
+    }
+
     return res.status(500).json({
       success: false,
       message: 'Error al crear el evento',
