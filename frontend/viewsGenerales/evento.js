@@ -325,8 +325,16 @@ async function handleReservation() {
     setLoadingState(true);
     
     try {
-        // Crear reserva
+        // Crear reserva con timeout
         const url = `${API_CONFIG.base}${API_CONFIG.endpoints.crearReserva}`;
+        
+        console.log('📤 Enviando reserva a:', url);
+        console.log('📦 Datos:', { id_evento: eventoActual.id, id_usuario: usuarioActual.id });
+        
+        // Crear timeout de 30 segundos
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+        
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -335,10 +343,16 @@ async function handleReservation() {
             body: JSON.stringify({
                 id_evento: eventoActual.id,
                 id_usuario: usuarioActual.id
-            })
+            }),
+            signal: controller.signal
         });
         
+        clearTimeout(timeoutId);
+        
+        console.log('📥 Respuesta recibida:', response.status);
+        
         const data = await response.json();
+        console.log('📦 Datos de respuesta:', data);
         
         if (!response.ok) {
             throw new Error(data.message || 'Error al crear la reserva');
@@ -346,13 +360,22 @@ async function handleReservation() {
         
         if (data.success) {
             showSuccess(data.message);
+            // Recargar la página después de 2 segundos para actualizar el estado
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         } else {
             throw new Error(data.message || 'Error al crear la reserva');
         }
         
     } catch (error) {
         console.error('❌ Error al crear reserva:', error);
-        showError(error.message);
+        
+        if (error.name === 'AbortError') {
+            showError('El servidor está tardando demasiado en responder. Por favor, intenta de nuevo.');
+        } else {
+            showError(error.message);
+        }
     } finally {
         setTimeout(() => setLoadingState(false), 1000);
     }
