@@ -18,6 +18,7 @@ app.use(cors()); // CORS para todas las rutas
 app.use(express.json()); // para parsear json en el body
 app.use(loginRoutes); // que la app use las rutas de login
 app.use(eventosRoutes); // que la app use las rutas de eventos
+app.use(eventoRoutes); // que la app use las rutas de evento individual
 app.use(usuariosRoutes); // que la app use las rutas de usuarios (registro)
 app.use(perfilRoutes); // que la app use las rutas de perfil
 

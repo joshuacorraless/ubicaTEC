@@ -1,33 +1,15 @@
-//* Rutas para manejar un evento individual (detalles y reservas)
-
 import { Router } from 'express';
-import {
-    getEventoDetalle,
-    crearReserva,
-    verificarReserva
-} from '../controllers/evento.controller.js';
+import { getEventoDetalle, crearReserva, verificarReserva } from '../controllers/evento.controllers.js';
 
 const router = Router();
 
-/**
- * @route   GET /api/evento/:id
- * @desc    Obtener detalles completos de un evento específico
- * @access  Public
- */
-router.get('/:id', getEventoDetalle);
+// Ruta para obtener detalles completos de un evento específico
+router.get('/api/evento/:id', getEventoDetalle);
 
-/**
- * @route   POST /api/evento/reserva
- * @desc    Crear una reserva para un evento
- * @access  Private (requiere autenticación)
- */
-router.post('/reserva', crearReserva);
+// Ruta para crear una reserva para un evento
+router.post('/api/evento/reserva', crearReserva);
 
-/**
- * @route   GET /api/evento/verificar-reserva
- * @desc    Verificar si un usuario ya tiene reserva para un evento
- * @access  Private (requiere autenticación)
- */
-router.get('/verificar-reserva', verificarReserva);
+// Ruta para verificar si un usuario ya tiene reserva para un evento
+router.get('/api/evento/verificar-reserva', verificarReserva);
 
 export default router;
