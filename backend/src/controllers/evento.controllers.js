@@ -1,12 +1,16 @@
-//* Controlador para manejar un evento individual
 
+//* en este archivo esta toda la logica backend para manejar un evento individual
+
+
+//* imports:
 import { getConnection } from '../db/connection.js';
 import nodemailer from 'nodemailer';
 import 'dotenv/config';
 
-/**
- * Obtener un evento específico por ID con toda su información
- */
+
+
+
+// funcion para obtener un evento específico por ID con toda su información:
 export const getEventoDetalle = async (req, res) => {
     let connection;
     try {
@@ -21,7 +25,7 @@ export const getEventoDetalle = async (req, res) => {
 
         connection = await getConnection();
         
-        // Llamar al stored procedure
+        // llamar al stored procedure
         await connection.query('CALL sp_obtener_evento_detalle(?, @p_result_code)', [id]);
         const [[result]] = await connection.query('SELECT @p_result_code as result_code');
         
@@ -32,9 +36,9 @@ export const getEventoDetalle = async (req, res) => {
             });
         }
         
-        // Obtener los datos del evento
+        // obtener los datos del evento
         const [eventos] = await connection.query('CALL sp_obtener_evento_detalle(?, @p_result_code)', [id]);
-        const evento = eventos[0][0]; // Primera fila del primer resultado
+        const evento = eventos[0][0]; // primera fila del primer resultado
         
         if (!evento) {
             return res.status(404).json({
@@ -43,7 +47,7 @@ export const getEventoDetalle = async (req, res) => {
             });
         }
         
-        // Formatear la fecha para mostrar
+        // formatear la fecha para mostrar
         const meses = [
             'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
             'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
@@ -53,7 +57,7 @@ export const getEventoDetalle = async (req, res) => {
         const dia = fechaObj.getDate();
         const mes = meses[fechaObj.getMonth()];
         
-        // Formatear hora
+        // formatear hora
         const [horas, minutos] = evento.hora.split(':');
         const horaNum = parseInt(horas);
         const periodo = horaNum >= 12 ? 'p.m.' : 'a.m.';
@@ -78,9 +82,11 @@ export const getEventoDetalle = async (req, res) => {
     }
 };
 
-/**
- * Crear una reserva para un evento
- */
+
+
+
+
+// funcion para crear una reserva para un evento:
 export const crearReserva = async (req, res) => {
     let connection;
     try {
@@ -95,7 +101,7 @@ export const crearReserva = async (req, res) => {
 
         connection = await getConnection();
         
-        // Llamar al stored procedure para crear la reserva
+        // llamar al stored procedure para crear la reserva
         await connection.query(
             'CALL sp_crear_reserva(?, ?, @p_result_code, @p_message, @p_id_reserva)',
             [id_evento, id_usuario]
@@ -105,7 +111,7 @@ export const crearReserva = async (req, res) => {
             'SELECT @p_result_code as result_code, @p_message as message, @p_id_reserva as id_reserva'
         );
         
-        // Manejar códigos de error
+        // manejar códigos de error
         if (result.result_code !== 0) {
             return res.status(400).json({
                 success: false,
@@ -113,21 +119,21 @@ export const crearReserva = async (req, res) => {
             });
         }
         
-        // Obtener datos del usuario para el correo
+        // obtener datos del usuario para el correo
         const [usuarios] = await connection.query(
             'SELECT nombre, apellido, correo FROM Usuarios WHERE id_usuario = ?',
             [id_usuario]
         );
         const usuario = usuarios && usuarios.length ? usuarios[0] : null;
 
-        // Obtener datos del evento para el correo
+        // obtener datos del evento para el correo
         const [eventos] = await connection.query(
             'SELECT nombre, fecha, hora, lugar FROM Eventos WHERE id_evento = ?',
             [id_evento]
         );
         const eventoInfo = eventos && eventos.length ? eventos[0] : null;
 
-        // Enviar correo de confirmación (no bloquear el flujo si falla)
+        // enviar correo de confirmación (no bloquear el flujo si falla)
         let emailEnviado = false;
         
         try {
@@ -199,7 +205,7 @@ export const crearReserva = async (req, res) => {
             console.error('Error enviando correo de confirmación:', mailErr);
         }
 
-        // Responder con éxito
+        // responder con éxito
         return res.status(201).json({
             success: true,
             message: emailEnviado 
@@ -224,9 +230,10 @@ export const crearReserva = async (req, res) => {
     }
 };
 
-/**
- * Verificar si un usuario ya tiene una reserva para un evento
- */
+
+
+
+// funcion para verificar si un usuario ya tiene una reserva para un evento:
 export const verificarReserva = async (req, res) => {
     let connection;
     try {
@@ -241,7 +248,7 @@ export const verificarReserva = async (req, res) => {
 
         connection = await getConnection();
         
-        // Llamar al stored procedure
+        // llamar al stored procedure
         await connection.query(
             'CALL sp_verificar_reserva(?, ?, @p_tiene_reserva)',
             [id_evento, id_usuario]
@@ -250,7 +257,7 @@ export const verificarReserva = async (req, res) => {
         const [[result]] = await connection.query('SELECT @p_tiene_reserva as tiene_reserva');
         
         if (result.tiene_reserva) {
-            // Obtener datos de la reserva
+            // obtener datos de la reserva
             const [reservas] = await connection.query(
                 'CALL sp_verificar_reserva(?, ?, @p_tiene_reserva)',
                 [id_evento, id_usuario]

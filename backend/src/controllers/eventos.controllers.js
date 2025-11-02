@@ -1,11 +1,14 @@
-//* Controlador para manejar eventos
 
+//* en este archivo esta toda la logica backend para manejar eventos
+
+
+//* imports:
 import { getConnection } from '../db/connection.js';
 
-/**
- * Obtener eventos filtrados según el rol y escuela del usuario
- * Este es el endpoint principal que debe usar el frontend
- */
+
+
+
+// funcion para obtener eventos filtrados según el rol y escuela del usuario:
 export const getEventosFiltrados = async (req, res) => {
     let connection;
     try {
@@ -22,12 +25,12 @@ export const getEventosFiltrados = async (req, res) => {
 
         connection = await getConnection();
         
-        // Convertir id_escuela a INT o NULL
+        // convertir id_escuela a INT o NULL
         const escuelaId = id_escuela && id_escuela !== '' ? parseInt(id_escuela) : null;
         
         console.log('🔄 Parámetros procesados para SP:', { tipo_rol, escuelaId });
         
-        // Llamar al stored procedure con los parámetros correctos
+        // llamar al stored procedure con los parámetros correctos
         const [eventos] = await connection.query(
             'CALL sp_obtener_eventos_filtrados(?, ?)',
             [tipo_rol, escuelaId]
@@ -35,7 +38,7 @@ export const getEventosFiltrados = async (req, res) => {
         
         console.log('✅ Eventos obtenidos del SP:', eventos[0].length);
         
-        // El SP devuelve un array con los resultados en la primera posición
+        // el SP devuelve un array con los resultados en la primera posición
         const eventosData = eventos[0];
         
         res.status(200).json({
@@ -56,9 +59,10 @@ export const getEventosFiltrados = async (req, res) => {
     }
 };
 
-/**
- * Obtener todos los eventos con acceso público (acceso = 'todos')
- */
+
+
+
+// funcion para obtener todos los eventos con acceso público (acceso = 'todos'):
 export const getEventosPublicos = async (req, res) => {
     let connection;
     try {

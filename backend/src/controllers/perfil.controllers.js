@@ -1,10 +1,19 @@
+
+//* en este archivo esta toda la logica backend para el perfil de usuario
+
+
+//* imports:
 import { getConnection } from '../db/connection.js';
 
+
+
+
+// funcion para obtener el perfil de un usuario:
 export const obtenerPerfilUsuario = async (req, res) => {
   const { id_usuario } = req.params;
 
   try {
-    // Validar que se proporcione el ID
+    // validar que se proporcione el ID
     if (!id_usuario) {
       return res.status(400).json({
         success: false,
@@ -12,16 +21,16 @@ export const obtenerPerfilUsuario = async (req, res) => {
       });
     }
 
-    // Obtener conexión
+    // obtener conexión
     const connection = await getConnection();
 
-    // Llamar al stored procedure
+    // llamar al stored procedure
     const [results] = await connection.query(
       'CALL sp_obtener_perfil_usuario(?)',
       [id_usuario]
     );
 
-    // El SP retorna los datos del usuario en results[0]
+    // el SP retorna los datos del usuario en results[0]
     const usuario = results[0];
 
     if (!usuario || usuario.length === 0) {
@@ -31,7 +40,7 @@ export const obtenerPerfilUsuario = async (req, res) => {
       });
     }
 
-    // Retornar los datos del perfil
+    // retornar los datos del perfil
     return res.status(200).json({
       success: true,
       data: usuario[0]
@@ -46,6 +55,10 @@ export const obtenerPerfilUsuario = async (req, res) => {
   }
 };
 
+
+
+
+// funcion para actualizar el perfil de un usuario:
 export const actualizarPerfilUsuario = async (req, res) => {
   const { id_usuario } = req.params;
   const { nombre, apellido, correo, usuario, nueva_contrasena } = req.body;

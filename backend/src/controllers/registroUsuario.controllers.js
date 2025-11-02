@@ -1,10 +1,14 @@
-//* Controlador para manejar usuarios (registro)
 
+//* en este archivo esta toda la logica backend para el registro de usuario
+
+
+//* imports:
 import { getConnection } from '../db/connection.js';
 
-/**
- * Crear un nuevo usuario (registro)
- */
+
+
+
+// funcion para crear un nuevo usuario (registro):
 export const crearUsuario = async (req, res) => {
     let connection;
     try {
@@ -29,7 +33,7 @@ export const crearUsuario = async (req, res) => {
             tieneCodigoAdmin: !!codigoAdministrador
         });
 
-        // Validaciones básicas
+        // validaciones básicas
         if (!nombre || !apellido || !correo || !usuario || !contrasena || !tipoUsuario) {
             return res.status(400).json({
                 success: false,
@@ -37,7 +41,7 @@ export const crearUsuario = async (req, res) => {
             });
         }
 
-        // Validar formato de correo
+        // validar formato de correo
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(correo)) {
             return res.status(400).json({
@@ -46,7 +50,7 @@ export const crearUsuario = async (req, res) => {
             });
         }
 
-        // Validar longitud de contraseña
+        // validar longitud de contraseña
         if (contrasena.length < 8) {
             return res.status(400).json({
                 success: false,
@@ -63,7 +67,7 @@ export const crearUsuario = async (req, res) => {
             });
         }
 
-        // Validar escuela para estudiantes
+        // validar escuela para estudiantes
         if (tipoUsuario === 'estudiante' && !idEscuela) {
             return res.status(400).json({
                 success: false,
@@ -71,7 +75,7 @@ export const crearUsuario = async (req, res) => {
             });
         }
 
-        // Validar código de administrador
+        // validar código de administrador
         if (tipoUsuario === 'administrativo' && codigoAdministrador !== '777') {
             return res.status(400).json({
                 success: false,
@@ -81,11 +85,11 @@ export const crearUsuario = async (req, res) => {
 
         connection = await getConnection();
 
-        // Preparar parámetros para el SP
+        // preparar parámetros para el SP
         const escuelaId = tipoUsuario === 'estudiante' ? parseInt(idEscuela) : null;
         const codigoAdmin = tipoUsuario === 'administrativo' ? codigoAdministrador : null;
 
-        // Llamar al stored procedure
+        // llamar al stored procedure
         await connection.query(
             'CALL sp_crear_usuario(?, ?, ?, ?, ?, ?, ?, ?, @p_result_code, @p_message)',
             [
@@ -93,7 +97,7 @@ export const crearUsuario = async (req, res) => {
                 apellido,
                 correo,
                 usuario,
-                contrasena, // En producción deberías hashear con bcrypt
+                contrasena, // en producción deberías hashear con bcrypt
                 tipoUsuario,
                 escuelaId,
                 codigoAdmin

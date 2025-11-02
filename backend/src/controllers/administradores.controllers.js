@@ -1,15 +1,20 @@
+
+//* en este archivo esta toda la logica backend para la gestion de eventos por parte de administradores
+
+
+//* imports:
 import { getConnection } from '../db/connection.js';
 import cloudinary from '../config/cloudinary.js';
 import streamifier from 'streamifier';
 
-/**
- * Obtener eventos creados por un administrador específico
- * GET /api/administradores/eventos
- */
+
+
+
+// funcion para obtener eventos creados por un administrador específico:
 export const obtenerEventosAdministrador = async (req, res) => {
   const { id_usuario } = req.query;
 
-  // Validar que se envió el id_usuario
+  // validar que se envió el id_usuario
   if (!id_usuario) {
     return res.status(400).json({
       success: false,
@@ -21,13 +26,13 @@ export const obtenerEventosAdministrador = async (req, res) => {
   try {
     connection = await getConnection();
     
-    // Llamar al stored procedure
+    // llamar al stored procedure
     const [eventos] = await connection.query(
       'CALL sp_listar_eventos_administrador(?)',
       [id_usuario]
     );
 
-    // El SP retorna los eventos en el primer elemento del array
+    // el SP retorna los eventos en el primer elemento del array
     const listaEventos = eventos[0];
 
     return res.status(200).json({
@@ -39,7 +44,7 @@ export const obtenerEventosAdministrador = async (req, res) => {
   } catch (error) {
     console.error('Error al obtener eventos del administrador:', error);
     
-    // Error específico del SP
+    // error específico del SP
     if (error.sqlState === '45000') {
       return res.status(404).json({
         success: false,
@@ -57,16 +62,16 @@ export const obtenerEventosAdministrador = async (req, res) => {
   }
 };
 
-/**
- * Obtener lista de todas las escuelas del TEC
- * GET /api/administradores/escuelas
- */
+
+
+
+// funcion para obtener lista de todas las escuelas del TEC:
 export const obtenerEscuelas = async (req, res) => {
   let connection;
   try {
     connection = await getConnection();
     
-    // Obtener todas las escuelas
+    // obtener todas las escuelas
     const [escuelas] = await connection.query(
       'SELECT id_escuela, nombre_escuela FROM EscuelasTEC ORDER BY nombre_escuela ASC'
     );
@@ -88,10 +93,10 @@ export const obtenerEscuelas = async (req, res) => {
   }
 };
 
-/**
- * Crear un nuevo evento
- * POST /api/administradores/eventos
- */
+
+
+
+// funcion para crear un nuevo evento:
 export const crearEvento = async (req, res) => {
   let connection;
   let uploadedImageUrl = null;
@@ -112,7 +117,7 @@ export const crearEvento = async (req, res) => {
       escuelas // JSON string: "[1,2,3]" o null
     } = req.body;
 
-    // Validaciones básicas
+    // validaciones básicas
     if (!nombre || !descripcion || !fecha || !hora || !lugar || !capacidad || precio === undefined || !acceso || !id_creador) {
       return res.status(400).json({
         success: false,
@@ -204,7 +209,7 @@ export const crearEvento = async (req, res) => {
       ]
     );
 
-    // Obtener los parámetros de salida
+    // obtener los parámetros de salida
     const [output] = await connection.query(
       'SELECT @p_result_code as result_code, @p_message as message, @p_id_evento as id_evento'
     );
@@ -221,7 +226,7 @@ export const crearEvento = async (req, res) => {
         }
       });
     } else {
-      // Si hubo error en la BD y se subió imagen, eliminarla de Cloudinary
+      // si hubo error en la BD y se subió imagen, eliminarla de Cloudinary
       if (cloudinaryPublicId) {
         try {
           await cloudinary.uploader.destroy(cloudinaryPublicId);
@@ -241,7 +246,7 @@ export const crearEvento = async (req, res) => {
   } catch (error) {
     console.error('Error al crear evento:', error);
 
-    // Si hubo error y se subió imagen, eliminarla de Cloudinary
+    // si hubo error y se subió imagen, eliminarla de Cloudinary
     if (cloudinaryPublicId) {
       try {
         await cloudinary.uploader.destroy(cloudinaryPublicId);
@@ -261,10 +266,11 @@ export const crearEvento = async (req, res) => {
   }
 };
 
-/**
- * Actualizar un evento existente
- * PUT /api/administradores/eventos/:id
- */
+
+
+
+
+// funcion para actualizar un evento existente:
 export const actualizarEvento = async (req, res) => {
   const { id } = req.params;
   const {
@@ -279,7 +285,7 @@ export const actualizarEvento = async (req, res) => {
     alt_imagen
   } = req.body;
 
-  // Validaciones básicas
+  // validaciones básicas
   if (!nombre || !descripcion || !fecha || !hora || !lugar || !capacidad || precio === undefined || !imagen_url) {
     return res.status(400).json({
       success: false,
@@ -291,7 +297,7 @@ export const actualizarEvento = async (req, res) => {
   try {
     connection = await getConnection();
     
-    // Llamar al stored procedure
+    // llamar al stored procedure
     const [result] = await connection.query(
       `CALL sp_actualizar_evento(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, @p_result_code, @p_message)`,
       [
@@ -343,10 +349,10 @@ export const actualizarEvento = async (req, res) => {
   }
 };
 
-/**
- * Eliminar un evento (soft delete)
- * DELETE /api/administradores/eventos/:id
- */
+
+
+
+// funcion para eliminar un evento (soft delete):
 export const eliminarEvento = async (req, res) => {
   const { id } = req.params;
 
@@ -354,7 +360,7 @@ export const eliminarEvento = async (req, res) => {
   try {
     connection = await getConnection();
     
-    // Llamar al stored procedure
+    // llamar al stored procedure
     const [result] = await connection.query(
       `CALL sp_eliminar_evento(?, @p_result_code, @p_message)`,
       [id]
