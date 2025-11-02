@@ -153,20 +153,11 @@ export const crearReserva = async (req, res) => {
                 
                 // configuración simplificada para Gmail con reintentos
                 const transporter = nodemailer.createTransport({
-                    host: 'smtp.gmail.com',
-                    port: 465,
-                    secure: true,
+                    service: 'gmail',
                     auth: {
-                        user: process.env.EMAIL_USER || 'ubicatecoficial@gmail.com',
+                        user: process.env.EMAIL_USER,
                         pass: process.env.EMAIL_PASS
-                    },
-                    tls: {
-                        rejectUnauthorized: false,
-                        minVersion: 'TLSv1.2'
-                    },
-                    connectionTimeout: 10000,
-                    greetingTimeout: 10000,
-                    socketTimeout: 10000
+                    }
                 });
 
                 const toEmail = usuario ? usuario.correo : null;
@@ -206,7 +197,7 @@ export const crearReserva = async (req, res) => {
 
                 if (toEmail && eventoInfo) {
                     const mailOptions = {
-                        from: 'ubicaTEC <ubicatecoficial@gmail.com>',
+                        from: process.env.EMAIL_USER,
                         to: toEmail,
                         subject: `Confirmación de reserva: ${eventoInfo.nombre}`,
                         html: `
@@ -222,30 +213,13 @@ export const crearReserva = async (req, res) => {
                         `
                     };
 
-                    // intentar enviar con reintentos
-                    let enviado = false;
-                    let intentos = 0;
-                    const maxIntentos = 3;
-
-                    while (!enviado && intentos < maxIntentos) {
-                        try {
-                            intentos++;
-                            console.log(`Intento ${intentos} de ${maxIntentos}...`);
-                            await transporter.sendMail(mailOptions);
-                            enviado = true;
-                            console.log('✅ Correo enviado exitosamente a:', toEmail);
-                        } catch (sendErr) {
-                            console.error(`❌ Error en intento ${intentos}:`, sendErr.message);
-                            if (intentos < maxIntentos) {
-                                console.log('⏳ Esperando 2 segundos antes de reintentar...');
-                                await new Promise(resolve => setTimeout(resolve, 2000));
-                            }
+                    transporter.sendMail(mailOptions, (error, info) => {
+                        if (error) {
+                            console.error('❌ Error enviando correo:', error);
+                        } else {
+                            console.log('✅ Email sent:', info.response);
                         }
-                    }
-
-                    if (!enviado) {
-                        console.error('❌ No se pudo enviar el correo después de', maxIntentos, 'intentos');
-                    }
+                    });
                 } else {
                     console.log('⚠️ No se envió correo: toEmail o eventoInfo faltante');
                 }
