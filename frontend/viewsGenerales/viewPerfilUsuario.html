@@ -292,7 +292,6 @@
       </button>
       <div class="d-none d-lg-flex gap-2">
         <button class="btn btn-outline-light btn-sm" onclick="openChatbot()" type="button"><i class="bi bi-life-preserver me-1"></i>Ayuda</button>
-        <button class="btn btn-outline-danger btn-sm" onclick="cerrarSesion()" type="button"><i class="bi bi-box-arrow-right me-1"></i>Cerrar sesión</button>
       </div>
     </div>
   </header>
@@ -321,21 +320,24 @@
       <!-- OFFCANVAS MOBILE -->
       <div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
         <div class="offcanvas-header" style="background:var(--tec-primary); color:#fff;">
-          <h5 class="offcanvas-title" id="menuLateralLabel"><i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+          <div class="offcanvas-title fw-bold fs-5" id="menuLateralLabel"><i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC</div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar menú lateral"></button>
         </div>
         <div class="offcanvas-body">
           <nav aria-label="Navegación móvil">
             <ul class="nav nav-pills flex-column gap-1">
-              <li class="nav-item"><a class="nav-link" href="eventos.html"><i class="bi bi-calendar-event me-2"></i> Panel de eventos</a></li>
-              <li class="nav-item"><a class="nav-link active" href="viewPerfilUsuario.html"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
+              <li class="nav-item"><a class="nav-link" href="eventos.html" aria-label="Ir al panel de eventos"><i class="bi bi-calendar-event me-2"></i> Panel de eventos</a></li>
+              <li class="nav-item"><a class="nav-link active" href="viewPerfilUsuario.html" aria-current="page"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
             </ul>
           </nav>
         </div>
       </div>
 
       <!-- CONTENIDO -->
-      <main id="contenido-principal" class="col-12 col-md-9 col-xl-10 px-4 py-4" tabindex="-1">
+      <main id="contenido-principal" class="col-12 col-md-9 col-xl-10 px-4 py-4">
+        <!-- Enlace de salto al contenido principal -->
+        <a href="#titulo-perfil" class="visually-hidden-focusable position-absolute top-0 start-0 bg-primary text-white px-3 py-2" style="z-index: 1100;">Saltar al contenido principal</a>
+        
         <!-- Migas -->
         <nav aria-label="Ruta de navegación" class="mb-3">
           <ol class="breadcrumb mb-0">
@@ -345,7 +347,7 @@
         </nav>
 
         <header class="mb-4">
-          <h1 class="display-5 fw-bold mb-2 text-gradient">Mi Perfil</h1>
+          <h1 id="titulo-perfil" class="display-5 fw-bold mb-2 text-gradient">Mi Perfil</h1>
           <p class="lead text-muted mb-0">Consulta y gestiona tu información personal</p>
         </header>
 

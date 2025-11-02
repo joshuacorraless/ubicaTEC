@@ -923,6 +923,8 @@ CREATE PROCEDURE sp_eliminar_evento(
     OUT p_message VARCHAR(255)
 )
 BEGIN
+    DECLARE v_estado_actual VARCHAR(20);
+    
     -- Inicializar variables
     SET p_result_code = 0;
     SET p_message = 'Evento eliminado exitosamente';
@@ -932,10 +934,21 @@ BEGIN
         SET p_result_code = 1;
         SET p_message = 'El evento no existe';
     ELSE
-        -- Soft delete: cambiar estado a 'cancelado'
-        UPDATE Eventos
-        SET estado = 'cancelado'
+        -- Obtener el estado actual del evento
+        SELECT estado INTO v_estado_actual
+        FROM Eventos
         WHERE id_evento = p_id_evento;
+        
+        -- Validar que el evento no esté ya cancelado
+        IF v_estado_actual = 'cancelado' THEN
+            SET p_result_code = 2;
+            SET p_message = 'El evento ya se encuentra cancelado';
+        ELSE
+            -- Soft delete: cambiar estado a 'cancelado'
+            UPDATE Eventos
+            SET estado = 'cancelado'
+            WHERE id_evento = p_id_evento;
+        END IF;
     END IF;
     
 END//

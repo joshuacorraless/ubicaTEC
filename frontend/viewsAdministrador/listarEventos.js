@@ -310,35 +310,40 @@ function eliminarEvento(id) {
     return;
   }
 
+  // Validar que el evento no esté ya cancelado
+  if (evento.estado === 'cancelado') {
+    showNotification('El evento ya se encuentra cancelado', 'warning');
+    return;
+  }
+
   // Mostrar modal de confirmación bonito y accesible
   showDeleteConfirmModal(evento, id);
 }
 
 function showDeleteConfirmModal(evento, id) {
   const modalHTML = `
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-describedby="deleteConfirmDesc" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius: var(--border-radius); border: none; overflow: hidden;">
           <div class="modal-header" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border: none;">
-            <h5 class="modal-title" id="deleteConfirmModalLabel">
-              <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Eliminación
-            </h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            <h2 class="modal-title h5" id="deleteConfirmModalLabel">
+              <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>Confirmar Eliminación
+            </h2>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar diálogo de confirmación"></button>
           </div>
           <div class="modal-body text-center py-4">
-            <div class="mb-3">
+            <div class="mb-3" aria-hidden="true">
               <i class="bi bi-trash3" style="font-size: 3rem; color: #dc3545;"></i>
             </div>
-            <h6 class="mb-3">¿Estás seguro de eliminar el evento?</h6>
-            <p class="text-muted mb-2"><strong>"${evento.nombre}"</strong></p>
-            <p class="text-muted small">Esta acción marcará el evento como cancelado.</p>
+            <p id="deleteConfirmDesc" class="mb-3">¿Estás seguro de eliminar el evento <strong>"${evento.nombre}"</strong>?</p>
+            <p class="text-muted small">Esta acción marcará el evento como cancelado y no se podrá revertir.</p>
           </div>
           <div class="modal-footer" style="border: none; background-color: #f8f9fa;">
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-              <i class="bi bi-x-circle me-1"></i>Cancelar
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Cancelar eliminación">
+              <i class="bi bi-x-circle me-1" aria-hidden="true"></i>Cancelar
             </button>
-            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
-              <i class="bi bi-trash3 me-1"></i>Sí, Eliminar
+            <button type="button" class="btn btn-danger" id="confirmDeleteBtn" aria-label="Confirmar eliminación del evento ${evento.nombre}">
+              <i class="bi bi-trash3 me-1" aria-hidden="true"></i>Sí, Eliminar
             </button>
           </div>
         </div>
@@ -358,6 +363,11 @@ function showDeleteConfirmModal(evento, id) {
   document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
     modal.hide();
     ejecutarEliminacion(id);
+  });
+  
+  // Enfocar el botón de cancelar cuando se abre el modal para mejor accesibilidad
+  document.getElementById('deleteConfirmModal').addEventListener('shown.bs.modal', () => {
+    document.querySelector('#deleteConfirmModal .btn-outline-secondary').focus();
   });
   
   modal.show();
@@ -404,29 +414,32 @@ function ejecutarEliminacion(id) {
 // ======= MODAL DINÁMICO =======
 function showEventModal(evento) {
   const porcentajeOcupacion = evento.capacidad > 0 ? Math.round((evento.asistencia/evento.capacidad)*100) : 0;
+  const estadoTexto = evento.estado === 'disponible' ? 'Disponible' : evento.estado === 'agotado' ? 'Agotado' : 'Cancelado';
   
   const modalHTML = `
-    <div class="modal fade" id="eventoModal" tabindex="-1" aria-labelledby="eventoModalLabel" aria-hidden="true">
+    <div class="modal fade" id="eventoModal" tabindex="-1" aria-labelledby="eventoModalLabel" aria-describedby="eventoModalDesc" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content" style="border-radius: var(--border-radius); border: none; overflow: hidden; box-shadow: var(--shadow-lg);">
           
           <!-- Header con gradiente -->
           <div class="modal-header" style="background: var(--tec-gradient); color: white; border: none; padding: 1.5rem;">
-            <h5 class="modal-title fw-bold" id="eventoModalLabel">
-              <i class="bi bi-calendar-event me-2"></i>${evento.nombre}
-            </h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            <h2 class="modal-title h5 fw-bold" id="eventoModalLabel">
+              <i class="bi bi-calendar-event me-2" aria-hidden="true"></i>${evento.nombre}
+            </h2>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar detalles del evento"></button>
           </div>
           
           <!-- Body -->
           <div class="modal-body" style="padding: 2rem;">
+            <p id="eventoModalDesc" class="visually-hidden">Detalles completos del evento ${evento.nombre}, estado ${estadoTexto}</p>
             
             <!-- Badge de estado -->
-            <div class="mb-4 text-center">
+            <div class="mb-4 text-center" role="status" aria-live="polite">
               <span class="badge ${evento.estado === 'disponible' ? 'badge-disponible' : evento.estado === 'agotado' ? 'badge-agotado' : 'bg-secondary'}" 
-                    style="font-size: 0.9rem; padding: 0.5rem 1.5rem; border-radius: 50px;">
-                <i class="bi bi-${evento.estado === 'disponible' ? 'check-circle' : evento.estado === 'agotado' ? 'x-circle' : 'dash-circle'} me-1"></i>
-                ${evento.estado === 'disponible' ? 'Disponible' : evento.estado === 'agotado' ? 'Agotado' : 'Cancelado'}
+                    style="font-size: 0.9rem; padding: 0.5rem 1.5rem; border-radius: 50px;"
+                    aria-label="Estado del evento: ${estadoTexto}">
+                <i class="bi bi-${evento.estado === 'disponible' ? 'check-circle' : evento.estado === 'agotado' ? 'x-circle' : 'dash-circle'} me-1" aria-hidden="true"></i>
+                ${estadoTexto}
               </span>
             </div>
             
@@ -437,15 +450,15 @@ function showEventModal(evento) {
               <div class="col-md-6">
                 <div class="card h-100" style="border: 1px solid #e3e6f0; border-radius: 12px; background: linear-gradient(135deg, rgba(0,82,204,0.03) 0%, rgba(255,255,255,1) 100%);">
                   <div class="card-body">
-                    <h6 class="card-title mb-3" style="color: var(--tec-primary); font-weight: 600;">
-                      <i class="bi bi-info-circle-fill me-2"></i>Información General
-                    </h6>
+                    <h3 class="card-title h6 mb-3" style="color: var(--tec-primary); font-weight: 600;">
+                      <i class="bi bi-info-circle-fill me-2" aria-hidden="true"></i>Información General
+                    </h3>
                     <ul class="list-unstyled mb-0" style="line-height: 2;">
-                      <li><i class="bi bi-calendar3 text-primary me-2"></i><strong>Fecha:</strong> ${evento.fechaTexto}</li>
-                      <li><i class="bi bi-clock text-primary me-2"></i><strong>Hora:</strong> ${evento.hora}</li>
-                      <li><i class="bi bi-geo-alt text-primary me-2"></i><strong>Lugar:</strong> ${evento.lugar}</li>
-                      <li><i class="bi bi-cash text-primary me-2"></i><strong>Precio:</strong> ${evento.precio > 0 ? '₡' + evento.precio.toLocaleString() : 'Gratis'}</li>
-                      <li><i class="bi bi-shield-check text-primary me-2"></i><strong>Acceso:</strong> ${evento.acceso === 'todos' ? 'Abierto a todos' : 'Solo TEC'}</li>
+                      <li><i class="bi bi-calendar3 text-primary me-2" aria-hidden="true"></i><strong>Fecha:</strong> ${evento.fechaTexto}</li>
+                      <li><i class="bi bi-clock text-primary me-2" aria-hidden="true"></i><strong>Hora:</strong> ${evento.hora}</li>
+                      <li><i class="bi bi-geo-alt text-primary me-2" aria-hidden="true"></i><strong>Lugar:</strong> ${evento.lugar}</li>
+                      <li><i class="bi bi-cash text-primary me-2" aria-hidden="true"></i><strong>Precio:</strong> ${evento.precio > 0 ? '₡' + evento.precio.toLocaleString() : 'Gratis'}</li>
+                      <li><i class="bi bi-shield-check text-primary me-2" aria-hidden="true"></i><strong>Acceso:</strong> ${evento.acceso === 'todos' ? 'Abierto a todos' : 'Solo TEC'}</li>
                     </ul>
                   </div>
                 </div>
@@ -455,19 +468,18 @@ function showEventModal(evento) {
               <div class="col-md-6">
                 <div class="card h-100" style="border: 1px solid #e3e6f0; border-radius: 12px; background: linear-gradient(135deg, rgba(0,101,255,0.03) 0%, rgba(255,255,255,1) 100%);">
                   <div class="card-body">
-                    <h6 class="card-title mb-3" style="color: var(--tec-primary); font-weight: 600;">
-                      <i class="bi bi-people-fill me-2"></i>Capacidad
-                    </h6>
+                    <h3 class="card-title h6 mb-3" style="color: var(--tec-primary); font-weight: 600;">
+                      <i class="bi bi-people-fill me-2" aria-hidden="true"></i>Capacidad
+                    </h3>
                     <div class="text-center mb-3">
-                      <div style="font-size: 2.5rem; font-weight: bold; color: var(--tec-primary);">
+                      <div style="font-size: 2.5rem; font-weight: bold; color: var(--tec-primary);" aria-label="${evento.asistencia} de ${evento.capacidad} asistentes registrados">
                         ${evento.asistencia}<span style="font-size: 1.5rem; color: #6c757d;">/${evento.capacidad}</span>
                       </div>
                       <p class="text-muted mb-0">asistentes registrados</p>
                     </div>
-                    <div class="progress mb-2" style="height: 12px; border-radius: 10px; background-color: #e9ecef;">
-                      <div class="progress-bar" role="progressbar" 
-                           style="width: ${porcentajeOcupacion}%; background: var(--tec-gradient); border-radius: 10px;"
-                           aria-valuenow="${porcentajeOcupacion}" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress mb-2" style="height: 12px; border-radius: 10px; background-color: #e9ecef;" role="progressbar" aria-valuenow="${porcentajeOcupacion}" aria-valuemin="0" aria-valuemax="100" aria-label="Ocupación del evento: ${porcentajeOcupacion} por ciento">
+                      <div class="progress-bar" 
+                           style="width: ${porcentajeOcupacion}%; background: var(--tec-gradient); border-radius: 10px;">
                       </div>
                     </div>
                     <p class="text-center text-muted small mb-0">${porcentajeOcupacion}% ocupado · ${evento.disponibles} disponibles</p>
@@ -480,9 +492,9 @@ function showEventModal(evento) {
             <!-- Descripción -->
             <div class="card" style="border: 1px solid #e3e6f0; border-radius: 12px; background-color: #f8f9fa;">
               <div class="card-body">
-                <h6 class="card-title mb-3" style="color: var(--tec-primary); font-weight: 600;">
-                  <i class="bi bi-card-text me-2"></i>Descripción
-                </h6>
+                <h3 class="card-title h6 mb-3" style="color: var(--tec-primary); font-weight: 600;">
+                  <i class="bi bi-card-text me-2" aria-hidden="true"></i>Descripción
+                </h3>
                 <p class="mb-0" style="color: #495057; line-height: 1.8;">${evento.descripcion}</p>
               </div>
             </div>
@@ -491,11 +503,11 @@ function showEventModal(evento) {
           
           <!-- Footer -->
           <div class="modal-footer" style="border: none; background-color: #f8f9fa; padding: 1.25rem;">
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-              <i class="bi bi-x-circle me-1"></i>Cerrar
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Cerrar detalles del evento">
+              <i class="bi bi-x-circle me-1" aria-hidden="true"></i>Cerrar
             </button>
-            <a href="editarEvento.html?id=${evento.id}" class="btn btn-primary" style="background: var(--tec-gradient); border: none;">
-              <i class="bi bi-pencil me-1"></i>Editar Evento
+            <a href="editarEvento.html?id=${evento.id}" class="btn btn-primary" style="background: var(--tec-gradient); border: none;" aria-label="Ir a editar el evento ${evento.nombre}">
+              <i class="bi bi-pencil me-1" aria-hidden="true"></i>Editar Evento
             </a>
           </div>
           
@@ -516,8 +528,20 @@ function showEventModal(evento) {
 
 // ======= NOTIFICACIONES =======
 function showNotification(message, type = 'success') {
+  // Anunciar a lectores de pantalla usando aria-live region
+  const liveStatus = document.getElementById('live-status');
+  if (liveStatus) {
+    liveStatus.textContent = message;
+    // Limpiar después para que esté listo para el próximo anuncio
+    setTimeout(() => { liveStatus.textContent = ''; }, 1000);
+  }
+  
+  // Crear notificación visual
   const notification = document.createElement('div');
-  notification.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'warning'} alert-dismissible fade show`;
+  const alertType = type === 'success' ? 'success' : type === 'error' ? 'danger' : 'warning';
+  notification.className = `alert alert-${alertType} alert-dismissible fade show`;
+  notification.setAttribute('role', 'alert');
+  notification.setAttribute('aria-live', 'assertive');
   notification.style.cssText = `
     position: fixed;
     top: 20px;
@@ -527,9 +551,9 @@ function showNotification(message, type = 'success') {
     animation: slideInRight 0.3s ease-out;
   `;
   notification.innerHTML = `
-    <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'exclamation-triangle'} me-2"></i>
+    <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'exclamation-triangle'} me-2" aria-hidden="true"></i>
     ${message}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar notificación"></button>
   `;
   
   document.body.appendChild(notification);

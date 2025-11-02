@@ -296,7 +296,7 @@
               </a>
             </li>
             <li class="nav-item mt-2">
-              <a class="nav-link d-flex align-items-center" href="../viewsEstudiante/viewPerfilEstudiante.html">
+              <a class="nav-link d-flex align-items-center" href="../viewsGenerales/viewPerfilUsuario.html">
                 <i class="bi bi-person-gear me-2"></i> Configuración de perfil
               </a>
             </li>
@@ -307,22 +307,25 @@
       <!-- OFFCANVAS MOBILE -->
       <div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
         <div class="offcanvas-header" style="background:var(--tec-primary); color:#fff;">
-          <h5 class="offcanvas-title" id="menuLateralLabel"><i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+          <div class="offcanvas-title fw-bold fs-5" id="menuLateralLabel"><i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC</div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar menú lateral"></button>
         </div>
         <div class="offcanvas-body">
           <nav aria-label="Navegación móvil">
             <ul class="nav nav-pills flex-column gap-1">
-              <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-speedometer2 me-2"></i> Panel de eventos</a></li>
-              <li class="nav-item"><a class="nav-link" href="listarEventos.html"><i class="bi bi-calendar-event me-2"></i> Gestión de eventos</a></li>
-              <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
+              <li class="nav-item"><a class="nav-link" href="../viewsGenerales/eventos.html" aria-label="Ir al panel de eventos"><i class="bi bi-speedometer2 me-2"></i> Panel de eventos</a></li>
+              <li class="nav-item"><a class="nav-link" href="listarEventos.html" aria-label="Ir a gestión de eventos"><i class="bi bi-calendar-event me-2"></i> Gestión de eventos</a></li>
+              <li class="nav-item"><a class="nav-link" href="../viewsGenerales/viewPerfilUsuario.html" aria-label="Ir a mi perfil"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
             </ul>
           </nav>
         </div>
       </div>
 
       <!-- CONTENIDO -->
-      <main id="contenido-principal" class="col-12 col-md-9 col-xl-10 px-4 py-4" tabindex="-1">
+      <main id="contenido-principal" class="col-12 col-md-9 col-xl-10 px-4 py-4">
+        <!-- Enlace de salto al contenido principal -->
+        <a href="#titulo-registrar-evento" class="visually-hidden-focusable position-absolute top-0 start-0 bg-primary text-white px-3 py-2" style="z-index: 1100;">Saltar al contenido principal</a>
+        
         <!-- Migas -->
         <nav aria-label="Ruta de navegación" class="mb-3">
           <ol class="breadcrumb mb-0">
@@ -332,7 +335,7 @@
         </nav>
 
         <header class="mb-4">
-          <h1 class="display-5 fw-bold mb-2 text-gradient">Crear Nuevo Evento</h1>
+          <h1 id="titulo-registrar-evento" class="display-5 fw-bold mb-2 text-gradient">Crear Nuevo Evento</h1>
           <p class="lead text-muted mb-0">Complete la información para registrar un evento en ubicaTEC</p>
         </header>
 
@@ -459,11 +462,11 @@
                 <button type="submit" class="btn btn-success flex-grow-1">
                   <i class="bi bi-plus-circle me-2"></i>Registrar Evento
                 </button>
-                <button type="reset" class="btn btn-outline-secondary">
-                  <i class="bi bi-arrow-counterclockwise me-1"></i>Limpiar
+                <button type="reset" class="btn btn-outline-secondary" aria-label="Limpiar formulario">
+                  <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Limpiar
                 </button>
-                <a href="listarEventos.html" class="btn btn-link">
-                  <i class="bi bi-arrow-left-short me-1"></i>Volver a eventos
+                <a href="listarEventos.html" class="btn btn-link" aria-label="Volver a la lista de gestión de eventos">
+                  <i class="bi bi-arrow-left-short me-1" aria-hidden="true"></i>Volver a eventos
                 </a>
               </div>
               

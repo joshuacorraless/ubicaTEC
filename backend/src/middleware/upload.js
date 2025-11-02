@@ -1,11 +1,18 @@
+//* --> este archivo contiene la configuración de multer para subir imágenes al servidor 
+
+
+//* imports:
 import multer from 'multer';
 
-// Configurar multer para almacenar en memoria (buffer)
+
+
+
+// configurar multer para almacenar en memoria (buffer)
 const storage = multer.memoryStorage();
 
-// Filtro para aceptar solo imágenes
+// filtro para aceptar solo imágenes
 const fileFilter = (req, file, cb) => {
-    // Aceptar solo archivos de imagen
+    // aceptar solo archivos de imagen
     if (file.mimetype.startsWith('image/')) {
         cb(null, true);
     } else {
@@ -13,7 +20,7 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// Configuración de multer
+// configuración de multer
 export const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
