@@ -1,6 +1,8 @@
 //* Controlador para manejar un evento individual
 
 import { getConnection } from '../db/connection.js';
+import nodemailer from 'nodemailer';
+import 'dotenv/config';
 
 /**
  * Obtener un evento específico por ID con toda su información
@@ -106,7 +108,7 @@ export const crearReserva = async (req, res) => {
             });
         }
 
-        connection = await getConnection();
+    connection = await getConnection();
         
         // Verificar que el evento existe y tiene cupos disponibles
         const [eventos] = await connection.query(
@@ -152,47 +154,147 @@ export const crearReserva = async (req, res) => {
         
         // Iniciar transacción
         await connection.beginTransaction();
-        
+
         try {
-            // Crear la reserva
-            // Usar valores por defecto según la estructura de la tabla
-            const cantidad = 1; // Por defecto 1 entrada
-            const metodo_pago = 'efectivo'; // Por defecto efectivo (puede cambiarse después)
-            
+            // Crear la reserva (una entrada por defecto)
+            const cantidad = 1;
+            const metodo_pago = 'efectivo';
+
             const [resultado] = await connection.query(
                 'INSERT INTO Reservas (id_evento, id_usuario, cantidad, metodo_pago, estado) VALUES (?, ?, ?, ?, ?)',
                 [id_evento, id_usuario, cantidad, metodo_pago, 'Confirmada']
             );
-            
-            // Incrementar asistencia del evento
-            await connection.query(
-                'UPDATE Eventos SET asistencia = asistencia + 1 WHERE id_evento = ?',
-                [id_evento]
-            );
-            
-            // Verificar si el evento se agotó
-            await connection.query(
-                `UPDATE Eventos 
-                 SET estado = CASE 
-                    WHEN asistencia >= capacidad THEN 'agotado'
-                    ELSE 'disponible'
-                 END
-                 WHERE id_evento = ?`,
-                [id_evento]
-            );
-            
+
+            // Llamar al stored procedure que decrementa la capacidad
+            await connection.query('CALL sp_decrementar_capacidad_evento(?, @p_result_code);', [id_evento]);
+            const [selectOut] = await connection.query('SELECT @p_result_code as p_result_code;');
+            const spResult = selectOut && selectOut.length ? selectOut[0].p_result_code : null;
+
+            if (spResult === null) {
+                await connection.rollback();
+                return res.status(500).json({ success: false, message: 'Error al ejecutar el stored procedure' });
+            }
+
+            if (spResult === 1) {
+                // Evento no encontrado
+                await connection.rollback();
+                return res.status(404).json({ success: false, message: 'Evento no encontrado (SP)' });
+            }
+
+            if (spResult === 2) {
+                // Capacidad ya agotada
+                await connection.rollback();
+                return res.status(400).json({ success: false, message: 'No hay cupos disponibles (agotado)' });
+            }
+
+            // Actualizar asistencia (ya que el SP decrementó la columna 'capacidad')
+            await connection.query('UPDATE Eventos SET asistencia = asistencia + 1 WHERE id_evento = ?', [id_evento]);
+
             await connection.commit();
-            
-            res.status(201).json({
+
+            // Obtener datos del usuario para el correo
+            const [usuarios] = await connection.query('SELECT nombre, apellido, correo FROM Usuarios WHERE id_usuario = ?', [id_usuario]);
+            const usuario = usuarios && usuarios.length ? usuarios[0] : null;
+
+            // Obtener datos del evento para el correo
+            const [eventos2] = await connection.query('SELECT nombre, fecha, hora, lugar FROM Eventos WHERE id_evento = ?', [id_evento]);
+            const eventoInfo = eventos2 && eventos2.length ? eventos2[0] : null;
+
+            // Enviar correo de confirmación (no bloquear el flujo si falla el envío)
+            try {
+                // Usar configuración SMTP explícita para Gmail (mejor compatibilidad con App Passwords)
+                const transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 465,
+                    secure: true, // true para port 465
+                    auth: {
+                        user: process.env.EMAIL_USER || 'ubicatecoficial@gmail.com',
+                        pass: process.env.EMAIL_PASS || 'ubicatec777charlie'
+                    }
+                });
+
+                const toEmail = usuario ? usuario.correo : null;
+                const nombreUsuario = usuario ? `${usuario.nombre} ${usuario.apellido}` : 'Usuario';
+
+                // Formatear fecha y hora para Costa Rica (UTC-6)
+                let fechaFormateada = '';
+                let horaFormateada = '';
+                
+                if (eventoInfo) {
+                    // Formatear fecha (ej: "12 de septiembre de 2025")
+                    const meses = [
+                        'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+                        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+                    ];
+                    
+                    // MySQL devuelve fecha como Date object, no string
+                    const fechaObj = eventoInfo.fecha instanceof Date 
+                        ? eventoInfo.fecha 
+                        : new Date(eventoInfo.fecha);
+                    
+                    const dia = fechaObj.getDate();
+                    const mes = meses[fechaObj.getMonth()];
+                    const anio = fechaObj.getFullYear();
+                    fechaFormateada = `${dia} de ${mes} de ${anio}`;
+                    
+                    // Formatear hora (ej: "10:00 a.m.")
+                    // Si hora es string "10:00:00" o Date/Time object
+                    let horaStr = eventoInfo.hora;
+                    if (typeof horaStr !== 'string') {
+                        horaStr = horaStr.toString();
+                    }
+                    const [horas, minutos] = horaStr.split(':');
+                    const horaNum = parseInt(horas);
+                    const periodo = horaNum >= 12 ? 'p.m.' : 'a.m.';
+                    const hora12 = horaNum > 12 ? horaNum - 12 : (horaNum === 0 ? 12 : horaNum);
+                    horaFormateada = `${hora12}:${minutos} ${periodo}`;
+                }
+
+                if (toEmail && eventoInfo) {
+                    const mailOptions = {
+                        from: 'ubicaTEC <ubicatecoficial@gmail.com>',
+                        to: toEmail,
+                        subject: `Confirmación de reserva: ${eventoInfo.nombre}`,
+                        html: `
+                            <p>Hola <strong>${nombreUsuario}</strong>,</p>
+                            <p>Tu reserva para el evento <strong>${eventoInfo.nombre}</strong> ha sido confirmada.</p>
+                            <ul>
+                                <li><strong>Fecha:</strong> ${fechaFormateada}</li>
+                                <li><strong>Hora:</strong> ${horaFormateada} (hora de Costa Rica)</li>
+                                <li><strong>Lugar:</strong> ${eventoInfo.lugar}</li>
+                            </ul>
+                            <p>¡Te esperamos!</p>
+                            <p>— equipo ubicaTEC</p>
+                        `
+                    };
+
+                    await transporter.sendMail(mailOptions);
+                }
+            } catch (mailErr) {
+                console.error('Error enviando correo de confirmación:', mailErr);
+                // No revertimos la transacción por error en correo — retornamos éxito pero avisamos que el email falló
+                return res.status(201).json({
+                    success: true,
+                    message: 'Reserva creada exitosamente, pero no se pudo enviar el correo de confirmación',
+                    data: {
+                        id_reserva: resultado.insertId,
+                        id_evento,
+                        id_usuario
+                    }
+                });
+            }
+
+            // Responder éxito
+            return res.status(201).json({
                 success: true,
-                message: 'Reserva creada exitosamente',
+                message: 'Reserva creada y correo de confirmación enviado correctamente',
                 data: {
                     id_reserva: resultado.insertId,
                     id_evento,
                     id_usuario
                 }
             });
-            
+
         } catch (error) {
             await connection.rollback();
             throw error;

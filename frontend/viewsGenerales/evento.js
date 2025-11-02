@@ -315,7 +315,7 @@ async function handleReservation() {
         }
         
         if (data.success) {
-            showSuccess();
+            showSuccess(data.message);
         } else {
             throw new Error(data.message || 'Error al crear la reserva');
         }
@@ -353,6 +353,8 @@ function setLoadingState(loading) {
  * Mostrar mensaje de éxito
  */
 function showSuccess() {
+    // showSuccess(message?) - muestra UI de éxito y toast
+    const message = arguments.length > 0 ? arguments[0] : null;
     const btnReservar = document.getElementById('btn-reservar');
     if (!btnReservar) return;
     
@@ -365,8 +367,8 @@ function showSuccess() {
     // Anunciar para accesibilidad
     announceToScreenReader('Reserva confirmada exitosamente. Se envió el correo de confirmación.');
     
-    // Mostrar toast
-    mostrarToast('Correo de confirmación enviado correctamente.');
+    // Mostrar mensaje del servidor si viene, si no usar texto por defecto
+    mostrarToast(message || 'Correo de confirmación enviado correctamente.');
     
     // Crear efecto visual
     createSuccessEffect();
