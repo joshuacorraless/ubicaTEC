@@ -53,21 +53,13 @@ function generarMenuPorRol(tipoRol, paginaActual) {
       text: 'Gestión de Eventos',
       paginas: ['listarEventos.html', 'editarEvento.html']
     });
-  } else if (tipoRol === 'Estudiante') {
-    // Los estudiantes pueden ver sus reservas (cuando se implemente)
-    menuItems.push({
-      href: '#',
-      icon: 'bi-bookmark-check',
-      text: 'Mis Reservas',
-      paginas: ['misReservas.html'],
-      disabled: true
-    });
   }
+  // nota: no hay opciones específicas para estudiantes por ahora
   
-  // Separador
+  // separador
   menuItems.push({ separator: true });
   
-  // Opción común: Perfil
+  // opción común: perfil
   menuItems.push({
     href: 'viewPerfilUsuario.html',
     icon: 'bi-person-circle',
@@ -75,7 +67,7 @@ function generarMenuPorRol(tipoRol, paginaActual) {
     paginas: ['viewPerfilUsuario.html', 'editarPerfilUsuario.html']
   });
   
-  // Nota: El botón de "Cerrar Sesión" está en el navbar superior, no en el sidebar
+  // nota: el botón de "Cerrar Sesión" está en el navbar superior, no en el sidebar
   
   // Generar HTML
   return menuItems.map(item => {
