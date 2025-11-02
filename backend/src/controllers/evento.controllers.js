@@ -149,9 +149,9 @@ export const crearReserva = async (req, res) => {
         // enviar correo de confirmación de forma asíncrona (no bloquear la respuesta)
         setImmediate(async () => {
             try {
-                console.log('📧 Intentando enviar correo de confirmación (async)...');
+                console.log('📧 Intentando enviar correo de confirmación...');
                 
-                // configuración simplificada para Gmail con reintentos
+                // configuración de nodemailer (igual que LogiEvents)
                 const transporter = nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
@@ -196,30 +196,30 @@ export const crearReserva = async (req, res) => {
                 }
 
                 if (toEmail && eventoInfo) {
+                    // mailOptions igual que LogiEvents
                     const mailOptions = {
                         from: process.env.EMAIL_USER,
                         to: toEmail,
                         subject: `Confirmación de reserva: ${eventoInfo.nombre}`,
-                        html: `
-                            <p>Hola <strong>${nombreUsuario}</strong>,</p>
-                            <p>Tu reserva para el evento <strong>${eventoInfo.nombre}</strong> ha sido confirmada.</p>
-                            <ul>
-                                <li><strong>Fecha:</strong> ${fechaFormateada}</li>
-                                <li><strong>Hora:</strong> ${horaFormateada} (hora de Costa Rica)</li>
-                                <li><strong>Lugar:</strong> ${eventoInfo.lugar}</li>
-                            </ul>
-                            <p>¡Te esperamos!</p>
-                            <p>— equipo ubicaTEC</p>
+                        text: `
+¡Hola, ${nombreUsuario}!
+
+Tu reserva para el evento "${eventoInfo.nombre}" ha sido confirmada.
+
+Detalles de la reserva:
+- Fecha: ${fechaFormateada}
+- Hora: ${horaFormateada} (hora de Costa Rica)
+- Lugar: ${eventoInfo.lugar}
+
+¡Te esperamos!
+
+— equipo ubicaTEC
                         `
                     };
 
-                    transporter.sendMail(mailOptions, (error, info) => {
-                        if (error) {
-                            console.error('❌ Error enviando correo:', error);
-                        } else {
-                            console.log('✅ Email sent:', info.response);
-                        }
-                    });
+                    // enviar correo con await (igual que LogiEvents)
+                    await transporter.sendMail(mailOptions);
+                    console.log('✅ Correo enviado exitosamente a:', toEmail);
                 } else {
                     console.log('⚠️ No se envió correo: toEmail o eventoInfo faltante');
                 }
