@@ -4,26 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <title>ubicaTEC – Mi Perfil</title>
+  <title>ubicaTEC – Editar Perfil</title>
 
   <!-- Bootstrap + Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
 
   <style>
-    /* ======= PALETA ubicaTEC - AZUL Y BLANCO ======= */
+    /* ======= PALETA TEC INSTITUCIONAL - AAA COMPLIANT ======= */
     :root{
-      --tec-primary: #0052CC;
-      --tec-secondary: #0065FF;
+      --tec-primary: #003C7D;
+      --tec-secondary: #0052CC;
       --tec-accent: #2684FF;
-      --tec-white: #ffffff;
-      --tec-surface: #f6f7fb;
-      --tec-text: #1d1f21;
-      --tec-gradient: linear-gradient(135deg, #0052CC 0%, #0065FF 50%, #2684FF 100%);
-      --tec-gradient-light: linear-gradient(135deg, rgba(0,82,204,0.1) 0%, rgba(0,101,255,0.05) 100%);
-      --shadow-md: 0 10px 40px rgba(0,82,204,0.1);
-      --shadow-lg: 0 20px 60px rgba(0,82,204,0.15);
-      --border-radius: 16px;
+      --tec-white: #FFFFFF;
+      --tec-text: #1A1A1A;
+      --tec-text-secondary: #4A4A4A;
+      --tec-surface: #F8FAFB;
+      --tec-border: #E1E8ED;
+      --tec-gradient: linear-gradient(135deg, #003C7D 0%, #0052CC 100%);
+      --tec-gradient-subtle: linear-gradient(135deg, rgba(0, 60, 125, 0.05) 0%, rgba(0, 82, 204, 0.02) 100%);
+      --shadow-sm: 0 2px 8px rgba(0, 60, 125, 0.08);
+      --shadow-md: 0 4px 16px rgba(0, 60, 125, 0.12);
+      --shadow-lg: 0 8px 24px rgba(0, 60, 125, 0.16);
+      --border-radius: 12px;
     }
 
     /* ======= ANIMACIONES Y EFECTOS ======= */
@@ -224,58 +227,15 @@
       margin-top: 40px !important;
     }
 
-    /* ======= PERFIL ESPECÍFICO ======= */
-    .profile-info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+    /* ======= FORMULARIOS MEJORADOS ======= */
+    .form-control:focus {
+      border-color: var(--tec-accent);
+      box-shadow: 0 0 0 0.2rem rgba(65, 0, 205, 0.25);
     }
 
-    .info-card {
-      background: rgba(255,255,255,0.95);
-      border-radius: var(--border-radius);
-      padding: 1.5rem;
-      box-shadow: var(--shadow-md);
-      transition: all 0.3s ease;
-    }
-
-    .info-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .info-card h3 {
-      color: var(--tec-primary);
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .info-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid rgba(0,0,0,0.1);
-    }
-
-    .info-item:last-child {
-      border-bottom: none;
-    }
-
-    .info-label {
-      font-weight: 500;
-      color: var(--tec-text);
-      opacity: 0.8;
-    }
-
-    .info-value {
-      font-weight: 600;
-      color: var(--tec-primary);
+    .form-select:focus {
+      border-color: var(--tec-accent);
+      box-shadow: 0 0 0 0.2rem rgba(65, 0, 205, 0.25);
     }
   </style>
 </head>
@@ -283,7 +243,7 @@
   <!-- NAV SUPERIOR -->
   <header class="navbar navbar-expand-lg navbar-dark navbar-ubc sticky-top" role="banner">
     <div class="container-fluid">
-  <a class="navbar-brand fw-bold" href="../viewsGenerales/eventos.html" aria-label="Inicio ubicaTEC">
+      <a class="navbar-brand fw-bold" href="#" aria-label="Inicio ubicaTEC">
         <i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
@@ -291,7 +251,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="d-none d-lg-flex gap-2">
-        <button class="btn btn-outline-light btn-sm" onclick="openChatbot()" type="button"><i class="bi bi-life-preserver me-1"></i>Ayuda</button>
+        <a class="btn btn-outline-light btn-sm" href="#"><i class="bi bi-life-preserver me-1"></i>Ayuda</a>
       </div>
     </div>
   </header>
@@ -314,7 +274,7 @@
               </a>
             </li>
             <li class="nav-item mt-2">
-              <a class="nav-link d-flex align-items-center active" href="viewPerfilEstudiante.html">
+              <a class="nav-link d-flex align-items-center active" href="viewPerfilUsuario.html">
                 <i class="bi bi-person-gear me-2"></i> Configuración de perfil
               </a>
             </li>
@@ -333,7 +293,7 @@
             <ul class="nav nav-pills flex-column gap-1">
               <li class="nav-item"><a class="nav-link" href="../viewsGenerales/eventos.html"><i class="bi bi-calendar-event me-2"></i> Panel de eventos</a></li>
               <li class="nav-item"><a class="nav-link" href="reservarEstudiante.html"><i class="bi bi-bookmark-plus me-2"></i> Gestión de reservas</a></li>
-              <li class="nav-item"><a class="nav-link active" href="viewPerfilEstudiante.html"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
+              <li class="nav-item"><a class="nav-link active" href="viewPerfilUsuario.html"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
             </ul>
           </nav>
         </div>
@@ -344,84 +304,123 @@
         <!-- Migas -->
         <nav aria-label="Ruta de navegación" class="mb-3">
           <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="../viewsGenerales/eventos.html">Sistema</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Mi Perfil</li>
+            <li class="breadcrumb-item"><a href="viewPerfilUsuario.html">Mi Perfil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Editar Perfil</li>
           </ol>
         </nav>
 
         <header class="mb-4">
-          <h1 class="display-5 fw-bold mb-2 text-gradient">Mi Perfil</h1>
-          <p class="lead text-muted mb-0">Consulta y gestiona tu información personal</p>
+          <h1 class="display-5 fw-bold mb-2 text-gradient">Editar Perfil</h1>
+          <p class="lead text-muted mb-0">Modifica tu información personal</p>
         </header>
 
         <!-- Estado accesible -->
         <div id="live-status" class="visually-hidden" role="status" aria-live="polite"></div>
 
-        <!-- Información del Perfil -->
-        <div class="profile-info-grid">
-          <!-- Información Personal -->
-          <section class="info-card card-elevada">
-            <h3 class="h5 text-gradient mb-3"><i class="bi bi-person-fill me-2"></i>Información Personal</h3>
-            
-            <div class="info-item">
-              <span class="info-label">Nombre completo:</span>
-              <span class="info-value" id="usuario-nombre">Juan Pérez Rodríguez</span>
-            </div>
-            
-            <div class="info-item">
-              <span class="info-label">Correo electrónico:</span>
-              <span class="info-value" id="usuario-email">juan.perez@tec.ac.cr</span>
-            </div>
-            
-            <div class="info-item">
-              <span class="info-label">Usuario:</span>
-              <span class="info-value" id="usuario-usuario">jperez</span>
-            </div>
-            
-            <div class="info-item">
-              <span class="info-label">Estado:</span>
-              <span class="badge bg-success" id="usuario-estado">Activo</span>
-            </div>
-          </section>
-
-          <!-- Información Académica -->
-          <section class="info-card card-elevada">
-            <h3 class="h5 text-gradient mb-3"><i class="bi bi-mortarboard-fill me-2"></i>Información Académica</h3>
-            
-            <div class="info-item">
-              <span class="info-label">Tipo de usuario:</span>
-              <span class="info-value" id="usuario-tipo">Estudiante TEC</span>
-            </div>
-            
-            <div class="info-item">
-              <span class="info-label">Número de carné:</span>
-              <span class="info-value" id="usuario-carne">2023123456</span>
-            </div>
-            
-            <div class="info-item">
-              <span class="info-label">Escuela:</span>
-              <span class="info-value" id="usuario-escuela">Ingeniería en Computación</span>
-            </div>
-            
-            <div class="info-item">
-              <span class="info-label">Año de ingreso:</span>
-              <span class="info-value" id="usuario-ingreso">2023</span>
-            </div>
-          </section>
-        </div>
-
-        <!-- Acciones -->
         <section class="card card-elevada">
-          <div class="card-body text-center">
-            <h3 class="h5 text-gradient mb-3">Acciones de Perfil</h3>
-            <div class="d-flex gap-2 justify-content-center flex-wrap">
-              <a href="editarPerfilEstudiante.html" class="btn btn-primary">
-                <i class="bi bi-pencil-square me-1"></i>Editar perfil
-              </a>
-              <button type="button" class="btn btn-outline-secondary" onclick="window.print()">
-                <i class="bi bi-printer me-1"></i>Imprimir perfil
-              </button>
-            </div>
+          <div class="card-body">
+            <form id="form-editar-perfil" novalidate>
+              <div class="row">
+                <!-- Información Personal -->
+                <div class="col-lg-6">
+                  <h3 class="h5 text-gradient mb-3"><i class="bi bi-person-fill me-2"></i>Información Personal</h3>
+                  
+                  <!-- Nombre -->
+                  <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre <span aria-hidden="true">*</span></label>
+                    <input 
+                      type="text" 
+                      id="nombre" 
+                      class="form-control" 
+                      required 
+                      minlength="2"
+                      pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+"
+                      title="Solo se permiten letras"
+                      aria-required="true"
+                      aria-describedby="nombre-help nombre-error"
+                    >
+                    <div class="form-text" id="nombre-help">Solo letras, mínimo 2 caracteres</div>
+                    <div id="nombre-error" class="invalid-feedback">El nombre es obligatorio y solo puede contener letras.</div>
+                  </div>
+
+                  <!-- Apellido -->
+                  <div class="mb-3">
+                    <label for="apellido" class="form-label">Apellido <span aria-hidden="true">*</span></label>
+                    <input 
+                      type="text" 
+                      id="apellido" 
+                      class="form-control" 
+                      required 
+                      minlength="2"
+                      pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+"
+                      title="Solo se permiten letras"
+                      aria-required="true"
+                      aria-describedby="apellido-help apellido-error"
+                    >
+                    <div class="form-text" id="apellido-help">Solo letras, mínimo 2 caracteres</div>
+                    <div id="apellido-error" class="invalid-feedback">El apellido es obligatorio y solo puede contener letras.</div>
+                  </div>
+                </div>
+
+                <div class="col-lg-6">
+                  <!-- Correo -->
+                  <div class="mb-3">
+                    <label for="correo-electronico" class="form-label">Correo electrónico <span aria-hidden="true">*</span></label>
+                    <input 
+                      type="email" 
+                      id="correo-electronico" 
+                      class="form-control" 
+                      required 
+                      pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|cr|ac\.cr|org|net|edu|es|mx|co)"
+                      title="Ingrese un correo válido con extensión permitida"
+                      aria-required="true"
+                      aria-describedby="correo-help correo-error"
+                    >
+                    <div class="form-text" id="correo-help">Correo con extensión válida (.com, .cr, .ac.cr, etc.)</div>
+                    <div id="correo-error" class="invalid-feedback">Ingresa un correo electrónico válido.</div>
+                  </div>
+
+                  <!-- Usuario -->
+                  <div class="mb-3">
+                    <label for="nombre-usuario" class="form-label">Usuario <span aria-hidden="true">*</span></label>
+                    <input 
+                      type="text" 
+                      id="nombre-usuario" 
+                      class="form-control" 
+                      required 
+                      minlength="3"
+                      pattern="[A-Za-z]+"
+                      title="Solo se permiten letras, sin números ni símbolos"
+                      aria-required="true"
+                      aria-describedby="usuario-help usuario-error"
+                    >
+                    <div class="form-text" id="usuario-help">Solo letras, mínimo 3 caracteres</div>
+                    <div id="usuario-error" class="invalid-feedback">El usuario es obligatorio y solo puede contener letras.</div>
+                  </div>
+
+                  <!-- Contraseña -->
+                  <div class="mb-3">
+                    <label for="nueva-password" class="form-label">Nueva contraseña</label>
+                    <input 
+                      type="password" 
+                      id="nueva-password" 
+                      class="form-control" 
+                      placeholder="Dejar vacío para mantener actual"
+                      minlength="8"
+                      aria-describedby="password-help password-error"
+                    >
+                    <div class="form-text" id="password-help">Mínimo 8 caracteres. Deja vacío si no deseas cambiarla.</div>
+                    <div id="password-error" class="invalid-feedback">La contraseña debe tener al menos 8 caracteres.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Guardar cambios</button>
+                <button type="reset" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise me-1"></i>Restablecer</button>
+                <a href="viewPerfilUsuario.html" class="btn btn-link ms-auto"><i class="bi bi-arrow-left-short me-1"></i>Volver al perfil</a>
+              </div>
+            </form>
           </div>
         </section>
 
@@ -434,43 +433,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Usuario actual (normalmente vendría de la sesión)
-    const usuarioActual = {
-      nombre: "Juan Pérez Rodríguez",
-      email: "juan.perez@tec.ac.cr",
-      usuario: "jperez",
-      tipo: "Estudiante TEC",
-      carne: "2023123456",
-      escuela: "Ingeniería en Computación",
-      ingreso: "2023"
-    };
-
-    // Inicialización
-    document.addEventListener('DOMContentLoaded', function() {
-      cargarDatosUsuario();
-      document.getElementById('year').textContent = new Date().getFullYear();
-    });
-
-    function cargarDatosUsuario() {
-      // Cargar información del usuario autenticado
-      document.getElementById('usuario-nombre').textContent = usuarioActual.nombre;
-      document.getElementById('usuario-email').textContent = usuarioActual.email;
-      document.getElementById('usuario-usuario').textContent = usuarioActual.usuario;
-      document.getElementById('usuario-tipo').textContent = usuarioActual.tipo;
-      document.getElementById('usuario-carne').textContent = usuarioActual.carne;
-      document.getElementById('usuario-escuela').textContent = usuarioActual.escuela;
-      document.getElementById('usuario-ingreso').textContent = usuarioActual.ingreso;
-    }
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
-
-  <!-- Universal Chatbot Integration -->
-  <link rel="stylesheet" href="../viewsChatbot/chatbot.css">
-  <script src="../viewsChatbot/ubica-chatbot.js"></script>
-  <script>
-    // Initialize universal chatbot when DOM is ready
-    document.addEventListener('DOMContentLoaded', function() {
-      UbicaChatbot.init();
-    });
-  </script>
+  <script src="editarPerfilUsuario.js"></script>
 </body>
 </html>

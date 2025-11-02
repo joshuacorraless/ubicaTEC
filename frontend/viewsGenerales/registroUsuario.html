@@ -125,7 +125,7 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       padding: 3rem 3.5rem;
       width: 100%;
-      max-width: 900px;
+      max-width: 1200px;
       animation: fadeInUp 0.8s ease-out;
       position: relative;
       overflow: hidden;
@@ -143,15 +143,28 @@
       background-size: 200% 100%;
     }
 
-    /* ======= GRID DE 2 COLUMNAS ======= */
+    /* ======= GRID DE 3 COLUMNAS ======= */
     .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    .form-row-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1.2rem;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 992px) {
       .form-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .form-row, .form-row-2 {
         grid-template-columns: 1fr;
         gap: 1rem;
       }
@@ -336,9 +349,14 @@
       color: #DC2626;
       font-weight: 500;
       margin-top: 0.3rem;
-      display: block;
+      display: none;
       width: 100%;
       font-size: 0.75rem;
+    }
+
+    .form-control.is-invalid ~ .invalid-feedback,
+    .form-select.is-invalid ~ .invalid-feedback {
+      display: block;
     }
 
     .form-text {
@@ -448,8 +466,62 @@
 
       <!-- Form -->
       <form id="form-register" class="needs-validation" novalidate>
-        <!-- Primera fila: Nombre y Correo -->
+        <!-- Primera fila: Nombre, Apellido y Nombre de usuario (3 columnas) -->
         <div class="form-row">
+          <div class="form-group">
+            <label for="nombre" class="form-label">
+              <i class="bi bi-person-circle" aria-hidden="true"></i>Nombre
+            </label>
+            <input 
+              type="text" 
+              id="nombre" 
+              class="form-control" 
+              placeholder="Ingrese su nombre"
+              required
+              minlength="2"
+              pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+"
+              title="Solo se permiten letras"
+              autocomplete="given-name"
+              aria-label="Nombre"
+              aria-describedby="nombre-help nombre-error"
+              aria-required="true"
+            >
+            <div id="nombre-help" class="form-text">
+              Solo letras, mínimo 2 caracteres
+            </div>
+            <div id="nombre-error" class="invalid-feedback" role="alert">
+              <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+              <span class="error-message"></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="apellido" class="form-label">
+              <i class="bi bi-person-circle" aria-hidden="true"></i>Apellido
+            </label>
+            <input 
+              type="text" 
+              id="apellido" 
+              class="form-control" 
+              placeholder="Ingrese su apellido"
+              required
+              minlength="2"
+              pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+"
+              title="Solo se permiten letras"
+              autocomplete="family-name"
+              aria-label="Apellido"
+              aria-describedby="apellido-help apellido-error"
+              aria-required="true"
+            >
+            <div id="apellido-help" class="form-text">
+              Solo letras, mínimo 2 caracteres
+            </div>
+            <div id="apellido-error" class="invalid-feedback" role="alert">
+              <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+              <span class="error-message"></span>
+            </div>
+          </div>
+
           <div class="form-group">
             <label for="nombreUsuario" class="form-label">
               <i class="bi bi-person" aria-hidden="true"></i>Nombre de usuario
@@ -461,21 +533,25 @@
               placeholder="Ingrese su nombre de usuario"
               required
               minlength="3"
+              pattern="[A-Za-z]+"
+              title="Solo se permiten letras, sin números ni símbolos"
               autocomplete="username"
               aria-label="Nombre de usuario"
-              aria-describedby="nombre-help nombre-error"
+              aria-describedby="nombreUsuario-help nombreUsuario-error"
               aria-required="true"
             >
-            <div id="nombre-help" class="form-text">
-              Mínimo 3 caracteres
+            <div id="nombreUsuario-help" class="form-text">
+              Solo letras, mínimo 3 caracteres
             </div>
-            <div id="nombre-error" class="invalid-feedback" role="alert">
+            <div id="nombreUsuario-error" class="invalid-feedback" role="alert">
               <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
               <span class="error-message"></span>
             </div>
           </div>
+        </div>
 
-          <!-- Correo -->
+        <!-- Segunda fila: Correo, Contraseña y Tipo de usuario (3 columnas) -->
+        <div class="form-row">
           <div class="form-group">
             <label for="correo" class="form-label">
               <i class="bi bi-envelope" aria-hidden="true"></i>Correo institucional
@@ -486,23 +562,22 @@
               class="form-control" 
               placeholder="usuario@tec.ac.cr"
               required
+              pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|cr|ac\.cr|org|net|edu|es|mx|co)"
+              title="Ingrese un correo válido con extensión permitida (.com, .cr, .ac.cr, .org, .net, .edu)"
               autocomplete="email"
               aria-label="Correo electrónico institucional"
               aria-describedby="correo-help correo-error"
               aria-required="true"
             >
             <div id="correo-help" class="form-text">
-              Correo del TEC
+              Correo del TEC o correo válido
             </div>
             <div id="correo-error" class="invalid-feedback" role="alert">
               <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
               <span class="error-message"></span>
             </div>
           </div>
-        </div>
 
-        <!-- Segunda fila: Contraseña y Tipo de usuario -->
-        <div class="form-row">
           <div class="form-group">
             <label for="contraseña" class="form-label">
               <i class="bi bi-lock" aria-hidden="true"></i>Contraseña
@@ -551,24 +626,25 @@
           </div>
         </div>
 
-        <!-- Tercera fila: Carrera y Código (campos condicionales) -->
-        <div class="form-row">
+        <!-- Tercera fila: Escuela y Código (campos condicionales, 2 columnas) -->
+        <div class="form-row-2">
           <div class="form-group conditional-field" id="carrera-group">
             <label for="carrera" class="form-label">
-              <i class="bi bi-mortarboard" aria-hidden="true"></i>Carrera o Escuela
+              <i class="bi bi-mortarboard" aria-hidden="true"></i>Escuela
             </label>
             <select 
               id="carrera" 
               class="form-select"
               disabled
-              aria-label="Carrera o escuela"
+              aria-label="Escuela"
               aria-describedby="carrera-help carrera-error"
             >
-              <option value="" selected>Seleccione su carrera o escuela</option>
-              <option value="computacion">Ingeniería en Computación</option>
-              <option value="civil">Ingeniería Civil</option>
-              <option value="electronica">Ingeniería Electrónica</option>
-              <option value="industrial">Ingeniería Industrial</option>
+              <option value="" selected>Seleccione su escuela</option>
+              <option value="1">Escuela de Administración de Empresas</option>
+              <option value="2">Escuela de Ingeniería Electrónica</option>
+              <option value="3">Escuela de Física</option>
+              <option value="4">Escuela de Ingeniería en Computación</option>
+              <option value="5">Escuela de Ingeniería en Producción Industrial</option>
             </select>
             <div id="carrera-help" class="form-text">Solo para estudiantes</div>
             <div id="carrera-error" class="invalid-feedback" role="alert">
@@ -587,10 +663,11 @@
               class="form-control" 
               placeholder="Ingrese el código"
               disabled
+              maxlength="3"
               aria-label="Código de administrador"
               aria-describedby="codigo-help codigo-error"
             >
-            <div id="codigo-help" class="form-text">Solo para administradores</div>
+            <div id="codigo-help" class="form-text">El código es proporcionado por el TEC</div>
             <div id="codigo-error" class="invalid-feedback" role="alert">
               <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
               <span class="error-message"></span>
@@ -620,314 +697,8 @@
   <!-- Estado accesible -->
   <div id="live-status" class="visually-hidden" role="status" aria-live="polite"></div>
 
-  <script>
-    // Referencias del DOM
-    const form = document.getElementById('form-register');
-    const btnRegister = document.getElementById('btn-register');
-    const statusDiv = document.getElementById('live-status');
-    const tipoUsuarioSelect = document.getElementById('tipoUsuario');
-    const carreraGroup = document.getElementById('carrera-group');
-    const codigoGroup = document.getElementById('codigo-group');
-    const carreraSelect = document.getElementById('carrera');
-    const codigoInput = document.getElementById('codigoAdministrador');
-
-    // Función para anunciar cambios a lectores de pantalla
-    function anunciar(mensaje) {
-      statusDiv.textContent = mensaje;
-      setTimeout(() => {
-        statusDiv.textContent = '';
-      }, 1000);
-    }
-
-    // Manejo de campos condicionales
-    tipoUsuarioSelect.addEventListener('change', function() {
-      const tipo = this.value;
-      
-      // Reset todos los campos condicionales
-      carreraGroup.classList.remove('enabled');
-      codigoGroup.classList.remove('enabled');
-      
-      carreraSelect.disabled = true;
-      carreraSelect.removeAttribute('required');
-      carreraSelect.removeAttribute('aria-required');
-      
-      codigoInput.disabled = true;
-      codigoInput.removeAttribute('required');
-      codigoInput.removeAttribute('aria-required');
-      
-      // Limpiar valores
-      carreraSelect.value = '';
-      codigoInput.value = '';
-      
-      // Habilitar campos según tipo
-      if (tipo === 'estudiante') {
-        carreraGroup.classList.add('enabled');
-        carreraSelect.disabled = false;
-        carreraSelect.setAttribute('required', '');
-        carreraSelect.setAttribute('aria-required', 'true');
-        anunciar('Campo de carrera habilitado. Por favor seleccione su carrera.');
-      } 
-      else if (tipo === 'administrativo') {
-        codigoGroup.classList.add('enabled');
-        codigoInput.disabled = false;
-        codigoInput.setAttribute('required', '');
-        codigoInput.setAttribute('aria-required', 'true');
-        anunciar('Campo de código de administrador habilitado. Por favor ingrese el código.');
-      }
-      else if (tipo === 'visitante') {
-        anunciar('Registro como visitante. Los campos de carrera y código quedan deshabilitados.');
-      }
-    });
-
-    // Validación en tiempo real - solo limpiar errores al escribir
-    function setupRealTimeValidation() {
-      const inputs = form.querySelectorAll('input, select');
-      
-      inputs.forEach(input => {
-        input.addEventListener('input', function() {
-          this.classList.remove('is-invalid');
-        });
-      });
-    }
-
-    // Manejo del formulario
-    function setupFormHandler() {
-      form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        // Validar formulario
-        if (!validateForm()) {
-          announceToScreenReader('Por favor corrige los errores en el formulario');
-          return;
-        }
-
-        // Estado de carga
-        setLoadingState(true);
-        
-        try {
-          // Simular proceso de registro
-          await simulateRegister();
-          
-          // Éxito
-          showSuccess();
-          
-          // Redireccionar después de 2 segundos
-          setTimeout(() => {
-            window.location.href = 'login.html';
-          }, 2000);
-          
-        } catch (error) {
-          showError(error.message);
-        } finally {
-          setLoadingState(false);
-        }
-      });
-    }
-
-    function validateForm() {
-      let isValid = true;
-      
-      // Limpiar validaciones previas
-      const inputs = form.querySelectorAll('input, select');
-      inputs.forEach(input => input.classList.remove('is-invalid'));
-
-      // Validar nombre de usuario
-      const nombreValid = validateField('nombreUsuario', (value) => {
-        if (!value.trim()) return 'El nombre de usuario es obligatorio';
-        if (value.length < 3) return 'El nombre debe tener al menos 3 caracteres';
-        if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Solo se permiten letras, números y guiones bajos';
-        return null;
-      });
-
-      // Validar correo
-      const correoValid = validateField('correo', (value) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const tecRegex = /^[^\s@]+@(estudiantes\.)?tec\.ac\.cr$/i;
-        
-        if (!value.trim()) return 'El correo electrónico es obligatorio';
-        if (!emailRegex.test(value)) return 'Formato de correo electrónico inválido';
-        if (!tecRegex.test(value)) return 'Debe ser un correo institucional del TEC';
-        return null;
-      });
-
-      // Validar contraseña
-      const passwordValid = validateField('contraseña', (value) => {
-        if (!value) return 'La contraseña es obligatoria';
-        if (value.length < 8) return 'La contraseña debe tener al menos 8 caracteres';
-        if (!/(?=.*[a-z])/.test(value)) return 'Debe incluir al menos una letra minúscula';
-        if (!/(?=.*[A-Z])/.test(value)) return 'Debe incluir al menos una letra mayúscula';
-        if (!/(?=.*\d)/.test(value)) return 'Debe incluir al menos un número';
-        return null;
-      });
-
-      // Validar tipo de usuario
-      const tipoValid = validateField('tipoUsuario', (value) => {
-        if (!value) return 'Debe seleccionar un tipo de usuario';
-        return null;
-      });
-
-      // Validar carrera (si está habilitada)
-      let carreraValid = true;
-      if (carreraSelect.required) {
-        carreraValid = validateField('carrera', (value) => {
-          if (!value) return 'Debe seleccionar una carrera o escuela';
-          return null;
-        });
-      }
-
-      // Validar código de administrador (si está habilitado)
-      let codigoValid = true;
-      if (codigoAdminInput.required) {
-        codigoValid = validateField('codigoAdmin', (value) => {
-          if (!value) return 'El código de administrador es obligatorio';
-          if (value !== 'ADMIN2025') return 'Código de administrador incorrecto';
-          return null;
-        });
-      }
-
-      isValid = nombreValid && correoValid && passwordValid && tipoValid && carreraValid && codigoValid;
-      return isValid;
-    }
-
-    function validateField(fieldId, validator) {
-      const field = document.getElementById(fieldId);
-      const error = validator(field.value);
-      
-      if (error) {
-        setFieldInvalid(field, error);
-        return false;
-      }
-      return true;
-    }
-
-    function setFieldInvalid(field, message) {
-      field.classList.add('is-invalid');
-      const feedback = field.parentNode.querySelector('.invalid-feedback .error-message');
-      if (feedback) {
-        feedback.textContent = message;
-      }
-    }
-
-    function setLoadingState(loading) {
-      const btnText = btnRegister.querySelector('.btn-text');
-      
-      if (loading) {
-        btnRegister.disabled = true;
-        btnRegister.classList.add('btn-loading');
-        btnText.innerHTML = '<div class="spinner"></div>Creando cuenta...';
-      } else {
-        btnRegister.disabled = false;
-        btnRegister.classList.remove('btn-loading');
-        btnText.innerHTML = '<i class="bi bi-person-plus me-2"></i>Crear Cuenta';
-      }
-    }
-
-    async function simulateRegister() {
-      // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simular registro exitoso
-      if (Math.random() > 0.1) { // 90% de éxito
-        return { success: true };
-      } else {
-        throw new Error('Error en el servidor');
-      }
-    }
-
-    function showSuccess() {
-      const btnText = btnRegister.querySelector('.btn-text');
-      btnRegister.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
-      btnText.innerHTML = '<i class="bi bi-check-circle me-2"></i>¡Cuenta creada exitosamente!';
-      
-      announceToScreenReader('Registro exitoso. Redirigiendo al login...');
-      
-      // Crear efecto de éxito
-      createSuccessEffect();
-    }
-
-    function showError(message) {
-      const btnText = btnRegister.querySelector('.btn-text');
-      btnRegister.style.background = 'linear-gradient(45deg, #dc3545, #fd7e14)';
-      btnText.innerHTML = `<i class="bi bi-exclamation-triangle me-2"></i>${message}`;
-      
-      announceToScreenReader(`Error: ${message}`);
-      
-      // Restaurar después de 3 segundos
-      setTimeout(() => {
-        btnRegister.style.background = '';
-        btnText.innerHTML = '<i class="bi bi-person-plus me-2"></i>Crear Cuenta';
-      }, 3000);
-    }
-
-    function createSuccessEffect() {
-      // Crear ondas de éxito
-      for (let i = 0; i < 3; i++) {
-        setTimeout(() => {
-          const ripple = document.createElement('div');
-          ripple.style.cssText = `
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 10px;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            animation: ripple 1s ease-out;
-            z-index: 1000;
-          `;
-          
-          btnRegister.appendChild(ripple);
-          
-          setTimeout(() => ripple.remove(), 1000);
-        }, i * 200);
-      }
-    }
-
-    function announceToScreenReader(message) {
-      statusDiv.textContent = message;
-      statusDiv.classList.remove('visually-hidden');
-      
-      setTimeout(() => {
-        statusDiv.classList.add('visually-hidden');
-      }, 3000);
-    }
-
-    // Inicialización
-    document.addEventListener('DOMContentLoaded', function() {
-      setupRealTimeValidation();
-      setupFormHandler();
-      
-      // Enfocar el primer campo
-      document.getElementById('nombreUsuario').focus();
-    });
-
-    // Efectos adicionales (mismo que el login)
-    document.addEventListener('mousemove', function(e) {
-      const cursor = { x: e.clientX, y: e.clientY };
-      const card = document.querySelector('.register-card');
-      const rect = card.getBoundingClientRect();
-      
-      if (cursor.x >= rect.left && cursor.x <= rect.right && 
-          cursor.y >= rect.top && cursor.y <= rect.bottom) {
-        
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        
-        const deltaX = (cursor.x - centerX) / (rect.width / 2);
-        const deltaY = (cursor.y - centerY) / (rect.height / 2);
-        
-        card.style.transform = `perspective(1000px) rotateY(${deltaX * 2}deg) rotateX(${-deltaY * 2}deg)`;
-      }
-    });
-
-    document.addEventListener('mouseleave', function() {
-      const card = document.querySelector('.register-card');
-      card.style.transform = '';
-    });
-  </script>
-
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="registroUsuario.js"></script>
 </body>
 </html>

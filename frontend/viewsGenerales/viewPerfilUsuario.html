@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>ubicaTEC – Mi Perfil</title>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <style>
+    /* ======= PALETA ubicaTEC - AZUL Y BLANCO ======= */
+    :root{
+      --tec-primary: #0052CC;
+      --tec-secondary: #0065FF;
+      --tec-accent: #2684FF;
+      --tec-white: #ffffff;
+      --tec-surface: #f6f7fb;
+      --tec-text: #1d1f21;
+      --tec-gradient: linear-gradient(135deg, #0052CC 0%, #0065FF 50%, #2684FF 100%);
+      --tec-gradient-light: linear-gradient(135deg, rgba(0,82,204,0.1) 0%, rgba(0,101,255,0.05) 100%);
+      --shadow-md: 0 10px 40px rgba(0,82,204,0.1);
+      --shadow-lg: 0 20px 60px rgba(0,82,204,0.15);
+      --border-radius: 16px;
+    }
+
+    /* ======= ANIMACIONES Y EFECTOS ======= */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ======= ELEMENTOS BASE ======= */
+    * { scroll-behavior: smooth; }
+    
+    body { 
+      background: linear-gradient(135deg, #f6f7fb 0%, #e8eaf6 100%);
+      color: var(--tec-text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ======= GRADIENTE DE TEXTO ======= */
+    .text-gradient {
+      background: var(--tec-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s ease-in-out infinite;
+      background-size: 200% 100%;
+    }
+
+    /* ======= THEMING AVANZADO ======= */
+    a { 
+      color: var(--tec-accent); 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    a:hover, a:focus { 
+      color: var(--tec-secondary);
+      transform: translateY(-1px);
+    }
+
+    .btn {
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary{
+      background: var(--tec-gradient);
+      border: none;
+      box-shadow: var(--shadow-md);
+      transform: translateY(0);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-outline-secondary{
+      border: 2px solid var(--tec-secondary);
+      color: var(--tec-secondary);
+      background: rgba(255,255,255,0.8);
+    }
+    .btn-outline-secondary:hover{
+      background: var(--tec-gradient);
+      border-color: transparent;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    :focus-visible { 
+      outline: 3px solid var(--tec-accent); 
+      outline-offset: 2px;
+      border-radius: 8px;
+    }
+
+    /* ======= NAVBAR ESPECTACULAR ======= */
+    .navbar-ubc.navbar { 
+      background: var(--tec-gradient) !important;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .navbar-ubc .navbar-brand,
+    .navbar-ubc .nav-link,
+    .navbar-ubc .btn,
+    .navbar-ubc .navbar-toggler { 
+      color: var(--tec-white);
+      transition: all 0.3s ease;
+    }
+    .navbar-ubc .navbar-brand:hover,
+    .navbar-ubc .nav-link:hover { 
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    /* ======= SIDEBAR MEJORADO ======= */
+    .sidebar {
+      background: var(--tec-gradient);
+      color: var(--tec-white);
+      min-height: 100vh;
+      position: sticky;
+      top: 0;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar .section-label { 
+      color: rgba(255,255,255,.7);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .sidebar .nav-link {
+      color: rgba(255,255,255,.92);
+      border-radius: 12px;
+      margin: 4px 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .sidebar .nav-link::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      transition: width 0.3s ease;
+    }
+    .sidebar .nav-link:hover::before { width: 100%; }
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link:focus { 
+      background: rgba(255,255,255,.12);
+      transform: translateX(8px);
+    }
+    .sidebar .nav-link.active { 
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* ======= CARDS ESPECTACULARES ======= */
+    .card-elevada { 
+      border: 0; 
+      box-shadow: var(--shadow-md);
+      border-radius: var(--border-radius);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .card-elevada:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* ======= BREADCRUMBS MEJORADOS ======= */
+    .breadcrumb {
+      background: var(--tec-gradient-light);
+      border-radius: 12px;
+      padding: 12px 20px;
+    }
+
+    .breadcrumb-item a {
+      color: var(--tec-accent);
+      font-weight: 500;
+    }
+
+    /* ======= FOOTER MEJORADO ======= */
+    footer {
+      background: var(--tec-gradient-light);
+      border-radius: 12px 12px 0 0;
+      margin-top: 40px !important;
+    }
+
+    /* ======= PERFIL ESPECÍFICO ======= */
+    .profile-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .info-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .info-card h3 {
+      color: var(--tec-primary);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      font-weight: 500;
+      color: var(--tec-text);
+      opacity: 0.8;
+    }
+
+    .info-value {
+      font-weight: 600;
+      color: var(--tec-primary);
+    }
+  </style>
+</head>
+<body>
+  <!-- NAV SUPERIOR -->
+  <header class="navbar navbar-expand-lg navbar-dark navbar-ubc sticky-top" role="banner">
+    <div class="container-fluid">
+  <a class="navbar-brand fw-bold" href="eventos.html" aria-label="Inicio ubicaTEC">
+        <i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
+              aria-controls="menuLateral" aria-label="Abrir menú de navegación">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="d-none d-lg-flex gap-2">
+        <button class="btn btn-outline-light btn-sm" onclick="openChatbot()" type="button"><i class="bi bi-life-preserver me-1"></i>Ayuda</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- SIDEBAR DESKTOP -->
+      <aside class="col-md-3 col-xl-2 d-none d-md-block border-end sidebar" aria-label="Navegación principal">
+        <nav class="py-4">
+          <div class="px-3 text-uppercase small section-label mb-2">Configuración de usuario</div>
+          <ul class="nav nav-pills flex-column gap-1 px-2">
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center" href="eventos.html">
+                <i class="bi bi-calendar-event me-2"></i> Panel de eventos
+              </a>
+            </li>
+            <li class="nav-item mt-2">
+              <a class="nav-link d-flex align-items-center active" href="viewPerfilUsuario.html">
+                <i class="bi bi-person-gear me-2"></i> Configuración de perfil
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- OFFCANVAS MOBILE -->
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
+        <div class="offcanvas-header" style="background:var(--tec-primary); color:#fff;">
+          <h5 class="offcanvas-title" id="menuLateralLabel"><i class="bi bi-geo-alt-fill me-1"></i> ubicaTEC</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+        </div>
+        <div class="offcanvas-body">
+          <nav aria-label="Navegación móvil">
+            <ul class="nav nav-pills flex-column gap-1">
+              <li class="nav-item"><a class="nav-link" href="eventos.html"><i class="bi bi-calendar-event me-2"></i> Panel de eventos</a></li>
+              <li class="nav-item"><a class="nav-link active" href="viewPerfilUsuario.html"><i class="bi bi-person-gear me-2"></i> Configuración de perfil</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- CONTENIDO -->
+      <main id="contenido-principal" class="col-12 col-md-9 col-xl-10 px-4 py-4" tabindex="-1">
+        <!-- Migas -->
+        <nav aria-label="Ruta de navegación" class="mb-3">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="eventos.html">Sistema</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Mi Perfil</li>
+          </ol>
+        </nav>
+
+        <header class="mb-4">
+          <h1 class="display-5 fw-bold mb-2 text-gradient">Mi Perfil</h1>
+          <p class="lead text-muted mb-0">Consulta y gestiona tu información personal</p>
+        </header>
+
+        <!-- Estado accesible -->
+        <div id="live-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+        <!-- Información del Perfil -->
+        <div class="profile-info-grid">
+          <!-- Información Personal -->
+          <section class="info-card card-elevada">
+            <h3 class="h5 text-gradient mb-3"><i class="bi bi-person-fill me-2"></i>Información Personal</h3>
+            
+            <div class="info-item">
+              <span class="info-label">Nombre completo:</span>
+              <span class="info-value" id="usuario-nombre">Cargando...</span>
+            </div>
+            
+            <div class="info-item">
+              <span class="info-label">Correo electrónico:</span>
+              <span class="info-value" id="usuario-email">Cargando...</span>
+            </div>
+            
+            <div class="info-item">
+              <span class="info-label">Usuario:</span>
+              <span class="info-value" id="usuario-usuario">Cargando...</span>
+            </div>
+            
+            <div class="info-item">
+              <span class="info-label">Estado:</span>
+              <span class="badge bg-success" id="usuario-estado">Activo</span>
+            </div>
+          </section>
+
+          <!-- Información Académica -->
+          <section class="info-card card-elevada">
+            <h3 class="h5 text-gradient mb-3"><i class="bi bi-mortarboard-fill me-2"></i>Información Académica</h3>
+            
+            <div class="info-item">
+              <span class="info-label">Tipo de usuario:</span>
+              <span class="info-value" id="usuario-tipo">Cargando...</span>
+            </div>
+            
+            <div class="info-item" data-field="carne">
+              <span class="info-label">Número de carné:</span>
+              <span class="info-value" id="usuario-carne">N/A</span>
+            </div>
+            
+            <div class="info-item" data-field="escuela">
+              <span class="info-label">Escuela:</span>
+              <span class="info-value" id="usuario-escuela">N/A</span>
+            </div>
+            
+            <div class="info-item" data-field="ingreso">
+              <span class="info-label">Año de ingreso:</span>
+              <span class="info-value" id="usuario-ingreso">N/A</span>
+            </div>
+          </section>
+        </div>
+
+        <!-- Acciones -->
+        <section class="card card-elevada">
+          <div class="card-body text-center">
+            <h3 class="h5 text-gradient mb-3">Acciones de Perfil</h3>
+            <div class="d-flex gap-2 justify-content-center flex-wrap">
+              <a href="editarPerfilUsuario.html" class="btn btn-primary">
+                <i class="bi bi-pencil-square me-1"></i>Editar perfil
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <footer class="mt-4 py-3 text-center text-muted border-top">
+          <small>© <span id="year"></span> ubicaTEC — Sistema de Gestión</small>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="viewPerfilUsuario.js"></script>
+
+  <!-- Universal Chatbot Integration -->
+  <link rel="stylesheet" href="../viewsChatbot/chatbot.css">
+  <script src="../viewsChatbot/ubica-chatbot.js"></script>
+  <script>
+    // Initialize universal chatbot when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      UbicaChatbot.init();
+    });
+  </script>
+</body>
+</html>
