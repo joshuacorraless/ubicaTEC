@@ -56,6 +56,64 @@ DELIMITER ;
 
 
 -- ===============================================
+-- SP para decrementar la capacidad de un evento
+-- Si capacidad > 0 => resta 1 y retorna código 0 (éxito)
+-- Si no existe el evento => retorna código 1
+-- Si capacidad = 0 => no resta y actualiza estado='agotado', retorna código 2
+-- ===============================================
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_decrementar_capacidad_evento//
+
+CREATE PROCEDURE sp_decrementar_capacidad_evento(
+    IN p_id_evento INT,
+    OUT p_result_code INT
+)
+BEGIN
+    DECLARE v_capacidad INT;
+    DECLARE v_estado VARCHAR(20);
+
+    -- Inicializar resultado
+    SET p_result_code = -1;
+
+    -- Verificar existencia del evento y obtener capacidad y estado
+    IF NOT EXISTS (SELECT 1 FROM Eventos WHERE id_evento = p_id_evento) THEN
+        SET p_result_code = 1; -- evento no encontrado
+    ELSE
+        SELECT capacidad, estado INTO v_capacidad, v_estado
+        FROM Eventos
+        WHERE id_evento = p_id_evento
+        LIMIT 1;
+
+        IF v_capacidad <= 0 THEN
+            -- Si ya no hay capacidad, marcar como agotado
+            UPDATE Eventos
+            SET estado = 'agotado'
+            WHERE id_evento = p_id_evento;
+
+            SET p_result_code = 2; -- ya agotado
+        ELSE
+            -- Decrementar capacidad en 1
+            UPDATE Eventos
+            SET capacidad = capacidad - 1
+            WHERE id_evento = p_id_evento;
+
+            -- Si tras decrementar la capacidad llegó a 0, marcar agotado
+            UPDATE Eventos
+            SET estado = 'agotado'
+            WHERE id_evento = p_id_evento AND capacidad = 0;
+
+            SET p_result_code = 0; -- éxito
+        END IF;
+    END IF;
+END//
+
+DELIMITER ;
+
+
+
+-- ===============================================
 -- SP para obtener eventos según rol y escuela
 -- ===============================================
 
@@ -410,3 +468,4 @@ BEGIN
 END//
 
 DELIMITER ;
+

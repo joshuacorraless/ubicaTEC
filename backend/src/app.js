@@ -9,6 +9,7 @@ import loginRoutes from './routes/login.routes.js';
 import eventosRoutes from './routes/eventos.routes.js';
 import usuariosRoutes from './routes/registroUsuario.routes.js';
 import perfilRoutes from './routes/perfil.routes.js';
+import eventoRoutes from './routes/evento.routes.js';
 
 
 const app = express();
