@@ -177,11 +177,22 @@ function renderizarEvento() {
         costoElement.textContent = eventoActual.costo === 0 ? textoGratis : textoCosto;
     }
     
-    // Imagen
+    // Imagen con descripción accesible para NVDA
     const imagenElement = document.querySelector('.evento-imagen img');
     if (imagenElement && eventoActual.img) {
         imagenElement.src = eventoActual.img;
-        imagenElement.alt = eventoActual.alt || `Imagen del evento: ${eventoActual.titulo}`;
+        
+        // Generar descripción alt descriptiva basada en el evento
+        let altDescripcion = '';
+        if (eventoActual.alt) {
+            altDescripcion = eventoActual.alt;
+        } else {
+            // Generar descripción genérica pero informativa
+            const lugarCorto = eventoActual.lugar ? eventoActual.lugar.split(',')[0] : 'lugar del evento';
+            altDescripcion = `Imagen ilustrativa del evento ${eventoActual.titulo}, que se realizará en ${lugarCorto}`;
+        }
+        
+        imagenElement.alt = altDescripcion;
     }
     
     // Disponibilidad
