@@ -328,8 +328,4 @@ Hoy el repositorio queda como evidencia tecnica del desarrollo y de esa etapa de
 
 <br>
 
-## Autor
 
-<b>Joshua Cabral Betana</b>
-
-Proyecto construido como evidencia de criterio full stack, modelado de datos, integracion de servicios externos y entrega web desplegable.
