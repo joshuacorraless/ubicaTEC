@@ -2,9 +2,9 @@
 
 
 
-create database ubicaTEC;
+create database ubicatec;
 
-use ubicaTEC;
+use ubicatec;
 
 CREATE TABLE Roles (
   id_rol INT AUTO_INCREMENT PRIMARY KEY,
