@@ -313,8 +313,10 @@ La instancia ya cumplio su proposito. Para publicar nuevamente en un proveedor s
 
 <br>
 
-## Autor
 
+<<<<<<< HEAD
 <b>Joshua Cabral Betana</b>
 
 Desarrollo full stack orientado a producto, datos relacionales y servicios externos.
+=======
+>>>>>>> f133d9226b4b8489c81c5f7bea224cc0406add72
