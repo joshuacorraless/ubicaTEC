@@ -93,49 +93,49 @@ El proyecto separa la experiencia por rol, controla cupos desde base de datos y 
 <table>
   <tr>
     <td align="center" width="14%">
-      <img alt="Node.js" width="42" src="https://cdn.simpleicons.org/nodedotjs/339933">
+      <img alt="Node.js" width="42" height="42" src="https://cdn.simpleicons.org/nodedotjs/339933">
       <br>
       <b>Node.js</b>
       <br>
       Runtime
     </td>
     <td align="center" width="14%">
-      <img alt="Express" width="42" src="https://cdn.simpleicons.org/express/111827">
+      <img alt="Express" width="42" height="42" src="https://cdn.simpleicons.org/express/111827">
       <br>
       <b>Express</b>
       <br>
       API REST
     </td>
     <td align="center" width="14%">
-      <img alt="MySQL" width="42" src="https://cdn.simpleicons.org/mysql/4479A1">
+      <img alt="MySQL" width="42" height="42" src="https://cdn.simpleicons.org/mysql/4479A1">
       <br>
       <b>MySQL</b>
       <br>
       Datos y SP
     </td>
     <td align="center" width="14%">
-      <img alt="JavaScript" width="42" src="https://cdn.simpleicons.org/javascript/F7DF1E">
+      <img alt="JavaScript" width="42" height="42" src="https://cdn.simpleicons.org/javascript/F7DF1E">
       <br>
       <b>JavaScript</b>
       <br>
       Cliente
     </td>
     <td align="center" width="14%">
-      <img alt="Bootstrap" width="42" src="https://cdn.simpleicons.org/bootstrap/7952B3">
+      <img alt="Bootstrap" width="42" height="42" src="https://cdn.simpleicons.org/bootstrap/7952B3">
       <br>
       <b>Bootstrap</b>
       <br>
       UI
     </td>
     <td align="center" width="14%">
-      <img alt="Cloudinary" width="42" src="https://cdn.simpleicons.org/cloudinary/3448C5">
+      <img alt="Cloudinary" width="42" height="42" src="https://cdn.simpleicons.org/cloudinary/3448C5">
       <br>
       <b>Cloudinary</b>
       <br>
       Imágenes
     </td>
     <td align="center" width="14%">
-      <img alt="SendGrid" width="42" src="https://cdn.simpleicons.org/sendgrid/51A9E3">
+      <img alt="SendGrid" width="42" height="42" src="https://www.vectorlogo.zone/logos/sendgrid/sendgrid-icon.svg">
       <br>
       <b>SendGrid</b>
       <br>
@@ -144,7 +144,7 @@ El proyecto separa la experiencia por rol, controla cupos desde base de datos y 
   </tr>
   <tr>
     <td align="center" colspan="7">
-      <img alt="Railway" width="42" src="https://cdn.simpleicons.org/railway/0B0D0E">
+      <img alt="Railway" width="42" height="42" src="https://cdn.simpleicons.org/railway/0B0D0E">
       <br>
       <b>Railway</b>
       <br>
@@ -152,6 +152,7 @@ El proyecto separa la experiencia por rol, controla cupos desde base de datos y 
     </td>
   </tr>
 </table>
+
 
 <br>
 
@@ -312,8 +313,11 @@ ubicaTEC tuvo una versión publicada en Railway durante la etapa de evaluación 
 El despliegue ya no se mantiene activo porque cumplió su función dentro del proyecto. Para publicar nuevamente en un proveedor similar, el backend debe tomar el puerto desde variables de entorno y conectarse a una base MySQL provisionada.
 
 <br>
+<<<<<<< HEAD
 
 
 <b>Joshua Cabral Betana</b>
 
 Desarrollo full stack orientado a producto, datos relacionales y servicios externos.
+=======
+>>>>>>> 353c5dcd51230631d397a3227169bed14c6feba9
