@@ -313,11 +313,5 @@ ubicaTEC tuvo una versión publicada en Railway durante la etapa de evaluación 
 El despliegue ya no se mantiene activo porque cumplió su función dentro del proyecto. Para publicar nuevamente en un proveedor similar, el backend debe tomar el puerto desde variables de entorno y conectarse a una base MySQL provisionada.
 
 <br>
-<<<<<<< HEAD
 
 
-<b>Joshua Cabral Betana</b>
-
-Desarrollo full stack orientado a producto, datos relacionales y servicios externos.
-=======
->>>>>>> 353c5dcd51230631d397a3227169bed14c6feba9
