@@ -1,317 +1,63 @@
-<div align="center">
-
-<img width="96" alt="ubicaTEC" src="frontend/images/charlieLogo.png">
-
 # ubicaTEC
 
-<b>Sistema web para gestionar eventos universitarios, cupos y reservas dentro del entorno TEC</b>
+Campus event discovery and reservations for students, visitors, and administrators at Tecnológico de Costa Rica. This academic web project combines a browser interface with an Express API and MySQL stored procedures.
 
-<br>
+[Documentación técnica en español](README.es.md)
 
-<img alt="Node.js" src="https://img.shields.io/badge/Node.js-0B6E4F?style=for-the-badge&logo=node.js&logoColor=white">
-<img alt="Express" src="https://img.shields.io/badge/Express-111827?style=for-the-badge&logo=express&logoColor=white">
-<img alt="MySQL" src="https://img.shields.io/badge/MySQL-075985?style=for-the-badge&logo=mysql&logoColor=white">
-<img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-B7791F?style=for-the-badge&logo=javascript&logoColor=111827">
-<img alt="Cloudinary" src="https://img.shields.io/badge/Cloudinary-2563EB?style=for-the-badge&logo=cloudinary&logoColor=white">
-<img alt="SendGrid" src="https://img.shields.io/badge/SendGrid-0EA5E9?style=for-the-badge&logo=sendgrid&logoColor=white">
-<img alt="Railway" src="https://img.shields.io/badge/Railway-5B21B6?style=for-the-badge&logo=railway&logoColor=white">
+## What it includes
 
-</div>
+- Event listings filtered by role and academic school, with event details and availability.
+- Reservations with duplicate and capacity checks, plus SendGrid confirmation emails.
+- Administrator screens for creating, editing, and cancelling events, with Cloudinary image uploads.
+- User registration, profiles, and a Botsonic chat widget with contextual quick actions.
 
-<br>
+**Stack:** JavaScript, HTML/CSS, Node.js, Express, MySQL, Cloudinary, SendGrid, Botsonic.
 
-<table>
-  <tr>
-    <td width="50%">
-      <b>Producto</b>
-      <br>
-      Plataforma web para publicar, segmentar y reservar eventos dentro del entorno TEC.
-    </td>
-    <td width="50%">
-      <b>Enfoque</b>
-      <br>
-      API REST, base relacional, procedimientos almacenados y servicios externos para imágenes y correo.
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <b>Usuarios</b>
-      <br>
-      Visitantes, estudiantes y administradores con experiencias diferenciadas.
-    </td>
-    <td>
-      <b>Despliegue</b>
-      <br>
-      La aplicación estuvo publicada en Railway durante la etapa activa del proyecto.
-    </td>
-  </tr>
-</table>
+## Run locally
 
-<br>
+Requires Node.js, npm, and MySQL. Run commands from the repository root.
 
-## Producto
+1. Install dependencies with `npm install`.
+2. Create a root `.env` file:
 
-ubicaTEC organiza la vida de eventos universitarios en una experiencia única. El sistema muestra actividades según el perfil de la persona, permite reservar cupos, confirma asistencia por correo y entrega a los administradores un flujo directo para mantener el catálogo actualizado.
+   ```dotenv
+   DB_HOST=localhost
+   DB_PORT=3306
+   DB_USER=your_mysql_user
+   DB_PASSWORD=your_mysql_password
+   DB_NAME=ubicatec
+   CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   SENDGRID_API_KEY=your_sendgrid_key
+   EMAIL_USER=your_verified_sender
+   NODE_ENV=development
+   ```
 
-El proyecto separa la experiencia por rol, controla cupos desde base de datos y mantiene una estructura lista para ejecución local o despliegue.
+3. On a fresh local MySQL instance, run these files in order from the MySQL client:
 
-<br>
+   ```sql
+   SOURCE backend/src/db/sqlScriptCreacion.sql;
+   SOURCE backend/src/db/sqlScriptLlenado.sql;
+   SOURCE backend/src/db/storedProcedures.sql;
+   ```
 
-## Capacidades
+4. Update the API URLs in `frontend/viewsGenerales/*.js` and `frontend/viewsAdministrador/*.js`. They currently reference the former Railway deployment; use `http://localhost:3000/api` for local development.
+5. Run `npm run dev`, then open [the login page](http://localhost:3000/viewsGenerales/login.html).
 
-<table>
-  <tr>
-    <td width="28%"><b>Identidad y acceso</b></td>
-    <td>Registro, login y perfiles para visitantes, estudiantes y administradores.</td>
-  </tr>
-  <tr>
-    <td><b>Segmentación académica</b></td>
-    <td>Eventos públicos, eventos solo TEC y eventos asociados a escuelas específicas.</td>
-  </tr>
-  <tr>
-    <td><b>Reservas</b></td>
-    <td>Validación de cupos, prevención de reservas duplicadas y actualización de asistencia.</td>
-  </tr>
-  <tr>
-    <td><b>Gestión de eventos</b></td>
-    <td>Creación, edición, listado y cancelación lógica de eventos.</td>
-  </tr>
-  <tr>
-    <td><b>Multimedia</b></td>
-    <td>Carga de imágenes de eventos mediante Cloudinary y procesamiento en memoria.</td>
-  </tr>
-  <tr>
-    <td><b>Asistencia integrada</b></td>
-    <td>Widget de chatbot reutilizable con respuestas contextualizadas por vista.</td>
-  </tr>
-</table>
+The main server serves the frontend and API on port `3000`. Cloudinary is needed for image uploads; SendGrid needs a verified sender for confirmation emails. The chatbot has separate configuration in [chatbot.js](frontend/viewsChatbot/chatbot.js).
 
-<br>
+## Code map
 
-## Stack
+| Area | Source |
+| --- | --- |
+| API routes and request handling | [Routes](backend/src/routes) · [Controllers](backend/src/controllers) |
+| Schema, seed data, and stored procedures | [Database scripts](backend/src/db) |
+| Data model | [ER diagram](backend/src/db/modelado.pdf) |
+| Participant and administrator interfaces | [General views](frontend/viewsGenerales) · [Administrator views](frontend/viewsAdministrador) |
+| Chat widget | [Chatbot files](frontend/viewsChatbot) |
 
-<table>
-  <tr>
-    <td align="center" width="14%">
-      <img alt="Node.js" width="42" height="42" src="https://cdn.simpleicons.org/nodedotjs/339933">
-      <br>
-      <b>Node.js</b>
-      <br>
-      Runtime
-    </td>
-    <td align="center" width="14%">
-      <img alt="Express" width="42" height="42" src="https://cdn.simpleicons.org/express/111827">
-      <br>
-      <b>Express</b>
-      <br>
-      API REST
-    </td>
-    <td align="center" width="14%">
-      <img alt="MySQL" width="42" height="42" src="https://cdn.simpleicons.org/mysql/4479A1">
-      <br>
-      <b>MySQL</b>
-      <br>
-      Datos y SP
-    </td>
-    <td align="center" width="14%">
-      <img alt="JavaScript" width="42" height="42" src="https://cdn.simpleicons.org/javascript/F7DF1E">
-      <br>
-      <b>JavaScript</b>
-      <br>
-      Cliente
-    </td>
-    <td align="center" width="14%">
-      <img alt="Bootstrap" width="42" height="42" src="https://cdn.simpleicons.org/bootstrap/7952B3">
-      <br>
-      <b>Bootstrap</b>
-      <br>
-      UI
-    </td>
-    <td align="center" width="14%">
-      <img alt="Cloudinary" width="42" height="42" src="https://cdn.simpleicons.org/cloudinary/3448C5">
-      <br>
-      <b>Cloudinary</b>
-      <br>
-      Imágenes
-    </td>
-    <td align="center" width="14%">
-      <img alt="SendGrid" width="42" height="42" src="https://www.vectorlogo.zone/logos/sendgrid/sendgrid-icon.svg">
-      <br>
-      <b>SendGrid</b>
-      <br>
-      Correo
-    </td>
-  </tr>
-  <tr>
-    <td align="center" colspan="7">
-      <img alt="Railway" width="42" height="42" src="https://cdn.simpleicons.org/railway/0B0D0E">
-      <br>
-      <b>Railway</b>
-      <br>
-      Hosting
-    </td>
-  </tr>
-</table>
+## Project status
 
-
-<br>
-
-## Arquitectura
-
-<table>
-  <tr>
-    <td width="32%"><b>Backend</b></td>
-    <td><code>backend/src</code> concentra Express, rutas REST, controladores, conexión MySQL, middleware de carga y configuración cloud.</td>
-  </tr>
-  <tr>
-    <td><b>Base de datos</b></td>
-    <td><code>backend/src/db</code> contiene creación del modelo, llenado inicial, procedimientos almacenados y modelado en PDF.</td>
-  </tr>
-  <tr>
-    <td><b>Cliente</b></td>
-    <td><code>frontend/viewsGenerales</code> y <code>frontend/viewsAdministrador</code> separan experiencia pública, sesión, perfil, eventos y administración sobre HTML, CSS, JavaScript y Bootstrap.</td>
-  </tr>
-  <tr>
-    <td><b>Asistente</b></td>
-    <td><code>frontend/viewsChatbot</code> encapsula estilos, plantilla e integración reusable del chatbot.</td>
-  </tr>
-</table>
-
-<br>
-
-## Reglas de negocio
-
-<table>
-  <tr>
-    <td><b>Rol primero</b></td>
-    <td>La API filtra eventos antes de responder al cliente, usando rol y escuela como parámetros de acceso.</td>
-  </tr>
-  <tr>
-    <td><b>Reglas en base de datos</b></td>
-    <td>MySQL valida login, registro, perfil, reservas, cupos y administración mediante procedimientos almacenados.</td>
-  </tr>
-  <tr>
-    <td><b>Reserva controlada</b></td>
-    <td>Una reserva confirma cupo, incrementa asistencia y marca el evento como agotado cuando corresponde.</td>
-  </tr>
-  <tr>
-    <td><b>Cancelación sin pérdida histórica</b></td>
-    <td>Los eventos no desaparecen del historial operativo, se cancelan por estado.</td>
-  </tr>
-  <tr>
-    <td><b>Correo desacoplado</b></td>
-    <td>La respuesta de reserva no espera el envío de SendGrid, evitando bloquear la experiencia del usuario.</td>
-  </tr>
-</table>
-
-<br>
-
-## Rutas principales
-
-<table>
-  <tr>
-    <td><b>Autenticación</b></td>
-    <td><code>POST /api/login</code></td>
-    <td>Inicio de sesión y datos de usuario.</td>
-  </tr>
-  <tr>
-    <td><b>Usuarios</b></td>
-    <td><code>POST /api/usuarios/registro</code></td>
-    <td>Registro por tipo de usuario.</td>
-  </tr>
-  <tr>
-    <td><b>Eventos</b></td>
-    <td><code>GET /api/eventos/filtrados</code></td>
-    <td>Catálogo según rol y escuela.</td>
-  </tr>
-  <tr>
-    <td><b>Detalle</b></td>
-    <td><code>GET /api/evento/{id}</code></td>
-    <td>Información completa de un evento.</td>
-  </tr>
-  <tr>
-    <td><b>Reservas</b></td>
-    <td><code>POST /api/evento/reserva</code></td>
-    <td>Confirmación de cupo y envío asíncrono de correo.</td>
-  </tr>
-  <tr>
-    <td><b>Perfil</b></td>
-    <td><code>GET /api/perfil/{id_usuario}</code></td>
-    <td>Consulta de datos personales.</td>
-  </tr>
-  <tr>
-    <td><b>Administración</b></td>
-    <td><code>POST /api/administradores/eventos</code></td>
-    <td>Creación de evento con imagen.</td>
-  </tr>
-</table>
-
-<br>
-
-## Base de datos
-
-<table>
-  <tr>
-    <td width="18%"><b>Roles</b></td>
-    <td>Administrador, Estudiante, Visitante.</td>
-  </tr>
-  <tr>
-    <td><b>Usuarios</b></td>
-    <td>Identidad, rol y escuela asociada cuando aplica.</td>
-  </tr>
-  <tr>
-    <td><b>Eventos</b></td>
-    <td>Nombre, descripción, fecha, lugar, capacidad, asistencia, precio, acceso, imagen y estado.</td>
-  </tr>
-  <tr>
-    <td><b>EscuelasTEC</b></td>
-    <td>Catálogo académico para segmentar actividades institucionales.</td>
-  </tr>
-  <tr>
-    <td><b>Reservas</b></td>
-    <td>Confirmaciones de asistencia vinculadas a usuario y evento.</td>
-  </tr>
-</table>
-
-<br>
-
-## Operación local
-
-```bash
-npm install
-npm run dev
-```
-
-```sql
-source backend/src/db/sqlScriptCreacion.sql
-source backend/src/db/sqlScriptLlenado.sql
-source backend/src/db/storedProcedures.sql
-```
-
-```env
-DB_HOST=localhost
-DB_USER=tu_usuario
-DB_PASSWORD=tu_contrasena
-DB_NAME=ubicatec
-DB_PORT=3306
-CLOUDINARY_CLOUD_NAME=tu_cloud_name
-CLOUDINARY_API_KEY=tu_api_key
-CLOUDINARY_API_SECRET=tu_api_secret
-SENDGRID_API_KEY=tu_sendgrid_key
-EMAIL_USER=correo_remitente
-NODE_ENV=development
-```
-
-El servidor principal escucha en el puerto `3000` y sirve el frontend desde `frontend`.
-
-<br>
-
-## Railway
-
-ubicaTEC tuvo una versión publicada en Railway durante la etapa de evaluación del proyecto. Ese despliegue permitió validar el comportamiento de la aplicación fuera del entorno local.
-
-El despliegue ya no se mantiene activo porque cumplió su función dentro del proyecto. Para publicar nuevamente en un proveedor similar, el backend debe tomar el puerto desde variables de entorno y conectarse a una base MySQL provisionada.
-
-<br>
-
+Academic prototype. The previous Railway deployment is no longer maintained. Authentication and authorization hardening, server-side handling of chatbot credentials, and automated tests remain work for a future deployment.
 
