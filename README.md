@@ -49,6 +49,12 @@
 
 <br>
 
+## In English
+
+**ubicaTEC** is a web app for publishing and booking university events at Instituto Tecnológico de Costa Rica (TEC). Visitors, students and administrators each get their own experience: events can be public, TEC-only or limited to specific schools, and the system checks seat availability, prevents duplicate bookings and confirms attendance by email. Built with Node.js, Express and MySQL (stored procedures), with Cloudinary for images and SendGrid for email; it was deployed on Railway while the project was active.
+
+<br>
+
 ## Producto
 
 ubicaTEC organiza la vida de eventos universitarios en una experiencia única. El sistema muestra actividades según el perfil de la persona, permite reservar cupos, confirma asistencia por correo y entrega a los administradores un flujo directo para mantener el catálogo actualizado.
